@@ -68,6 +68,28 @@ def news_weights(m: MSXHawkes, data: EventData, c: int, z: float) -> np.ndarray:
     return np.tensordot(B[:, c], marks, axes=([-1], [0]))
 
 
+def type_mass_se(m: MSXHawkes, data: EventData) -> dict:
+    """Total direct-kernel mass per release type (constant mark) and its standard error."""
+    if not m.cov:
+        return {}
+    lay, E, M = m.layout, m.spec.exo.size, data.n_marks
+    Pd = m.theta_d.shape[1]
+    out = {}
+    for name, c in data.meta["type_index"].items():
+        mass, var = 0.0, 0.0
+        for i in range(data.n_dims):
+            cols = Pd + lay["off_exo"] + c * E * M + np.arange(E) * M
+            idx, cov = m.cov[i]
+            th = np.concatenate([m.theta_d[i], m.theta_s[i]])
+            mass += float(th[cols].sum())
+            where = {v: k for k, v in enumerate(idx)}
+            pos = [where[cc] for cc in cols if cc in where]
+            if pos:
+                var += float(cov[np.ix_(pos, pos)].sum())
+        out[name] = dict(mass=mass, se=float(np.sqrt(max(var, 0.0))))
+    return out
+
+
 def analyse(m: MSXHawkes, data: EventData, ms: MainSpec, out: Path, tag: str,
             t_grid: np.ndarray = np.geomspace(0.05, 3600, 60)) -> dict:
     assets = data.meta["assets"]
@@ -105,7 +127,8 @@ def analyse(m: MSXHawkes, data: EventData, ms: MainSpec, out: Path, tag: str,
                 dm = np.array([up, dn])
                 ref = lambda qq, cur, tot, direct: ss.refine_quantile(ms.exo, W, dm, qq, q(fine, cur, tot, qq), direct)
                 row = dict(extra_events_direct=float(act_dir), extra_events_total=float(act_tot),
-                           amplification=float(act_tot / act_dir),
+                           # the echo multiplier is only meaningful for a non-negligible direct response
+                           amplification=float(act_tot / act_dir) if act_dir >= 0.5 else float("nan"),
                            t50_direct=ref(0.5, cd, act_dir, True), t50_total=ref(0.5, ct, act_tot, False),
                            t90_direct=ref(0.9, cd, act_dir, True), t90_total=ref(0.9, ct, act_tot, False))
                 drift = deltas[asset] * (r.cum_total[:, up] - r.cum_total[:, dn])
@@ -120,11 +143,14 @@ def analyse(m: MSXHawkes, data: EventData, ms: MainSpec, out: Path, tag: str,
     res["t_grid"] = t_grid.tolist()
     print(f"  responses done in {time.time() - t_start:.0f}s", flush=True)
     # placebo falsification: total news-kernel mass of the PLACEBO type vs real types
-    if "PLACEBO" in types:
-        Wp = news_weights(m, data, types["PLACEBO"], 0.0)
-        res["placebo_mass_per_dim"] = Wp.sum(axis=(1, 2)).tolist()
+    pl_types = {k: c for k, c in types.items() if k.startswith("PLACEBO")}
+    if pl_types:
+        res["placebo_mass_per_dim"] = {k: news_weights(m, data, c, 0.0).sum(axis=(1, 2)).tolist()
+                                       for k, c in pl_types.items()}
         res["real_mass_per_dim"] = {k: news_weights(m, data, c, 0.0).sum(axis=(1, 2)).tolist()
-                                    for k, c in types.items() if k != "PLACEBO"}
+                                    for k, c in types.items() if not k.startswith("PLACEBO")}
+        # standard errors of the per-type kernel masses from the observed information
+        res["mass_se"] = type_mass_se(m, data)
     # goodness of fit
     gofs, ed_rej = [], []
     wid = data.window_ids()

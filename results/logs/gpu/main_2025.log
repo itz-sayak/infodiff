@@ -1,3 +1,6 @@
 
 === Mon Sep 28 02:53:22 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2025
 2025: windows=160 events=1923009
+
+=== Mon Sep 28 03:07:56 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2025
+2025: windows=160 events=1512395

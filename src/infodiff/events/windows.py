@@ -121,7 +121,9 @@ def build_windows(cal: pd.DataFrame, spec: WindowSpec, marks_fn=None, verbose: b
     """marks_fn(row) -> nonnegative mark vector (M,), default [1]."""
     store = TickStore(spec.tick_root)
     kinds = list(spec.kinds)
-    type_index = {k: i for i, k in enumerate(kinds + (["PLACEBO"] if spec.placebo else []))}
+    # one placebo type per real release type (PLACEBO_<kind>): the placebo test can then be read
+    # slot by slot (08:30 ET data releases vs 14:00 ET FOMC vs ECB/BoJ times)
+    type_index = {k: i for i, k in enumerate(kinds + ([f"PLACEBO_{k}" for k in kinds] if spec.placebo else []))}
     busy = np.sort(cal.t_utc.map(lambda x: x.timestamp()).values)
     clusters = cluster_calendar(cal, kinds, spec.cluster_gap)
     M = len(marks_fn(clusters[0].iloc[0])) if marks_fn else 1
@@ -135,7 +137,7 @@ def build_windows(cal: pd.DataFrame, spec: WindowSpec, marks_fn=None, verbose: b
         if spec.placebo:
             s = _placebo_shift(lo, hi, busy)
             if s is not None:
-                pn = [(t + s, type_index["PLACEBO"], np.eye(1, M, 0)[0]) for t in tt]
+                pn = [(t + s, type_index[f"PLACEBO_{k}"], np.eye(1, M, 0)[0]) for t, k in zip(tt, cl.kind)]
                 plan.append((lo + s, hi + s, pn, dict(placebo=True, events=[f"PLACEBO<{e}" for e in cl.event_id],
                                                       kinds=["PLACEBO"] * len(tt))))
 
