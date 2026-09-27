@@ -80,5 +80,6 @@ if __name__ == "__main__":
     seed = int(sys.argv[4]) if len(sys.argv) > 4 else 2019
     max_epoch = int(sys.argv[5]) if len(sys.argv) > 5 and sys.argv[5] != "-" else None
     bs = int(sys.argv[6]) if len(sys.argv) > 6 else None
-    r = run_model(model, dataset, n_types, seed, max_epoch, batch_size=bs)
+    import torch
+    r = run_model(model, dataset, n_types, seed, max_epoch, batch_size=bs, gpu=0 if torch.cuda.is_available() else -1)
     print("RESULT " + json.dumps(r), flush=True)

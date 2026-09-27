@@ -1,0 +1,19 @@
+  taxi seed=0 ep=0 val_ll=-0.6243 best=-0.6243
+Traceback (most recent call last):
+  File "D:\Quant\scripts\probe_track_b.py", line 7, in <module>
+    r = train_one(ds, 0, **kw)
+        ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\src\infodiff\experiments\track_b.py", line 114, in train_one
+    loss.backward()
+  File "D:\Quant\.venv_cu126\Lib\site-packages\torch\_tensor.py", line 623, in backward
+    torch.autograd.backward(
+  File "D:\Quant\.venv_cu126\Lib\site-packages\torch\autograd\__init__.py", line 395, in backward
+    _engine_run_backward(
+  File "D:\Quant\.venv_cu126\Lib\site-packages\torch\autograd\graph.py", line 1072, in _engine_run_backward
+    return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+torch.AcceleratorError: CUDA error: unspecified launch failure
+Search for `cudaErrorLaunchFailure' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+

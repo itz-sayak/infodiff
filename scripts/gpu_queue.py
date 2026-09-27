@@ -41,8 +41,10 @@ def main():
         idle = 0
         name, cmd = job
         env = dict(__import__("os").environ)
-        if QNAME == "cpu":
+        if QNAME.startswith("cpu"):
             env["CUDA_VISIBLE_DEVICES"] = ""
+        if QNAME == "cpuneural":  # share the 28 threads with the MSX queue
+            env["OMP_NUM_THREADS"] = env["MKL_NUM_THREADS"] = "10"
         for attempt in (1, 2):
             with open(LOGS / f"{name}.log", "a") as log:
                 log.write(f"\n=== {time.ctime()} attempt {attempt}: {cmd}\n")
