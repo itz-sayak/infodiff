@@ -1,2 +1,24 @@
 
 === Sun Sep 27 23:45:36 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept.py taxi 0 "{\"epochs\":100,\"phases\":2}"
+Traceback (most recent call last):
+  File "D:\Quant\scripts\run_ept.py", line 13, in <module>
+    r = train_one(ds, s, **cfg)
+        ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\src\infodiff\experiments\track_b.py", line 114, in train_one
+    loss.backward()
+  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\_tensor.py", line 623, in backward
+    torch.autograd.backward(
+  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\autograd\__init__.py", line 395, in backward
+    _engine_run_backward(
+  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\autograd\graph.py", line 979, in _engine_run_backward
+    return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+torch.AcceleratorError: CUDA error: unspecified launch failure
+Search for `cudaErrorLaunchFailure' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+
+
+=== Sun Sep 27 23:47:13 2026 attempt 2: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept.py taxi 0 "{\"epochs\":100,\"phases\":2}"
+
+=== Sun Sep 27 23:48:16 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept.py taxi 0 "{\"epochs\":100,\"phases\":2}"

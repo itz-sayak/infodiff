@@ -42,7 +42,7 @@ def main():
         name, cmd = job
         env = dict(__import__("os").environ)
         if QNAME.startswith("cpu"):
-            env["CUDA_VISIBLE_DEVICES"] = ""
+            env["CUDA_VISIBLE_DEVICES"] = "-1"  # empty would *delete* the var on Windows
         if QNAME == "cpuneural":  # share the 28 threads with the MSX queue
             env["OMP_NUM_THREADS"] = env["MKL_NUM_THREADS"] = "10"
         for attempt in (1, 2):

@@ -1,3 +1,25 @@
 
 === Sun Sep 27 23:40:35 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2024
 2024: windows=169 events=1690655
+Traceback (most recent call last):
+  File "D:\Quant\scripts\run_main.py", line 18, in <module>
+    m = fit(data, ms)
+        ^^^^^^^^^^^^^
+  File "D:\Quant\src\infodiff\experiments\main_study.py", line 52, in fit
+    m.fit(data)
+  File "D:\Quant\src\infodiff\models\msx.py", line 301, in fit
+    th_n = _interior_point(prob, des.Xs, th, tol_i, verbose=self.verbose)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\src\infodiff\models\msx.py", line 172, in _interior_point
+    f1 = barrier_obj(cand)
+         ^^^^^^^^^^^^^^^^^
+  File "D:\Quant\src\infodiff\models\msx.py", line 147, in barrier_obj
+    if torch.any(l <= 0) or torch.any(t <= 0):
+torch.AcceleratorError: CUDA error: unspecified launch failure
+Search for `cudaErrorLaunchFailure' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+
+
+=== Sun Sep 27 23:48:21 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2024
+2024: windows=169 events=1690655
