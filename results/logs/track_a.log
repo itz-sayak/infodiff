@@ -1,0 +1,24 @@
+{'scenario': 'S1-exp', 'seed': 0, 'method': 'MSX (ours)', 'n_train': 75675, 'G_err': 0.1044, 'rho_err': 0.0487, 'kern_L1': 0.1445, 'seconds': 3.2088, 'dLL': 0.0004, 'cert_gap': 0.0}
+{'scenario': 'S1-exp', 'seed': 0, 'method': 'MSX-auto (ours)', 'n_train': 75675, 'G_err': 0.1044, 'rho_err': 0.0487, 'kern_L1': 0.1445, 'seconds': 14.2081, 'dLL': 0.0004, 'cert_gap': 0.0}
+{'scenario': 'S1-exp', 'seed': 0, 'method': 'MSX-exp (ablation: no Erlang)', 'n_train': 75675, 'G_err': 0.096, 'rho_err': 0.0495, 'kern_L1': 0.1942, 'seconds': 1.2123, 'dLL': 0.0011, 'cert_gap': 0.0}
+{'scenario': 'S1-exp', 'seed': 0, 'method': 'tick-ExpKern(MLE, best decay)', 'n_train': 75675, 'G_err': 0.0266, 'rho_err': 0.0033, 'kern_L1': 0.0293, 'seconds': 4.9281, 'dLL': 0.0001}
+{'scenario': 'S1-exp', 'seed': 0, 'method': 'tick-SumExpKern(MLE, AGD)', 'n_train': 75675, 'G_err': 0.0991, 'rho_err': 0.0496, 'kern_L1': 0.1952, 'seconds': 27.8759, 'dLL': 0.0011}
+{'scenario': 'S1-exp', 'seed': 0, 'method': 'tick-ADM4', 'n_train': 75675, 'G_err': 0.0266, 'rho_err': 0.0033, 'kern_L1': 0.0292, 'seconds': 22.1252, 'dLL': 0.0001}
+{'scenario': 'S1-exp', 'seed': 0, 'method': 'tick-EM(nonparam)', 'n_train': 75675, 'G_err': 0.0595, 'rho_err': 0.0271, 'kern_L1': 0.1818, 'seconds': 6.7576, 'dLL': 0.0011}
+{'scenario': 'S1-exp', 'seed': 0, 'method': 'NPHC(cumulants)', 'n_train': 75675, 'G_err': 0.3855, 'rho_err': 0.0579, 'kern_L1': nan, 'seconds': 1.5532}
+{'scenario': 'S1-exp', 'seed': 0, 'method': 'tick-ConditionalLaw', 'n_train': 75675, 'G_err': 0.0509, 'rho_err': 0.0165, 'kern_L1': 0.2277, 'seconds': 5.793, 'dLL': 0.0024}
+{'scenario': 'S1-exp', 'seed': 1, 'method': 'MSX (ours)', 'n_train': 74236, 'G_err': 0.0323, 'rho_err': 0.0009, 'kern_L1': 0.0721, 'seconds': 2.1114, 'dLL': 0.0002, 'cert_gap': 0.0}
+{'scenario': 'S1-exp', 'seed': 1, 'method': 'MSX-auto (ours)', 'n_train': 74236, 'G_err': 0.0393, 'rho_err': 0.0145, 'kern_L1': 0.0638, 'seconds': 14.5359, 'dLL': 0.0002, 'cert_gap': 0.0}
+{'scenario': 'S1-exp', 'seed': 1, 'method': 'MSX-exp (ablation: no Erlang)', 'n_train': 74236, 'G_err': 0.0348, 'rho_err': 0.0082, 'kern_L1': 0.1414, 'seconds': 1.5143, 'dLL': 0.001, 'cert_gap': 0.0}
+{'scenario': 'S1-exp', 'seed': 1, 'method': 'tick-ExpKern(MLE, best decay)', 'n_train': 74236, 'G_err': 0.0149, 'rho_err': 0.0065, 'kern_L1': 0.0138, 'seconds': 5.8512, 'dLL': 0.0}
+S1-exp seed=1 SumExp: FAILED RuntimeError('The sum of the influence on someone cannot be negative. Maybe did you forget to add a positive constraint to your proximal operator\n')
+{'scenario': 'S1-exp', 'seed': 1, 'method': 'tick-ADM4', 'n_train': 74236, 'G_err': 0.0149, 'rho_err': 0.0065, 'kern_L1': 0.0138, 'seconds': 21.7928, 'dLL': 0.0}
+{'scenario': 'S1-exp', 'seed': 1, 'method': 'tick-EM(nonparam)', 'n_train': 74236, 'G_err': 0.0304, 'rho_err': 0.0119, 'kern_L1': 0.1738, 'seconds': 6.5067, 'dLL': 0.0011}
+{'scenario': 'S1-exp', 'seed': 1, 'method': 'NPHC(cumulants)', 'n_train': 74236, 'G_err': 0.2357, 'rho_err': 0.0137, 'kern_L1': nan, 'seconds': 0.3587}
+{'scenario': 'S1-exp', 'seed': 1, 'method': 'tick-ConditionalLaw', 'n_train': 74236, 'G_err': 0.1232, 'rho_err': 0.0194, 'kern_L1': 0.1876, 'seconds': 5.7492, 'dLL': 0.0036}
+{'scenario': 'S1-exp', 'seed': 2, 'method': 'MSX (ours)', 'n_train': 74734, 'G_err': 0.0216, 'rho_err': 0.0105, 'kern_L1': 0.0516, 'seconds': 2.1549, 'dLL': 0.0002, 'cert_gap': 0.0}
+{'scenario': 'S1-exp', 'seed': 2, 'method': 'MSX-auto (ours)', 'n_train': 74734, 'G_err': 0.0171, 'rho_err': 0.0007, 'kern_L1': 0.0464, 'seconds': 14.5188, 'dLL': 0.0002, 'cert_gap': 0.0}
+{'scenario': 'S1-exp', 'seed': 2, 'method': 'MSX-exp (ablation: no Erlang)', 'n_train': 74734, 'G_err': 0.044, 'rho_err': 0.0245, 'kern_L1': 0.1371, 'seconds': 1.3769, 'dLL': 0.0009, 'cert_gap': 0.0}
+{'scenario': 'S1-exp', 'seed': 2, 'method': 'tick-ExpKern(MLE, best decay)', 'n_train': 74734, 'G_err': 0.0228, 'rho_err': 0.0064, 'kern_L1': 0.0223, 'seconds': 5.783, 'dLL': 0.0001}
+{'scenario': 'S1-exp', 'seed': 2, 'method': 'tick-SumExpKern(MLE, AGD)', 'n_train': 74734, 'G_err': 0.0446, 'rho_err': 0.0247, 'kern_L1': 0.137, 'seconds': 2.6797, 'dLL': 0.0009}
+{'scenario': 'S1-exp', 'seed': 2, 'method': 'tick-ADM4', 'n_train': 74734, 'G_err': 0.0228, 'rho_err': 0.0064, 'kern_L1': 0.0223, 'seconds': 21.7718, 'dLL': 0.0001}

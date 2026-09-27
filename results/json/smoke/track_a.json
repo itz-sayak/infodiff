@@ -1,0 +1,23 @@
+[
+ {
+  "scenario": "S1-exp",
+  "seed": 0,
+  "method": "NPHC(cumulants)",
+  "n_train": 75675,
+  "G_err": 0.3854624282931434,
+  "rho_err": 0.05791798426642769,
+  "kern_L1": NaN,
+  "seconds": 3.1361429691314697
+ },
+ {
+  "scenario": "S1-exp",
+  "seed": 0,
+  "method": "tick-ConditionalLaw",
+  "n_train": 75675,
+  "G_err": 0.0509338815376277,
+  "rho_err": 0.016541235469646032,
+  "kern_L1": 0.2276581742680138,
+  "seconds": 5.643791198730469,
+  "dLL": 0.0023892552438286277
+ }
+]
