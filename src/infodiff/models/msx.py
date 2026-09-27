@@ -421,6 +421,32 @@ class MSXHawkes:
             out[i] = np.log(lam).sum() - comp
         return out if per_dim else out.sum()
 
+    def heldout_loglik(self, data: EventData, n_iter: int = 300, per_dim: bool = False):
+        """Profile log-likelihood of new windows: their own window-baseline columns are
+        re-estimated by EM (a concave problem) with every shared parameter held fixed."""
+        wc = self.spec.win_cols
+        W_fit = (self.layout["off_tod"]) // wc
+        lay_new = self.spec.layout(data.n_dims, data.n_windows, max(data.n_news_types, 1), data.n_marks)
+        out = np.zeros(data.n_dims)
+        for i in range(data.n_dims):
+            des = build_design(data, self.spec, i)
+            th_s = np.concatenate([np.zeros(data.n_windows * wc), self.theta_s[i, W_fit * wc:]])
+            nb = data.n_windows * wc
+            Xs = des.Xs.tocsc()
+            other = des.Xd.astype(np.float64) @ self.theta_d[i] + Xs[:, nb:] @ th_s[nb:]
+            Xb = Xs[:, :nb].tocsr()
+            cb = des.integ_s[:nb]
+            T = data.t1 - data.t0
+            cnt = np.bincount(data.window_ids()[des.rows], minlength=data.n_windows)
+            th_b = np.repeat(np.maximum(0.5 * cnt / T, 1e-6), wc)
+            for _ in range(n_iter):
+                lam = other + Xb @ th_b
+                th_b = th_b * (Xb.T @ (1.0 / lam)) / np.maximum(cb, 1e-300)
+            lam = other + Xb @ th_b
+            comp = des.integ_d @ self.theta_d[i] + cb @ th_b + des.integ_s[nb:] @ th_s[nb:]
+            out[i] = np.log(lam).sum() - comp
+        return out if per_dim else float(out.sum())
+
     def residuals(self, data: EventData, dim: int) -> np.ndarray:
         """Time-rescaled inter-event compensator increments for one dimension (Exp(1) under H0)."""
         des = build_design(data, self.spec, dim, want_cum=True)

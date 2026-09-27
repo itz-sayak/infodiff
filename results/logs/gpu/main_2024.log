@@ -60,3 +60,25 @@ rho 0.8599142808817238 relaxation_s 846.7695177102238 total 73s
   responses done in 49s
   goodness of fit done in 69s
 rho 0.8501412906106303 relaxation_s 787.1939582706509 total 401s
+
+=== Mon Sep 28 03:12:10 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2024
+2024: windows=169 events=1423029
+
+=== Mon Sep 28 03:12:19 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2024
+2024: windows=169 events=1423029
+  dim  0 n=  118819 ll=    -245797.72 gap=5.2e-04 it=274 37s
+  dim  1 n=  119380 ll=    -247256.71 gap=5.5e-04 it=320 36s
+  dim  2 n=  174224 ll=    -316112.12 gap=2.4e-04 it=290 49s
+  dim  3 n=  172602 ll=    -311498.05 gap=5.0e-04 it=300 51s
+  dim  4 n=   86900 ll=    -233717.16 gap=7.9e-04 it=210 24s
+  dim  5 n=   86900 ll=    -234514.75 gap=7.9e-04 it=256 25s
+  dim  6 n=   45174 ll=    -143201.94 gap=2.4e-04 it=173 13s
+  dim  7 n=   44517 ll=    -141274.88 gap=1.9e-04 it=253 14s
+  dim  8 n=  110382 ll=    -198621.25 gap=8.4e-04 it=305 37s
+  dim  9 n=  109788 ll=    -195318.09 gap=4.9e-04 it=278 34s
+  dim 10 n=   82965 ll=    -161522.82 gap=6.6e-04 it=364 29s
+  dim 11 n=   82950 ll=    -160032.70 gap=9.0e-04 it=219 23s
+  total fit 373s
+  responses done in 89s
+  goodness of fit done in 109s
+rho 0.8493910938904458 relaxation_s 788.0885667021028 total 483s
