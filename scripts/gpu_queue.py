@@ -43,8 +43,10 @@ def main():
         env = dict(__import__("os").environ)
         if QNAME.startswith("cpu"):
             env["CUDA_VISIBLE_DEVICES"] = "-1"  # empty would *delete* the var on Windows
-        if QNAME == "cpuneural":  # share the 28 threads with the MSX queue
-            env["OMP_NUM_THREADS"] = env["MKL_NUM_THREADS"] = "10"
+        # thread budget: <= 4 threads per job so concurrent CPU jobs stay well below 28 cores
+        for var in ("OMP_NUM_THREADS", "MKL_NUM_THREADS", "OPENBLAS_NUM_THREADS", "NUMBA_NUM_THREADS",
+                    "NUMEXPR_NUM_THREADS"):
+            env[var] = "4"
         for attempt in (1, 2):
             with open(LOGS / f"{name}.log", "a") as log:
                 log.write(f"\n=== {time.ctime()} attempt {attempt}: {cmd}\n")

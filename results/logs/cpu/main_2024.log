@@ -23,3 +23,6 @@ For debugging consider passing CUDA_LAUNCH_BLOCKING=1
 
 === Sun Sep 27 23:48:21 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2024
 2024: windows=169 events=1690655
+
+=== Mon Sep 28 01:13:45 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2024
+2024: windows=169 events=1690655

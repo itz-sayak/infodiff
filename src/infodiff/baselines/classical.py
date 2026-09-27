@@ -212,7 +212,7 @@ def fit_tick_expkern(data: EventData, decays_grid: np.ndarray) -> Fitted:
     best = None
     for beta in decays_grid:
         try:
-            model = ModelHawkesExpKernLogLik(float(beta), n_threads=8).fit(ev, end_times=np.asarray(ends))
+            model = ModelHawkesExpKernLogLik(float(beta), n_threads=4).fit(ev, end_times=np.asarray(ends))
             mu, adj, sc = _tick_mle(model, d, 1)
         except Exception:
             continue
@@ -230,7 +230,7 @@ def fit_tick_sumexp(data: EventData, decays: np.ndarray) -> Fitted:
     ev, ends = to_tick(data)
     d = data.n_dims
     t = time.time()
-    model = ModelHawkesSumExpKernLogLik(np.asarray(decays, float), n_threads=8).fit(ev, end_times=np.asarray(ends))
+    model = ModelHawkesSumExpKernLogLik(np.asarray(decays, float), n_threads=4).fit(ev, end_times=np.asarray(ends))
     mu, adj, _ = _tick_mle(model, d, len(decays))
     sec = time.time() - t
     mu = np.maximum(mu, 1e-12)
@@ -242,7 +242,7 @@ def fit_tick_em(data: EventData, edges: np.ndarray) -> Fitted:
     from tick.hawkes import HawkesEM
     ev, ends = to_tick(data)
     t = time.time()
-    em = HawkesEM(kernel_discretization=np.asarray(edges, float), max_iter=300, tol=1e-7, n_threads=8)
+    em = HawkesEM(kernel_discretization=np.asarray(edges, float), max_iter=300, tol=1e-7, n_threads=4)
     em.fit(ev, end_times=ends)
     sec = time.time() - t
     vals = np.concatenate([em.kernel, em.kernel[..., -1:] * 0], axis=-1)  # bin values, last edge -> 0
@@ -265,7 +265,7 @@ def fit_tick_adm4(data: EventData, decays_grid: np.ndarray) -> Fitted:
     best = None
     for decay in decays_grid:
         try:
-            m = HawkesADM4(decay=float(decay), C=1e3, lasso_nuclear_ratio=0.5, max_iter=200, tol=1e-7, n_threads=8)
+            m = HawkesADM4(decay=float(decay), C=1e3, lasso_nuclear_ratio=0.5, max_iter=200, tol=1e-7, n_threads=4)
             m.fit(ev, end_times=np.asarray(ends))
             adj, mu = m.adjacency.copy(), np.maximum(m.baseline.copy(), 1e-12)
             ll = _exp_sum_loglik(decay, adj, mu)(data)
@@ -301,7 +301,7 @@ def fit_tick_claw(data: EventData, configs: list[tuple] | None = None) -> Fitted
     for (delta, mn, mx, sup, qm) in configs:
         try:
             m = HawkesConditionalLaw(delta_lag=delta, min_lag=mn, max_lag=mx, n_quad=60, max_support=sup,
-                                     min_support=mn, quad_method=qm, n_threads=8)
+                                     min_support=mn, quad_method=qm, n_threads=4)
             for real, T in zip(ev, ends):
                 m.incremental_fit(real, compute=False, T=T)
             m.compute()

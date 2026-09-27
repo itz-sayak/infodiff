@@ -1,0 +1,3 @@
+  taxi seed=0 ep=0 val_ll=0.2140 best=0.2140
+  taxi seed=0 ep=5 val_ll=0.3752 best=0.3752
+  taxi seed=0 ep=10 val_ll=0.3825 best=0.3830
