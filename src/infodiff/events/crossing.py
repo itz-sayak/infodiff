@@ -1,14 +1,21 @@
 """delta-crossing ("intrinsic time") price events.
 
 An up (down) event is emitted each time the log price moves +delta (-delta) away from
-the reference level of the previous event; a jump of n*delta at one timestamp emits n
-tied events (ties never excite each other in the likelihood).  Consequences:
+the reference level of the previous event (a jump of several levels at one timestamp
+emits one event, see below).  Consequences:
 
 * assets become comparable in bps units (delta is in basis points of log price);
 * bid-ask bounce is filtered whenever delta exceeds the half-spread;
-* the price change over any interval equals delta * (N_up - N_down) up to one delta,
-  so an echo-corrected intensity response integrates *exactly* to an expected
-  price-drift (price-discovery) curve.
+* the price change over any interval equals delta * sum(sizes of up events) -
+  delta * sum(sizes of down events) up to one delta, so an echo-corrected intensity
+  response times the mean event size integrates to an expected price-drift curve.
+
+Simple point process.  Prices are first collapsed to the last price per timestamp
+(several trades or quote updates can share a millisecond when one order sweeps the
+book), and a jump across several delta levels at one timestamp emits a *single* event
+whose size (number of levels) is returned as a mark.  Hence no two events of the same
+series share a timestamp -- the orderliness assumed by the Hawkes likelihood and by the
+time-rescaling goodness-of-fit test.
 """
 from __future__ import annotations
 
@@ -17,37 +24,37 @@ from numba import njit
 
 
 @njit(cache=True)
-def _crossings(t, logp, delta, max_per_tick):
+def _crossings(t, logp, delta):
     n = t.shape[0]
-    out_t = np.empty(n * 2, dtype=np.float64)
-    out_s = np.empty(n * 2, dtype=np.int8)
+    out_t = np.empty(n, dtype=np.float64)
+    out_s = np.empty(n, dtype=np.int8)
+    out_k = np.empty(n, dtype=np.int32)
     k = 0
     if n == 0:
-        return out_t[:0], out_s[:0]
+        return out_t[:0], out_s[:0], out_k[:0]
     ref = logp[0]
-    for i in range(1, n):
-        diff = logp[i] - ref
+    i = 1
+    while i < n:
+        # collapse to the last price of this timestamp
+        j = i
+        while j + 1 < n and t[j + 1] == t[i]:
+            j += 1
+        diff = logp[j] - ref
         if diff >= delta or diff <= -delta:
             m = int(abs(diff) // delta)
             sgn = 1 if diff > 0 else -1
             ref += sgn * m * delta
-            m = min(m, max_per_tick)
-            if k + m > out_t.shape[0]:
-                grow = np.empty(out_t.shape[0] * 2 + m, dtype=np.float64)
-                grow[:k] = out_t[:k]
-                out_t = grow
-                g2 = np.empty(grow.shape[0], dtype=np.int8)
-                g2[:k] = out_s[:k]
-                out_s = g2
-            for _ in range(m):
-                out_t[k] = t[i]
-                out_s[k] = sgn
-                k += 1
-    return out_t[:k], out_s[:k]
+            out_t[k] = t[i]
+            out_s[k] = sgn
+            out_k[k] = m
+            k += 1
+        i = j + 1
+    return out_t[:k], out_s[:k], out_k[:k]
 
 
-def crossing_events(t_sec: np.ndarray, price: np.ndarray, delta_bps: float, max_per_tick: int = 50):
-    """Return (times, signs) of delta-crossings; delta in bps of log price."""
+def crossing_events(t_sec: np.ndarray, price: np.ndarray, delta_bps: float, return_sizes: bool = False):
+    """Return (times, signs[, sizes]) of delta-crossings; delta in bps of log price."""
     t_sec = np.ascontiguousarray(t_sec, dtype=np.float64)
     logp = np.log(np.ascontiguousarray(price, dtype=np.float64))
-    return _crossings(t_sec, logp, delta_bps * 1e-4, max_per_tick)
+    t, s, k = _crossings(t_sec, logp, delta_bps * 1e-4)
+    return (t, s, k) if return_sizes else (t, s)

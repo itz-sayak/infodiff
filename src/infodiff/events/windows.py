@@ -24,7 +24,11 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from zoneinfo import ZoneInfo
+
 from .crossing import crossing_events
+
+NY = ZoneInfo("America/New_York")
 from .data import EventData
 
 MIN = 60.0
@@ -138,6 +142,8 @@ def build_windows(cal: pd.DataFrame, spec: WindowSpec, marks_fn=None, verbose: b
     d = 2 * len(spec.assets)
     times, types, ptr, t0s, t1s, tod0, nptr, nt, nty, nm, metas = [], [], [0], [], [], [], [0], [], [], [], []
     dropped = 0
+    size_sum = {a: 0.0 for a in spec.assets}
+    size_cnt = {a: 0 for a in spec.assets}
     for k, (lo, hi, news, meta) in enumerate(plan):
         seg_t, seg_u, ok = [], [], True
         cover = {}
@@ -148,7 +154,9 @@ def build_windows(cal: pd.DataFrame, spec: WindowSpec, marks_fn=None, verbose: b
             if cover[asset] < 0.9:
                 ok = False
                 break
-            et, es = crossing_events(t, p, spec.deltas_bps[asset])
+            et, es, ek = crossing_events(t, p, spec.deltas_bps[asset], return_sizes=True)
+            size_sum[asset] += float(ek.sum())
+            size_cnt[asset] += int(len(ek))
             seg_t.append(et)
             seg_u.append(np.where(es > 0, 2 * a, 2 * a + 1))
         if not ok:
@@ -162,8 +170,8 @@ def build_windows(cal: pd.DataFrame, spec: WindowSpec, marks_fn=None, verbose: b
         ptr.append(ptr[-1] + len(tt))
         t0s.append(lo)
         t1s.append(hi)
-        ts = pd.Timestamp(lo, unit="s", tz="UTC")
-        tod0.append(ts.hour * 3600 + ts.minute * 60 + ts.second)
+        ts = pd.Timestamp(lo, unit="s", tz="UTC").tz_convert(NY)  # US-local clock (DST-aware)
+        tod0.append(ts.hour * 3600 + ts.minute * 60 + ts.second + ts.microsecond * 1e-6)
         for (tn, c, z) in news:
             nt.append(tn)
             nty.append(c)
@@ -178,7 +186,9 @@ def build_windows(cal: pd.DataFrame, spec: WindowSpec, marks_fn=None, verbose: b
                      news_ptr=np.asarray(nptr), news_t=np.asarray(nt), news_type=np.asarray(nty, np.int32),
                      news_marks=np.asarray(nm).reshape(-1, M), n_news_types=len(type_index),
                      meta=dict(windows=metas, type_index=type_index, assets=list(spec.assets),
-                               deltas_bps=dict(spec.deltas_bps), dropped=dropped))
+                               deltas_bps=dict(spec.deltas_bps), dropped=dropped,
+                               mean_event_size={a: size_sum[a] / max(size_cnt[a], 1) for a in spec.assets},
+                               tod_clock="America/New_York"))
     return data
 
 

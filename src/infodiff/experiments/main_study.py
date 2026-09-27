@@ -34,14 +34,17 @@ from ..models.statespace import StateSpaceHawkes
 @dataclass
 class MainSpec:
     endo: PhaseTypeDictionary = PhaseTypeDictionary.log_grid(0.005, 600.0, 10, orders=2)
-    exo: PhaseTypeDictionary = PhaseTypeDictionary.log_grid(0.2, 1800.0, 8, orders=3)
-    ant: PhaseTypeDictionary = PhaseTypeDictionary.log_grid(10.0, 600.0, 4, orders=1)
+    # news kernels: time scales 0.1 s .. 300 s (max mean lag 15 min, well inside the 60-min
+    # post window) so that they cannot act as within-window trend absorbers
+    exo: PhaseTypeDictionary = PhaseTypeDictionary.log_grid(0.1, 300.0, 8, orders=3)
+    ant: PhaseTypeDictionary = PhaseTypeDictionary.log_grid(10.0, 300.0, 4, orders=1)
     n_tod: int = 96
+    win_cols: int = 2  # per-window linear baseline (identified with the placebo windows)
     l1_endo: float = 0.0
     l1_exo: float = 0.0
 
     def design(self) -> DesignSpec:
-        return DesignSpec(endo=self.endo, exo=self.exo, ant=self.ant, n_tod=self.n_tod)
+        return DesignSpec(endo=self.endo, exo=self.exo, ant=self.ant, n_tod=self.n_tod, win_cols=self.win_cols)
 
 
 def fit(data: EventData, ms: MainSpec, device: str | None = None, verbose: bool = True,
@@ -76,7 +79,7 @@ def analyse(m: MSXHawkes, data: EventData, ms: MainSpec, out: Path, tag: str,
                n_events=int(data.counts().sum()), G=G.tolist(), rho=ss.spectral_radius(),
                relaxation_time_s=ss.relaxation_time(), per_type={})
     lay = m.layout
-    base = m.theta_s[:, : data.n_windows].mean(axis=1)
+    base = m.window_levels(data.n_windows).mean(axis=1)
     res["endogeneity"] = ss.endogeneity(np.maximum(base, 1e-12)).tolist() if res["rho"] < 1 else None
     t_start = time.time()
     fine = np.geomspace(1e-3, 1e6, 181)  # 20 points per decade; quantiles refined exactly

@@ -118,8 +118,7 @@ def msx_forecast(model: MSXHawkes, data: EventData, w: int, tau: float, news_idx
         f = tod / h - m0
         hats = model.theta_s[:, lay["off_tod"]:lay["off_tod"] + spec.n_tod]
         mu += hats[:, m0 % spec.n_tod] * (1 - f) + hats[:, (m0 + 1) % spec.n_tod] * f
-    wid_int = model._forecast_intercepts[w] if hasattr(model, "_forecast_intercepts") else None
-    mu += wid_int if wid_int is not None else model.theta_s[:, : data.n_windows].mean(axis=1)
+    mu += model.window_levels(data.n_windows)[:, w]
     u_in = np.zeros(nx + E * ny)
     u_in[:nx] = Gin @ mu
     Ainv = np.linalg.inv(A)

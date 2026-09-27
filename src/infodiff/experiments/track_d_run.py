@@ -42,16 +42,17 @@ def pre_release_model(model: MSXHawkes, data: EventData, w: int, tau: float, W_t
     d = data.n_dims
     pre = _window_data(data, w, t1=tau)
     lay_test = model.spec.layout(d, 1, max(data.n_news_types, 1), data.n_marks)
-    th_s = np.concatenate([np.zeros((d, 1)), model.theta_s[:, W_train:]], axis=1)
+    wc = model.spec.win_cols
+    th_s = np.concatenate([np.zeros((d, wc)), model.theta_s[:, W_train * wc:]], axis=1)
     T = tau - pre.t0[0]
     for i in range(d):
         des = build_design(pre, model.spec, i)
         if des.n == 0:
-            th_s[i, 0] = 1e-6
+            th_s[i, :wc] = 1e-6
             continue
         # other-term intensities at the pre-release events of dim i (intercept column 0 excluded)
         Xs = des.Xs.tocsc()
-        other = des.Xd.astype(np.float64) @ model.theta_d[i] + Xs[:, 1:] @ th_s[i, 1:]
+        other = des.Xd.astype(np.float64) @ model.theta_d[i] + Xs[:, wc:] @ th_s[i, wc:]
         # other-term compensator over [t0, tau) is irrelevant for the intercept's score
         c = max(des.n / T - other.mean(), 1e-6)
         for _ in range(n_newton):  # maximise sum log(c + r_n) - c T
@@ -62,7 +63,7 @@ def pre_release_model(model: MSXHawkes, data: EventData, w: int, tau: float, W_t
                 c = c_new
                 break
             c = c_new
-        th_s[i, 0] = c
+        th_s[i, :wc] = c  # constant level estimated on pre-release data (both tents equal)
     m = copy.copy(model)
     m.theta_s = th_s
     m.layout = lay_test

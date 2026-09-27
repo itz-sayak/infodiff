@@ -258,3 +258,21 @@ def test_vectorised_sparse_cumulative_matches_reference():
         a = sparse_cumulative(data, spec, model.layout, model.theta_s[i], rt, rw)
         b = sparse_cumulative_reference(data, spec, model.layout, model.theta_s[i], rt, rw)
         assert np.allclose(a, b, rtol=1e-10, atol=1e-10)
+
+
+def test_linear_window_baseline_bruteforce_and_residuals():
+    """win_cols=2 (tent baseline) with equal tents reproduces the constant-baseline likelihood
+    exactly, and true-model residuals remain Exp(1)."""
+    truth = _truth(seed=11)
+    data = _sim(truth, W=6, seed=12)
+    spec = DesignSpec(endo=ENDO, exo=EXO, ant=ANT, n_tod=24, win_cols=2)
+    model = model_from_truth(truth, spec, data)
+    assert np.isclose(model.loglik(data), _brute_loglik(truth, spec, data), rtol=1e-9)
+    big = _sim(truth, W=60, seed=13)
+    model = model_from_truth(truth, spec, big)
+    for i in range(truth.d):
+        g = gof(model.residuals(big, i))
+        assert g.ks_p > 0.001 and abs(g.mean - 1) < 0.05
+    # an unequal tent pair: fitted model's compensator matches numerical integration
+    m = MSXHawkes(spec, device="cpu").fit(data)
+    assert all(r.gap < 1e-2 for r in m.reports)

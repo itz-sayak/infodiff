@@ -360,7 +360,9 @@ class MSXHawkes:
         th_s = np.zeros(lay["Ps"])
         cnt = np.bincount(data.window_ids()[des.rows], minlength=data.n_windows)
         T = np.maximum(data.t1 - data.t0, 1e-9)
-        th_s[: data.n_windows] = np.maximum(0.5 * cnt / T, 1e-3 * n / T.sum())
+        lvl = np.maximum(0.5 * cnt / T, 1e-3 * n / T.sum())
+        wc = self.spec.win_cols
+        th_s[: data.n_windows * wc] = np.repeat(lvl, wc)
         rest = slice(lay["off_tod"], lay["Ps"])
         m = lay["Ps"] - lay["off_tod"]
         if m:
@@ -381,6 +383,11 @@ class MSXHawkes:
             yield td, ts
 
     # ------------------------------------------------------------------ accessors
+    def window_levels(self, n_windows: int) -> np.ndarray:
+        """(d, W) average baseline level of each window (mean of its tent weights if linear)."""
+        wc = self.spec.win_cols
+        return self.theta_s[:, : n_windows * wc].reshape(self.theta_s.shape[0], n_windows, wc).mean(-1)
+
     def endo_weights(self) -> np.ndarray:
         """(d_target, d_source, K, R) excitation weights."""
         e = self.spec.endo

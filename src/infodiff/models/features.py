@@ -159,7 +159,7 @@ def _endo_features(times, types, wptr, t0, t1, d, betas, R, target, want_cum):
 # Sparse block (numba): window intercepts, time-of-day hats, news, anticipation
 # ----------------------------------------------------------------------------------
 @njit(cache=True)
-def _sparse_rows(row_t, row_w, t0, tod0, news_ptr, news_t, news_type, news_marks,
+def _sparse_rows(row_t, row_w, t0, t1, win_cols, tod0, news_ptr, news_t, news_type, news_marks,
                  n_tod, exo_b, exo_R, ant_b, n_types, off_tod, off_exo, off_ant, count_only,
                  indptr, indices, data):
     n = row_t.shape[0]
@@ -173,11 +173,20 @@ def _sparse_rows(row_t, row_w, t0, tod0, news_ptr, news_t, news_type, news_marks
             indptr[r] = nnz
         t = row_t[r]
         w = row_w[r]
-        # window intercept
-        if not count_only:
-            indices[nnz] = w
-            data[nnz] = 1.0
-        nnz += 1
+        # window baseline: constant (1 column) or linear (2 nonnegative tent columns)
+        if win_cols == 1:
+            if not count_only:
+                indices[nnz] = w
+                data[nnz] = 1.0
+            nnz += 1
+        else:
+            u = (t - t0[w]) / (t1[w] - t0[w])
+            if not count_only:
+                indices[nnz] = 2 * w
+                data[nnz] = 1.0 - u
+                indices[nnz + 1] = 2 * w + 1
+                data[nnz + 1] = u
+            nnz += 2
         # time-of-day hats (periodic piecewise-linear partition of unity)
         if n_tod > 0:
             x = (tod0[w] + (t - t0[w])) % 86400.0
@@ -227,6 +236,15 @@ def _sparse_rows(row_t, row_w, t0, tod0, news_ptr, news_t, news_type, news_marks
     return nnz
 
 
+def _window_baseline_cum(spec, theta_s, w, t, lo, hi):
+    """int_{lo}^{t} of the window baseline (constant or linear tents)."""
+    if spec.win_cols == 1:
+        return theta_s[w] * (t - lo)
+    T = hi - lo
+    x = t - lo
+    return theta_s[2 * w] * (x - x * x / (2 * T)) + theta_s[2 * w + 1] * x * x / (2 * T)
+
+
 def _hat_integral(a: float, b: float, n_tod: int) -> np.ndarray:
     """Exact integral of each periodic hat function over local-clock interval [a, b]."""
     out = np.zeros(n_tod)
@@ -257,10 +275,11 @@ class DesignSpec:
     exo: PhaseTypeDictionary | None = None
     ant: PhaseTypeDictionary | None = None  # anticipation uses order-1 elements only
     n_tod: int = 0  # number of periodic time-of-day hat functions (0 disables)
+    win_cols: int = 1  # per-window baseline: 1 = constant, 2 = linear (two tent columns)
 
     def layout(self, n_dims: int, n_windows: int, n_types: int, n_marks: int) -> dict:
         Pd = n_dims * self.endo.size
-        off_tod = n_windows
+        off_tod = n_windows * self.win_cols
         off_exo = off_tod + self.n_tod
         n_exo = n_types * self.exo.size * n_marks if self.exo is not None else 0
         off_ant = off_exo + n_exo
@@ -298,7 +317,7 @@ def build_design(data: EventData, spec: DesignSpec, target: int, want_cum: bool 
     row_w = data.window_ids()[rows]
     exo_b, exo_R = (spec.exo.betas, spec.exo.R) if spec.exo is not None else _empty_dict()
     ant_b = spec.ant.betas if spec.ant is not None else np.zeros(0)
-    args = (row_t, row_w, data.t0, data.tod0, data.news_ptr, data.news_t, data.news_type,
+    args = (row_t, row_w, data.t0, data.t1, spec.win_cols, data.tod0, data.news_ptr, data.news_t, data.news_type,
             data.news_marks, spec.n_tod, exo_b, exo_R, ant_b, max(data.n_news_types, 1),
             lay["off_tod"], lay["off_exo"], lay["off_ant"])
     dummy_i, dummy_f = np.zeros(1, np.int64), np.zeros(1)
@@ -333,7 +352,11 @@ def sparse_integrals(data: EventData, spec: DesignSpec, lay: dict) -> np.ndarray
     M = data.n_marks
     for w in range(data.n_windows):
         lo, hi = data.t0[w], data.t1[w]
-        out[w] += hi - lo
+        if spec.win_cols == 1:
+            out[w] += hi - lo
+        else:  # each tent integrates to half the window length
+            out[2 * w] += 0.5 * (hi - lo)
+            out[2 * w + 1] += 0.5 * (hi - lo)
         if spec.n_tod:
             out[lay["off_tod"]:lay["off_tod"] + spec.n_tod] += _hat_integral(
                 data.tod0[w], data.tod0[w] + (hi - lo), spec.n_tod)
@@ -351,7 +374,7 @@ def sparse_cumulative_reference(data: EventData, spec: DesignSpec, lay: dict, th
     buf = np.zeros(lay["Ps"])
     for r, (t, w) in enumerate(zip(row_t, row_w)):
         lo = data.t0[w]
-        val = theta_s[w] * (t - lo)
+        val = _window_baseline_cum(spec, theta_s, w, t, lo, data.t1[w])
         if spec.n_tod:
             val += theta_s[lay["off_tod"]:lay["off_tod"] + spec.n_tod] @ _hat_integral(
                 data.tod0[w], data.tod0[w] + (t - lo), spec.n_tod)
@@ -406,7 +429,7 @@ def sparse_cumulative(data: EventData, spec: DesignSpec, lay: dict, theta_s: np.
             continue
         t = row_t[idx]
         lo = data.t0[w]
-        val = theta_s[w] * (t - lo)
+        val = _window_baseline_cum(spec, theta_s, w, t, lo, data.t1[w])
         if spec.n_tod:
             val = val + _tod_cumulative(data.tod0[w], lo, t, th_tod)
         for e in range(data.news_ptr[w], data.news_ptr[w + 1]):

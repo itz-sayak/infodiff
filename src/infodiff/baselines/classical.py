@@ -154,7 +154,7 @@ def fit_msx(data: EventData, dic: PhaseTypeDictionary, name: str = "MSX", l1: fl
     t = time.time()
     m = MSXHawkes(DesignSpec(endo=dic), l1_endo=l1, **kw).fit(data)
     A = m.endo_weights()
-    mu = m.theta_s[:, : data.n_windows].mean(axis=1)
+    mu = m.window_levels(data.n_windows).mean(axis=1)
     sec = time.time() - t
 
     def k(i, j, tt):
