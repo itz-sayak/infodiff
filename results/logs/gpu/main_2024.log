@@ -41,3 +41,6 @@ loaded results\models\msx_2024.pkl max gap 0.0012871672515757382
   responses done in 53s
   goodness of fit done in 73s
 rho 0.8599142808817238 relaxation_s 846.7695177102238 total 73s
+
+=== Mon Sep 28 03:01:08 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2024
+2024: windows=169 events=1423029

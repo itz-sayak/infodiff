@@ -1,0 +1,22 @@
+\section{Results}\label{sec:results}
+
+\subsection{Track A: synthetic recovery}
+Table~\ref{tab:track-a} reports means and standard deviations over five seeds.
+When the truth is a single exponential (S1) the correctly specified single-decay
+estimators (tick's exponential MLE and ADM4) are best, as they must be. Under a true
+power law (S2) the sum-of-exponentials estimators---tick's and MSX---are statistically
+tied (held-out deficit $0.2$ vs.\ $0.3\times10^{-3}$ nats/event; tick's solver failed on
+one of five seeds). Whenever the kernel has structure outside a single family---a
+delayed hump (S3), components ten milliseconds and thirty seconds apart (S4), or a sparse
+ten-dimensional power-law network (S5)---MSX-auto is best on every metric: its held-out
+deficit is 7--10 times smaller than the best competitor's, its branching-matrix error
+is roughly halved, and it recovers the causal graph perfectly (AUC $=1$). The
+exponential-only ablation isolates the contribution of Erlang phases, and the
+certificate of Proposition~\ref{prop:gap} was below $10^{-4}$ nats in every MSX fit.
+
+\begin{table}[t]\centering\scriptsize
+\caption{Track A. Five seeds; dLL is the held-out log-likelihood deficit to the true model
+($10^{-3}$ nats/event, lower is better); bold marks the best dLL per scenario.}
+\label{tab:track-a}
+\resizebox{\linewidth}{!}{\input{tables/track_a}}
+\end{table}
