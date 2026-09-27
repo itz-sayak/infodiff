@@ -69,12 +69,14 @@ def evaluate(model: EPTTPP, seqs, n_marks, device, predict: bool = False, s_max:
                 st = states[:, :-1].reshape(-1, states.shape[-1])
                 mu = mus[:, :-1].reshape(-1, mus.shape[-1])
                 sel = msk[:, 1:].reshape(-1)
+                hh = model._last_h[:, :-1].reshape(-1, model._last_h.shape[-1])[sel]
                 st, mu = st[sel], mu[sel]
                 tgt_dt = dts[:, 1:].reshape(-1)[sel]
                 tgt_mk = mk[:, 1:].reshape(-1)[sel]
                 for a in range(0, st.shape[0], 4096):
                     e_dt, p_mk, _ = model.predict_next(st[a:a + 4096], mu[a:a + 4096],
-                                                       torch.full((min(4096, st.shape[0] - a),), s_max, device=device))
+                                                       torch.full((min(4096, st.shape[0] - a),), s_max, device=device),
+                                                       h=hh[a:a + 4096])
                     se.append(((e_dt - tgt_dt[a:a + 4096]) ** 2).cpu().numpy())
                     acc.append((p_mk == tgt_mk[a:a + 4096]).float().cpu().numpy())
     out = dict(ll_per_event=tot_ll / tot_n, n_events=tot_n)

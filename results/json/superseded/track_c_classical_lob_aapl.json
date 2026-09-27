@@ -49,5 +49,13 @@
   "val_ll": 0.9605528271315115,
   "seconds": 19.50457215309143,
   "decay": 804.9482136095169
+ },
+ {
+  "dataset": "lob_aapl",
+  "method": "tick-ConditionalLaw",
+  "key": "CondLaw",
+  "ll_per_event": -11.382733858676747,
+  "val_ll": -15.187954319340596,
+  "seconds": 2326.4795916080475
  }
 ]

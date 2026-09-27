@@ -2613,5 +2613,193 @@
   "AUC": 0.9336419753086419,
   "AP": 0.7980149128540941,
   "dLL": 0.07651723124381363
+ },
+ {
+  "scenario": "S5-network10",
+  "seed": 1,
+  "method": "MSX-auto",
+  "error": "AcceleratorError(\"CUDA error: unspecified launch failure\\nSearch for `cudaErrorLaunchFailure' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\\nCUDA ker"
+ },
+ {
+  "scenario": "S5-network10",
+  "seed": 1,
+  "method": "MSX",
+  "error": "AcceleratorError(\"CUDA error: unspecified launch failure\\nSearch for `cudaErrorLaunchFailure' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\\nCUDA ker"
+ },
+ {
+  "scenario": "S5-network10",
+  "seed": 1,
+  "method": "MSX-R4",
+  "error": "AcceleratorError(\"CUDA error: unspecified launch failure\\nSearch for `cudaErrorLaunchFailure' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\\nCUDA ker"
+ },
+ {
+  "scenario": "S5-network10",
+  "seed": 1,
+  "method": "MSX-exp",
+  "error": "AcceleratorError(\"CUDA error: unspecified launch failure\\nSearch for `cudaErrorLaunchFailure' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\\nCUDA ker"
+ },
+ {
+  "scenario": "S5-network10",
+  "seed": 1,
+  "method": "tick-ExpKern(MLE, best decay)",
+  "key": "ExpKern",
+  "n_train": 174790,
+  "G_err": 0.16950277435502886,
+  "rho_err": 0.09919672409083191,
+  "kern_L1": 0.3187037199837307,
+  "seconds": 32.4720733165741,
+  "AUC": 1.0,
+  "AP": 1.0,
+  "dLL": 0.026680650598632942,
+  "decay": 10.0
+ },
+ {
+  "scenario": "S5-network10",
+  "seed": 1,
+  "method": "SumExp",
+  "error": "RuntimeError('The sum of the influence on someone cannot be negative. Maybe did you forget to add a positive constraint to your proximal operator\\n')"
+ },
+ {
+  "scenario": "S5-network10",
+  "seed": 1,
+  "method": "tick-ADM4",
+  "key": "ADM4",
+  "n_train": 174790,
+  "G_err": 0.16952191787635054,
+  "rho_err": 0.09919661082331943,
+  "kern_L1": 0.3186998043194308,
+  "seconds": 274.6452615261078,
+  "AUC": 1.0,
+  "AP": 1.0,
+  "dLL": 0.02668048227393865,
+  "decay": 10.0
+ },
+ {
+  "scenario": "S5-network10",
+  "seed": 1,
+  "method": "tick-EM(nonparam)",
+  "key": "EM",
+  "n_train": 174790,
+  "G_err": 0.09640950105326056,
+  "rho_err": 0.05472186956240166,
+  "kern_L1": 0.29520953426779645,
+  "seconds": 45.10833263397217,
+  "AUC": 1.0,
+  "AP": 1.0,
+  "dLL": 0.0055796834880531155
+ },
+ {
+  "scenario": "S5-network10",
+  "seed": 1,
+  "method": "NPHC",
+  "error": "AcceleratorError(\"CUDA error: unspecified launch failure\\nSearch for `cudaErrorLaunchFailure' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\\nCUDA ker"
+ },
+ {
+  "scenario": "S5-network10",
+  "seed": 1,
+  "method": "tick-ConditionalLaw",
+  "key": "CondLaw",
+  "n_train": 174790,
+  "G_err": 0.3901286065868432,
+  "rho_err": 0.021156473647648055,
+  "kern_L1": 0.6281700197016954,
+  "seconds": 1055.028492450714,
+  "AUC": 0.9768518518518519,
+  "AP": 0.9117547974423621,
+  "dLL": 0.07472849111719683
+ },
+ {
+  "scenario": "S5-network10",
+  "seed": 2,
+  "method": "MSX-auto",
+  "error": "AcceleratorError(\"CUDA error: unspecified launch failure\\nSearch for `cudaErrorLaunchFailure' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\\nCUDA ker"
+ },
+ {
+  "scenario": "S5-network10",
+  "seed": 2,
+  "method": "MSX",
+  "error": "AcceleratorError(\"CUDA error: unspecified launch failure\\nSearch for `cudaErrorLaunchFailure' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\\nCUDA ker"
+ },
+ {
+  "scenario": "S5-network10",
+  "seed": 2,
+  "method": "MSX-R4",
+  "error": "AcceleratorError(\"CUDA error: unspecified launch failure\\nSearch for `cudaErrorLaunchFailure' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\\nCUDA ker"
+ },
+ {
+  "scenario": "S5-network10",
+  "seed": 2,
+  "method": "MSX-exp",
+  "error": "AcceleratorError(\"CUDA error: unspecified launch failure\\nSearch for `cudaErrorLaunchFailure' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\\nCUDA ker"
+ },
+ {
+  "scenario": "S5-network10",
+  "seed": 2,
+  "method": "tick-ExpKern(MLE, best decay)",
+  "key": "ExpKern",
+  "n_train": 177284,
+  "G_err": 0.16837156539303663,
+  "rho_err": 0.09636531633385947,
+  "kern_L1": 0.31996874169010886,
+  "seconds": 47.958740234375,
+  "AUC": 1.0,
+  "AP": 1.0,
+  "dLL": 0.0266587707873245,
+  "decay": 10.0
+ },
+ {
+  "scenario": "S5-network10",
+  "seed": 2,
+  "method": "SumExp",
+  "error": "RuntimeError('The sum of the influence on someone cannot be negative. Maybe did you forget to add a positive constraint to your proximal operator\\n')"
+ },
+ {
+  "scenario": "S5-network10",
+  "seed": 2,
+  "method": "tick-ADM4",
+  "key": "ADM4",
+  "n_train": 177284,
+  "G_err": 0.16837113137739207,
+  "rho_err": 0.09636097560308965,
+  "kern_L1": 0.3199698929626063,
+  "seconds": 225.8943440914154,
+  "AUC": 1.0,
+  "AP": 1.0000000000000002,
+  "dLL": 0.026658742443426618,
+  "decay": 10.0
+ },
+ {
+  "scenario": "S5-network10",
+  "seed": 2,
+  "method": "tick-EM(nonparam)",
+  "key": "EM",
+  "n_train": 177284,
+  "G_err": 0.07970085618603158,
+  "rho_err": 0.04735427859099661,
+  "kern_L1": 0.27823276749251524,
+  "seconds": 45.801185846328735,
+  "AUC": 1.0,
+  "AP": 1.0,
+  "dLL": 0.005176910547653638
+ },
+ {
+  "scenario": "S5-network10",
+  "seed": 2,
+  "method": "NPHC",
+  "error": "AcceleratorError(\"CUDA error: unspecified launch failure\\nSearch for `cudaErrorLaunchFailure' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\\nCUDA ker"
+ },
+ {
+  "scenario": "S5-network10",
+  "seed": 2,
+  "method": "tick-ConditionalLaw",
+  "key": "CondLaw",
+  "n_train": 177284,
+  "G_err": 0.4801128563171771,
+  "rho_err": 0.0482136560931028,
+  "kern_L1": 0.6607281681319401,
+  "seconds": 1070.2039670944214,
+  "AUC": 0.9830246913580247,
+  "AP": 0.939930756378125,
+  "dLL": 0.07901773390142218
  }
 ]

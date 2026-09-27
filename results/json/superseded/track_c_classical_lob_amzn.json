@@ -1,0 +1,61 @@
+[
+ {
+  "dataset": "lob_amzn",
+  "method": "MSX-auto (ours)",
+  "key": "MSX-auto",
+  "ll_per_event": -18.73484234259673,
+  "val_ll": -30.702913975319124,
+  "seconds": 94.15070819854736,
+  "gap": 8.137302756949794e-06,
+  "R": 4,
+  "l1": 0.0
+ },
+ {
+  "dataset": "lob_amzn",
+  "method": "MSX (ours, R=2)",
+  "key": "MSX",
+  "ll_per_event": -19.127735682323785,
+  "val_ll": -31.315496599471288,
+  "seconds": 6.388664484024048,
+  "gap": 9.20958882488776e-06
+ },
+ {
+  "dataset": "lob_amzn",
+  "method": "tick-ExpKern(MLE, best decay)",
+  "key": "ExpKern",
+  "ll_per_event": 0.7003031964084252,
+  "val_ll": 0.48543684637305834,
+  "seconds": 9.328170776367188,
+  "decay": 153.73156153651246
+ },
+ {
+  "dataset": "lob_amzn",
+  "key": "SumExp",
+  "error": "RuntimeError('The sum of the influence on someone cannot be negative. Maybe did you forget to add a positive constraint to your proximal operator\\n')"
+ },
+ {
+  "dataset": "lob_amzn",
+  "method": "tick-EM(nonparam)",
+  "key": "EM",
+  "ll_per_event": 0.9977969014151491,
+  "val_ll": 0.9136624788029036,
+  "seconds": 3.7693870067596436
+ },
+ {
+  "dataset": "lob_amzn",
+  "method": "tick-ADM4",
+  "key": "ADM4",
+  "ll_per_event": 0.7003016427464379,
+  "val_ll": 0.4854370511235264,
+  "seconds": 13.68807053565979,
+  "decay": 153.73156153651246
+ },
+ {
+  "dataset": "lob_amzn",
+  "method": "tick-ConditionalLaw",
+  "key": "CondLaw",
+  "ll_per_event": -11.613703811719649,
+  "val_ll": -15.292265728300015,
+  "seconds": 335.30153918266296
+ }
+]

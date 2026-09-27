@@ -1,6 +1,0 @@
-{"dataset": "lob_aapl", "method": "MSX-auto (ours)", "key": "MSX-auto", "ll_per_event": 1.8991283579645521, "val_ll": 1.2582526508232854, "seconds": 282.77283906936646, "gap": 5.99964550929144e-06, "R": 4, "l1": 0.0}
-{"dataset": "lob_aapl", "method": "MSX (ours, R=2)", "key": "MSX", "ll_per_event": 1.867995221886, "val_ll": 1.224244847271253, "seconds": 17.67372465133667, "gap": 7.338889190577902e-06}
-{"dataset": "lob_aapl", "method": "tick-ExpKern(MLE, best decay)", "key": "ExpKern", "ll_per_event": 1.5707883885144582, "val_ll": 0.9605544325050536, "seconds": 11.977078676223755, "decay": 804.9482136095169}
-{"dataset": "lob_aapl", "key": "SumExp", "error": "RuntimeError('The sum of the influence on someone cannot be negative. Maybe did you forget to add a positive constraint to your proximal operator\\n')"}
-{"dataset": "lob_aapl", "method": "tick-EM(nonparam)", "key": "EM", "ll_per_event": 1.6453398598891325, "val_ll": 1.2129422699262715, "seconds": 5.380779504776001}
-{"dataset": "lob_aapl", "method": "tick-ADM4", "key": "ADM4", "ll_per_event": 1.5707831774874064, "val_ll": 0.9605528271315115, "seconds": 19.50457215309143, "decay": 804.9482136095169}

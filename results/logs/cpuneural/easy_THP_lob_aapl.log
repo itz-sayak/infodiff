@@ -1,0 +1,54 @@
+
+=== Mon Sep 28 00:34:41 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner THP lob_aapl 6 2019 30 64
+[31;1m2026-09-28 00:34:52,504 - config.py[pid:20248;line:33:build_from_yaml_file] - CRITICAL: Load pipeline config class RunnerConfig[0m
+[31;1m2026-09-28 00:34:52,516 - runner_config.py[pid:20248;line:205:update_config] - CRITICAL: train model THP using CPU with torch backend[0m
+[38;20m2026-09-28 00:34:52,523 - runner_config.py[pid:20248;line:45:__init__] - INFO: Save the config to D:\Quant\results\easytpp\checkpoints/lob_aapl/THP/train_2026_09_28_00_34_52\THP_train_output.yaml[0m
+[38;20m2026-09-28 00:34:52,526 - base_runner.py[pid:20248;line:193:save_log] - INFO: Save the log to D:\Quant\results\easytpp\checkpoints/lob_aapl/THP/train_2026_09_28_00_34_52\log[0m
+0.20842144931553017 0.6263620567872881
+min_dt: 0.0
+max_dt: 17.26781208600005
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "D:\Quant\src\infodiff\baselines\easytpp_runner.py", line 84, in <module>
+    r = run_model(model, dataset, n_types, seed, max_epoch, batch_size=bs, gpu=0 if torch.cuda.is_available() else -1)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\src\infodiff\baselines\easytpp_runner.py", line 66, in run_model
+    runner = Runner.build_from_config(config)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\base_runner.py", line 66, in build_from_config
+    return runner_cls(runner_config, unique_model_dir=unique_model_dir, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\tpp_runner.py", line 16, in __init__
+    super(TPPRunner, self).__init__(runner_config, unique_model_dir, **kwargs)
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\base_runner.py", line 49, in __init__
+    assert (min_dt > 0.)
+            ^^^^^^^^^^^
+AssertionError
+
+=== Mon Sep 28 00:35:31 2026 attempt 2: D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner THP lob_aapl 6 2019 30 64
+[31;1m2026-09-28 00:35:46,588 - config.py[pid:31832;line:33:build_from_yaml_file] - CRITICAL: Load pipeline config class RunnerConfig[0m
+[31;1m2026-09-28 00:35:46,613 - runner_config.py[pid:31832;line:205:update_config] - CRITICAL: train model THP using CPU with torch backend[0m
+[38;20m2026-09-28 00:35:46,623 - runner_config.py[pid:31832;line:45:__init__] - INFO: Save the config to D:\Quant\results\easytpp\checkpoints/lob_aapl/THP/train_2026_09_28_00_35_46\THP_train_output.yaml[0m
+[38;20m2026-09-28 00:35:46,625 - base_runner.py[pid:31832;line:193:save_log] - INFO: Save the log to D:\Quant\results\easytpp\checkpoints/lob_aapl/THP/train_2026_09_28_00_35_46\log[0m
+0.20842144931553017 0.6263620567872881
+min_dt: 0.0
+max_dt: 17.26781208600005
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "D:\Quant\src\infodiff\baselines\easytpp_runner.py", line 84, in <module>
+    r = run_model(model, dataset, n_types, seed, max_epoch, batch_size=bs, gpu=0 if torch.cuda.is_available() else -1)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\src\infodiff\baselines\easytpp_runner.py", line 66, in run_model
+    runner = Runner.build_from_config(config)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\base_runner.py", line 66, in build_from_config
+    return runner_cls(runner_config, unique_model_dir=unique_model_dir, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\tpp_runner.py", line 16, in __init__
+    super(TPPRunner, self).__init__(runner_config, unique_model_dir, **kwargs)
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\base_runner.py", line 49, in __init__
+    assert (min_dt > 0.)
+            ^^^^^^^^^^^
+AssertionError

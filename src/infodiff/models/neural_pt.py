@@ -6,17 +6,21 @@ for channel c and learnable rate beta_k
 between events.  At event n (mark m_n, gap dt_n) a GRU summary h_n drives a gated,
 nonnegative jump
         x(t_n+) = sigma(W_g h_n) * x(t_n-) + softplus(W_j h_n),
-and the marked intensities are a nonnegative linear read-out plus a Gompertz head
-        lambda_m(t) = mu_m(h_n) + sum_p C_mp x_p(t) + g_m(h_n) exp(w(h_n) (t - t_n)),
-with C, mu, g >= 0 and w of either sign (increasing or decreasing hazards).
+and the marked intensities are a nonnegative read-out plus two bounded hazard terms
+        lambda_m(t) = mu_m(h_n) + sum_p C_mp(h_n) x_p(t)
+                      + g1_m(h_n) e^{-a(h_n) s} + g2_m(h_n) (1 - e^{-kappa(h_n) s}),  s = t - t_n,
+with C, mu, g1, g2, a, kappa >= 0: history-dependent decaying hazards (RMTPP with
+w <= 0) and rising-but-saturating hazards (an unbounded rising Gompertz hazard overflows
+and is ill-posed for heavy-tailed gaps).
 Consequences
   * lambda >= mu > 0 always; the compensator between events is available in closed
     form (no Monte-Carlo integral, unlike NHP/THP/AttNHP/S2P2), so training and
     evaluation use the *exact* log-likelihood;
   * with an identity GRU/gate, linear jumps and g = 0 the model is exactly the MSX
     multivariate phase-type Hawkes process; with C = 0 it is RMTPP (Du et al. 2016),
-    so EPT nests both families while keeping the compensator exact
-    (int_0^dt g e^{w s} ds = g expm1(w dt) / w);
+    with C = 0 and g2 = 0 it is RMTPP restricted to decaying hazards, while the compensator
+    stays exact (int g1 e^{-a s} = g1 (1 - e^{-a dt}) / a,
+    int g2 (1 - e^{-k s}) = g2 (dt - (1 - e^{-k dt}) / k));
   * next-event time and mark predictions are Bayes-optimal functionals of the exact
     density, evaluated by 1-D quadrature.
 """
@@ -43,6 +47,7 @@ class EPTConfig:
     dropout: float = 0.0
     mark_emb: int = 32
     gompertz: bool = True
+    mark_mixing: bool = True  # C_mp(h) = c_p softmax_m(W_p h): history-dependent marks
 
 
 class EPTTPP(nn.Module):
@@ -62,12 +67,16 @@ class EPTTPP(nn.Module):
         self.gate = nn.Linear(cfg.hidden, self.P)
         self.mu = nn.Linear(cfg.hidden, cfg.n_marks)
         if cfg.gompertz:
-            self.g_head = nn.Linear(cfg.hidden, cfg.n_marks)
-            self.w_head = nn.Linear(cfg.hidden, 1)
+            self.g_head = nn.Linear(cfg.hidden, 2 * cfg.n_marks)
+            self.w_head = nn.Linear(cfg.hidden, 2)
             nn.init.constant_(self.g_head.bias, -4.0)
             nn.init.zeros_(self.w_head.weight)
             nn.init.zeros_(self.w_head.bias)
         self.C_raw = nn.Parameter(torch.randn(cfg.n_marks, self.P) * 0.1 - 2.0)
+        if cfg.mark_mixing:
+            self.c_tot = nn.Parameter(torch.full((self.P,), -2.0))
+            self.mix = nn.Linear(cfg.hidden, self.P * cfg.n_marks)
+            nn.init.zeros_(self.mix.weight)
         nn.init.constant_(self.gate.bias, 2.0)  # start close to additive (Hawkes-like) updates
         nn.init.constant_(self.jump.bias, -1.0)
         nn.init.constant_(self.mu.bias, -2.0)
@@ -107,25 +116,44 @@ class EPTTPP(nn.Module):
         integ = integ / b.unsqueeze(-1)
         return new.flatten(-2), integ.flatten(-2)
 
-    def C(self):
-        return F.softplus(self.C_raw)
+    def C(self, h=None):
+        """Mark read-out (M, P), or (B, M, P) when marks mix with the history h."""
+        if not self.cfg.mark_mixing:
+            return F.softplus(self.C_raw)
+        M, P = self.cfg.n_marks, self.P
+        logits = self.mix(h).view(-1, P, M) + self.C_raw.T[None]
+        pi = torch.softmax(logits, dim=-1)  # (B, P, M): mark distribution of each component
+        return (F.softplus(self.c_tot)[None, :, None] * pi).transpose(1, 2)  # (B, M, P)
+
+    def _readout(self, Cm, x):
+        """lambda contribution C x for Cm (M,P) or (B,M,P) and x (B,P) or (B,G,P)."""
+        if Cm.dim() == 2:
+            return x @ Cm.T
+        if x.dim() == 2:
+            return torch.einsum("bmp,bp->bm", Cm, x)
+        return torch.einsum("bmp,bgp->bgm", Cm, x)
 
     def _gomp(self, h):
-        """Gompertz amplitudes g (B, M) >= 0 and rate w (B,) in units of 1/t_scale."""
+        """Hazard-head parameters packed as (g1, g2) (B, M) each and rates (a, kappa) (B,)."""
         if not self.cfg.gompertz:
             return None, None
-        g = F.softplus(self.g_head(h))
-        w = 5.0 * torch.tanh(self.w_head(h)[..., 0]) / self.t_scale
-        return g, w
+        M = self.cfg.n_marks
+        gg = F.softplus(self.g_head(h))
+        rates = F.softplus(self.w_head(h)) / self.t_scale  # (B, 2) >= 0
+        return torch.cat([gg[..., :M], gg[..., M:]], -1), rates
 
-    @staticmethod
-    def _gomp_terms(g, w, dt):
-        """g e^{w dt} and int_0^dt g e^{w s} ds for g (..., M), w (...), dt (...)."""
-        wdt = w * dt
-        val = g * torch.exp(wdt).unsqueeze(-1)
-        small = wdt.abs() < 1e-6
-        frac = torch.where(small, dt * (1 + 0.5 * wdt), torch.expm1(wdt) / torch.where(small, torch.ones_like(w), w))
-        return val, g * frac.unsqueeze(-1)
+    def _gomp_terms(self, g, w, dt):
+        """Values and integrals over [0, dt] of g1 e^{-a s} + g2 (1 - e^{-k s})."""
+        M = self.cfg.n_marks
+        g1, g2 = g[..., :M], g[..., M:]
+        a, k = w[..., 0], w[..., 1]
+        ea = torch.exp(-a * dt)
+        ek = torch.exp(-k * dt)
+        val = g1 * ea.unsqueeze(-1) + g2 * (1 - ek).unsqueeze(-1)
+        ia = torch.where(a * dt < 1e-6, dt, -torch.expm1(-a * dt) / a.clamp_min(1e-30))
+        ik = torch.where(k * dt < 1e-6, 0.5 * k * dt * dt, dt + torch.expm1(-k * dt) / k.clamp_min(1e-30))
+        integ = g1 * ia.unsqueeze(-1) + g2 * ik.unsqueeze(-1)
+        return val, integ
 
     # ------------------------------------------------------------ forward pass
     def forward(self, dts, marks, mask):
@@ -136,17 +164,18 @@ class EPTTPP(nn.Module):
           and the post-event states needed for prediction."""
         B, L = marks.shape
         dev = dts.device
-        h = torch.zeros(B, self.cfg.hidden, device=dev)
-        x = torch.zeros(B, self.P, device=dev)
-        Cm = self.C()
-        Csum = Cm.sum(0)
-        log_lam, comp, states, mus = [], [], [], []
+        h = torch.zeros(B, self.cfg.hidden, device=dev, dtype=dts.dtype)
+        x = torch.zeros(B, self.P, device=dev, dtype=dts.dtype)
+        mixing = self.cfg.mark_mixing
+        Cm = None if mixing else self.C()
+        Csum = None if mixing else Cm.sum(0)
+        log_lam, comp, states, mus, hs = [], [], [], [], []
         for n in range(L):
             if n > 0:
                 dt = dts[:, n]
                 x_left, integ = self.evolve(x, dt)
-                lam_all = mu + x_left @ Cm.T  # (B, M)
-                c_n = mu.sum(-1) * dt + integ @ Csum
+                lam_all = mu + self._readout(Cm, x_left)  # (B, M)
+                c_n = mu.sum(-1) * dt + (integ @ Csum if not mixing else integ @ F.softplus(self.c_tot))
                 if g is not None:
                     gv, gi = self._gomp_terms(g, w, dt)
                     lam_all = lam_all + gv
@@ -156,7 +185,7 @@ class EPTTPP(nn.Module):
                 comp.append(c_n)
             else:
                 x_left = x
-            gap = dts[:, n] if n > 0 else torch.zeros(B, device=dev)
+            gap = dts[:, n] if n > 0 else torch.zeros(B, device=dev, dtype=dts.dtype)
             inp = torch.cat([self.emb(marks[:, n].clamp(max=self.cfg.n_marks)),
                              torch.log1p(gap / self.t_scale)[:, None], torch.log(gap / self.t_scale + 1e-3)[:, None]], -1)
             h_new = self.gru(self.drop(inp), h)
@@ -166,8 +195,12 @@ class EPTTPP(nn.Module):
             x = torch.where(valid, x_new, x)
             mu = F.softplus(self.mu(h)) + 1e-6
             g, w = self._gomp(h)
+            if mixing:
+                Cm = self.C(h)
+            hs.append(h)
             states.append(x)
-            mus.append(mu if g is None else torch.cat([mu, g, w[:, None]], -1))
+            mus.append(mu if g is None else torch.cat([mu, g, w], -1))
+        self._last_h = torch.stack(hs, 1)  # post-event GRU states, used by prediction
         return torch.stack(log_lam, 1), torch.stack(comp, 1), torch.stack(states, 1), torch.stack(mus, 1)
 
     def loglik(self, dts, marks, mask):
@@ -179,25 +212,25 @@ class EPTTPP(nn.Module):
 
     # ------------------------------------------------------------ prediction
     @torch.no_grad()
-    def predict_next(self, x, mu, s_max: torch.Tensor, n_grid: int = 400):
+    def predict_next(self, x, mu, s_max: torch.Tensor, n_grid: int = 400, h=None):
         """Bayes-optimal next gap E[dt] and marginal mark argmax from post-event state.
 
         x (N, P), mu (N, M), s_max (N,) horizon where survival is negligible."""
-        Cm = self.C()
-        Csum = Cm.sum(0)
+        Cm = self.C(h) if self.cfg.mark_mixing else self.C()
+        Csum = F.softplus(self.c_tot) if self.cfg.mark_mixing else Cm.sum(0)
         N = x.shape[0]
         M = self.cfg.n_marks
         g = w = None
         if self.cfg.gompertz:
-            mu, g, w = mu[:, :M], mu[:, M:2 * M], mu[:, 2 * M]
+            mu, g, w = mu[:, :M], mu[:, M:3 * M], mu[:, 3 * M:3 * M + 2]
         u = torch.linspace(0, 1, n_grid, device=x.device)
         grid = s_max[:, None] * (torch.expm1(6 * u) / math.expm1(6))[None, :]  # dense near 0
         xs = x[:, None, :].expand(N, n_grid, -1)
         x_t, integ = self.evolve(xs, grid)
         Lam = mu.sum(-1, keepdim=True) * grid + integ @ Csum
-        lam = mu[:, None, :] + x_t @ Cm.T  # (N, G, M)
+        lam = mu[:, None, :] + self._readout(Cm, x_t)  # (N, G, M)
         if g is not None:
-            gv, gi = self._gomp_terms(g[:, None, :], w[:, None].expand_as(grid), grid)
+            gv, gi = self._gomp_terms(g[:, None, :], w[:, None, :].expand(-1, grid.shape[1], -1), grid)
             lam = lam + gv
             Lam = Lam + gi.sum(-1)
         S = torch.exp(-Lam)

@@ -11,6 +11,12 @@ Jaisson & Muzy 2016; Jain et al. 2024):
 Halts (7) and cross trades (6) are dropped.  The trading day is split chronologically
 60/20/20 into train/validation/test and cut into consecutive sequences of `seq_len`
 events.  Times are seconds after the start of each sequence.
+
+Ties.  6-10% of messages share a nanosecond timestamp with their predecessor (one order
+walking several queue entries).  EasyTPP requires strictly positive gaps, so each tied
+message is displaced by an independent U(0, 100 ns) offset (seeded) and events are
+re-sorted -- the same randomisation-within-resolution device as Rambaldi et al. (2015).
+All models are trained and scored on the identical jittered files.
 """
 from __future__ import annotations
 
@@ -34,7 +40,12 @@ def lobster_events(msg_csv: Path) -> tuple[np.ndarray, np.ndarray]:
     typ[np.isin(t, (4, 5)) & (d == -1)] = 4
     typ[np.isin(t, (4, 5)) & (d == 1)] = 5
     keep = typ >= 0
-    return df.t.values[keep].astype(np.float64), typ[keep]
+    t_out, k_out = df.t.values[keep].astype(np.float64), typ[keep]
+    tied = np.r_[False, np.diff(t_out) == 0]
+    rng = np.random.default_rng(2012)
+    t_out = t_out + tied * rng.uniform(0.0, 1e-7, len(t_out))
+    o = np.argsort(t_out, kind="stable")
+    return t_out[o], k_out[o]
 
 
 def to_sequences(t: np.ndarray, k: np.ndarray, seq_len: int) -> list[dict]:

@@ -1,0 +1,68 @@
+[
+ {
+  "ll_per_event": 2.3224545791800533,
+  "n_events": 33655.0,
+  "rmse": 0.43757307529449463,
+  "acc": 0.22888129949569702,
+  "dataset": "lob_aapl",
+  "seed": 0,
+  "val_ll": 1.6172732318354095,
+  "epochs": 60,
+  "seconds": 565.5650615692139,
+  "hidden": 64,
+  "n_rates": 8,
+  "n_channels": 4,
+  "phases": 2,
+  "lr": 0.01,
+  "gompertz": true,
+  "n_params": 29005,
+  "config": {
+   "epochs": 60,
+   "phases": 2
+  }
+ },
+ {
+  "ll_per_event": 2.311257900566177,
+  "n_events": 33655.0,
+  "rmse": 0.4395432472229004,
+  "acc": 0.22891101241111755,
+  "dataset": "lob_aapl",
+  "seed": 1,
+  "val_ll": 1.608348742875191,
+  "epochs": 60,
+  "seconds": 559.2107980251312,
+  "hidden": 64,
+  "n_rates": 8,
+  "n_channels": 4,
+  "phases": 2,
+  "lr": 0.01,
+  "gompertz": true,
+  "n_params": 29005,
+  "config": {
+   "epochs": 60,
+   "phases": 2
+  }
+ },
+ {
+  "ll_per_event": 2.3051123141179803,
+  "n_events": 33655.0,
+  "rmse": 0.4402444660663605,
+  "acc": 0.22891101241111755,
+  "dataset": "lob_aapl",
+  "seed": 2,
+  "val_ll": 1.6050768166426725,
+  "epochs": 60,
+  "seconds": 721.9672124385834,
+  "hidden": 64,
+  "n_rates": 8,
+  "n_channels": 4,
+  "phases": 2,
+  "lr": 0.01,
+  "gompertz": true,
+  "n_params": 29005,
+  "config": {
+   "epochs": 60,
+   "phases": 2
+  }
+ }
+]

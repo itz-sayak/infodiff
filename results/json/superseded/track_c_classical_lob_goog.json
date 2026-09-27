@@ -1,0 +1,61 @@
+[
+ {
+  "dataset": "lob_goog",
+  "method": "MSX-auto (ours)",
+  "key": "MSX-auto",
+  "ll_per_event": -0.533767298231649,
+  "val_ll": -2.1179620082701027,
+  "seconds": 80.66415238380432,
+  "gap": 3.239478246541694e-06,
+  "R": 4,
+  "l1": 0.0
+ },
+ {
+  "dataset": "lob_goog",
+  "method": "MSX (ours, R=2)",
+  "key": "MSX",
+  "ll_per_event": -0.5762732997130183,
+  "val_ll": -2.1778255618631928,
+  "seconds": 6.6683573722839355,
+  "gap": 8.527664704160998e-06
+ },
+ {
+  "dataset": "lob_goog",
+  "method": "tick-ExpKern(MLE, best decay)",
+  "key": "ExpKern",
+  "ll_per_event": 0.7997850121574988,
+  "val_ll": 0.6923917486450757,
+  "seconds": 11.865228414535522,
+  "decay": 113.07459085175442
+ },
+ {
+  "dataset": "lob_goog",
+  "key": "SumExp",
+  "error": "RuntimeError('The sum of the influence on someone cannot be negative. Maybe did you forget to add a positive constraint to your proximal operator\\n')"
+ },
+ {
+  "dataset": "lob_goog",
+  "method": "tick-EM(nonparam)",
+  "key": "EM",
+  "ll_per_event": 1.1245866727137337,
+  "val_ll": 1.2317698877409058,
+  "seconds": 3.2776072025299072
+ },
+ {
+  "dataset": "lob_goog",
+  "method": "tick-ADM4",
+  "key": "ADM4",
+  "ll_per_event": 0.799784713825489,
+  "val_ll": 0.6923904952470394,
+  "seconds": 34.707622051239014,
+  "decay": 113.07459085175442
+ },
+ {
+  "dataset": "lob_goog",
+  "method": "tick-ConditionalLaw",
+  "key": "CondLaw",
+  "ll_per_event": -21.29945219867887,
+  "val_ll": -26.79120354735481,
+  "seconds": 234.88675212860107
+ }
+]
