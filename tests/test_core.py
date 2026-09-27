@@ -244,3 +244,17 @@ def test_fast_curves_match_dense_expm():
     ff = ss.response_curves(EXO, W, fine)
     tq = ss.quantile_from_curve(fine, ff.cum_total.sum(1), ff.int_total.sum(), 0.5)
     assert np.isclose(tq, ss.absorption_time(EXO, W, 0.5), rtol=0.02)
+
+
+def test_vectorised_sparse_cumulative_matches_reference():
+    from infodiff.models.features import sparse_cumulative, sparse_cumulative_reference
+    truth = _truth(seed=7)
+    data = _sim(truth, W=8, seed=8)
+    spec = DesignSpec(endo=ENDO, exo=EXO, ant=ANT, n_tod=24)
+    model = model_from_truth(truth, spec, data)
+    rows = np.where(data.in_likelihood())[0]
+    rt, rw = data.times[rows], data.window_ids()[rows]
+    for i in range(truth.d):
+        a = sparse_cumulative(data, spec, model.layout, model.theta_s[i], rt, rw)
+        b = sparse_cumulative_reference(data, spec, model.layout, model.theta_s[i], rt, rw)
+        assert np.allclose(a, b, rtol=1e-10, atol=1e-10)

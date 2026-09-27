@@ -2707,6 +2707,68 @@
  {
   "scenario": "S5-network10",
   "seed": 1,
+  "method": "MSX-auto (ours)",
+  "key": "MSX-auto",
+  "n_train": 174790,
+  "G_err": 0.04953948549584315,
+  "rho_err": 0.016304374748341455,
+  "kern_L1": 0.08697958916408982,
+  "seconds": 622.9998645782471,
+  "AUC": 1.0,
+  "AP": 1.0,
+  "dLL": 0.0008582891156073131,
+  "cert_gap": 0.0001205686894536484,
+  "R": 1,
+  "l1": 0.01
+ },
+ {
+  "scenario": "S5-network10",
+  "seed": 1,
+  "method": "MSX (ours)",
+  "key": "MSX",
+  "n_train": 174790,
+  "G_err": 0.11735529894685837,
+  "rho_err": 0.04596264412448903,
+  "kern_L1": 0.20113455631954824,
+  "seconds": 38.69400715827942,
+  "AUC": 1.0,
+  "AP": 1.0,
+  "dLL": 0.0013042698725723913,
+  "cert_gap": 0.00013094440873828717
+ },
+ {
+  "scenario": "S5-network10",
+  "seed": 1,
+  "method": "MSX-R4 (ours, fixed Erlang-4)",
+  "key": "MSX-R4",
+  "n_train": 174790,
+  "G_err": 0.12595975961501482,
+  "rho_err": 0.05871989069132333,
+  "kern_L1": 0.2377675213670563,
+  "seconds": 136.7987937927246,
+  "AUC": 1.0,
+  "AP": 1.0,
+  "dLL": 0.0017310248637123968,
+  "cert_gap": 0.00011520814950927161
+ },
+ {
+  "scenario": "S5-network10",
+  "seed": 1,
+  "method": "MSX-exp (ablation: no Erlang)",
+  "key": "MSX-exp",
+  "n_train": 174790,
+  "G_err": 0.10734595607147392,
+  "rho_err": 0.03792343574328427,
+  "kern_L1": 0.16583161761450815,
+  "seconds": 13.118541955947876,
+  "AUC": 1.0,
+  "AP": 1.0,
+  "dLL": 0.0009359283643169569,
+  "cert_gap": 0.00015059253200888634
+ },
+ {
+  "scenario": "S5-network10",
+  "seed": 1,
   "method": "tick-ExpKern(MLE, best decay)",
   "key": "ExpKern",
   "n_train": 174790,
@@ -2718,6 +2780,12 @@
   "AP": 1.0,
   "dLL": 0.026680650598632942,
   "decay": 10.0
+ },
+ {
+  "scenario": "S5-network10",
+  "seed": 1,
+  "method": "SumExp",
+  "error": "RuntimeError('The sum of the influence on someone cannot be negative. Maybe did you forget to add a positive constraint to your proximal operator\\n')"
  },
  {
   "scenario": "S5-network10",
@@ -2751,6 +2819,19 @@
  {
   "scenario": "S5-network10",
   "seed": 1,
+  "method": "NPHC(cumulants)",
+  "key": "NPHC",
+  "n_train": 174790,
+  "G_err": 1.7947515109442564,
+  "rho_err": 0.9429887039034412,
+  "kern_L1": NaN,
+  "seconds": 1.3344371318817139,
+  "AUC": 0.6381172839506173,
+  "AP": 0.33465352085379063
+ },
+ {
+  "scenario": "S5-network10",
+  "seed": 1,
   "method": "tick-ConditionalLaw",
   "key": "CondLaw",
   "n_train": 174790,
@@ -2761,6 +2842,68 @@
   "AUC": 0.9768518518518519,
   "AP": 0.9117547974423621,
   "dLL": 0.07472849111719683
+ },
+ {
+  "scenario": "S5-network10",
+  "seed": 2,
+  "method": "MSX-auto (ours)",
+  "key": "MSX-auto",
+  "n_train": 177284,
+  "G_err": 0.04166162642469253,
+  "rho_err": 0.01688371623852225,
+  "kern_L1": 0.0787161854221013,
+  "seconds": 629.2969493865967,
+  "AUC": 1.0,
+  "AP": 1.0,
+  "dLL": 0.0007486854566617749,
+  "cert_gap": 0.00014011803432367742,
+  "R": 1,
+  "l1": 0.01
+ },
+ {
+  "scenario": "S5-network10",
+  "seed": 2,
+  "method": "MSX (ours)",
+  "key": "MSX",
+  "n_train": 177284,
+  "G_err": 0.10065738215561953,
+  "rho_err": 0.03631363938896448,
+  "kern_L1": 0.16963461237988509,
+  "seconds": 45.82081866264343,
+  "AUC": 1.0,
+  "AP": 1.0,
+  "dLL": 0.0011598095944371565,
+  "cert_gap": 0.00021117610231158324
+ },
+ {
+  "scenario": "S5-network10",
+  "seed": 2,
+  "method": "MSX-R4 (ours, fixed Erlang-4)",
+  "key": "MSX-R4",
+  "n_train": 177284,
+  "G_err": 0.11999690495308389,
+  "rho_err": 0.046155814120075966,
+  "kern_L1": 0.21474571023098943,
+  "seconds": 132.4147708415985,
+  "AUC": 1.0,
+  "AP": 1.0,
+  "dLL": 0.001519839451891139,
+  "cert_gap": 9.753071935847402e-05
+ },
+ {
+  "scenario": "S5-network10",
+  "seed": 2,
+  "method": "MSX-exp (ablation: no Erlang)",
+  "key": "MSX-exp",
+  "n_train": 177284,
+  "G_err": 0.10526104376987948,
+  "rho_err": 0.0273855281032942,
+  "kern_L1": 0.14391479121509074,
+  "seconds": 12.155648469924927,
+  "AUC": 1.0,
+  "AP": 1.0,
+  "dLL": 0.0008419068910623241,
+  "cert_gap": 0.00018176345110987313
  },
  {
   "scenario": "S5-network10",
@@ -2776,6 +2919,12 @@
   "AP": 1.0,
   "dLL": 0.0266587707873245,
   "decay": 10.0
+ },
+ {
+  "scenario": "S5-network10",
+  "seed": 2,
+  "method": "SumExp",
+  "error": "RuntimeError('The sum of the influence on someone cannot be negative. Maybe did you forget to add a positive constraint to your proximal operator\\n')"
  },
  {
   "scenario": "S5-network10",
@@ -2805,6 +2954,19 @@
   "AUC": 1.0,
   "AP": 1.0,
   "dLL": 0.005176910547653638
+ },
+ {
+  "scenario": "S5-network10",
+  "seed": 2,
+  "method": "NPHC(cumulants)",
+  "key": "NPHC",
+  "n_train": 177284,
+  "G_err": 1.2159386641315533,
+  "rho_err": 0.4244603680332033,
+  "kern_L1": NaN,
+  "seconds": 1.2208070755004883,
+  "AUC": 0.7368827160493827,
+  "AP": 0.4409938047278133
  },
  {
   "scenario": "S5-network10",

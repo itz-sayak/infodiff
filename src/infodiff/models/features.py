@@ -343,7 +343,7 @@ def sparse_integrals(data: EventData, spec: DesignSpec, lay: dict) -> np.ndarray
     return out
 
 
-def sparse_cumulative(data: EventData, spec: DesignSpec, lay: dict, theta_s: np.ndarray,
+def sparse_cumulative_reference(data: EventData, spec: DesignSpec, lay: dict, theta_s: np.ndarray,
                       row_t: np.ndarray, row_w: np.ndarray) -> np.ndarray:
     """theta_s . int_{t0}^{t} x_sparse(u) du for each (row time t, window) — used for residuals."""
     out = np.zeros(len(row_t))
@@ -362,4 +362,69 @@ def sparse_cumulative(data: EventData, spec: DesignSpec, lay: dict, theta_s: np.
                                     data.news_marks[e], lo, t, buf)
             val += theta_s[lay["off_exo"]:] @ buf[lay["off_exo"]:]
         out[r] = val
+    return out
+
+
+def _tod_cumulative(tod0: float, t0: float, t: np.ndarray, weights: np.ndarray) -> np.ndarray:
+    """Exact int_{t0}^{t} sum_m w_m hat_m(tod(u)) du for sorted-or-not t (vectorised).
+
+    The seasonal rate is piecewise linear in u with kinks where the local clock crosses a
+    knot; integrate exactly with the trapezoid rule on the knot grid and interpolate the
+    quadratic antiderivative within each piece."""
+    n_tod = len(weights)
+    h = DAY / n_tod
+    t = np.asarray(t, float)
+    if len(t) == 0:
+        return np.zeros(0)
+    x_hi = tod0 + (t.max() - t0)
+    k0, k1 = int(np.floor(tod0 / h)), int(np.floor(x_hi / h))
+    xs = np.unique(np.concatenate([[tod0], h * np.arange(k0 + 1, k1 + 1), [x_hi]]))
+
+    def rate(x):
+        m0 = np.floor(x / h).astype(np.int64)
+        f = x / h - m0
+        return weights[m0 % n_tod] * (1 - f) + weights[(m0 + 1) % n_tod] * f
+
+    rx = rate(xs)
+    cum = np.concatenate([[0.0], np.cumsum(0.5 * (rx[1:] + rx[:-1]) * np.diff(xs))])
+    x = tod0 + (t - t0)
+    k = np.clip(np.searchsorted(xs, x, side="right") - 1, 0, len(xs) - 1)
+    return cum[k] + 0.5 * (x - xs[k]) * (rx[k] + rate(x))
+
+
+def sparse_cumulative(data: EventData, spec: DesignSpec, lay: dict, theta_s: np.ndarray,
+                      row_t: np.ndarray, row_w: np.ndarray) -> np.ndarray:
+    """theta_s . int_{t0}^{t} x_sparse(u) du for each (row time t, window), vectorised per window."""
+    out = np.zeros(len(row_t))
+    M = data.n_marks
+    order = np.argsort(row_w, kind="stable")
+    bounds = np.searchsorted(row_w[order], np.arange(data.n_windows + 1))
+    th_tod = theta_s[lay["off_tod"]:lay["off_tod"] + spec.n_tod] if spec.n_tod else None
+    for w in range(data.n_windows):
+        idx = order[bounds[w]:bounds[w + 1]]
+        if len(idx) == 0:
+            continue
+        t = row_t[idx]
+        lo = data.t0[w]
+        val = theta_s[w] * (t - lo)
+        if spec.n_tod:
+            val = val + _tod_cumulative(data.tod0[w], lo, t, th_tod)
+        for e in range(data.news_ptr[w], data.news_ptr[w + 1]):
+            tau, c, z = data.news_t[e], int(data.news_type[e]), data.news_marks[e]
+            if spec.exo is not None:
+                base = lay["off_exo"] + c * spec.exo.size * M
+                W = theta_s[base:base + spec.exo.size * M].reshape(spec.exo.size, M) @ z  # (K*R,)
+                if np.any(W > 0):
+                    after = t > tau
+                    if after.any():
+                        start = spec.exo.cdf(np.array([max(lo - tau, 0.0)]))[0] @ W
+                        val[after] += spec.exo.cdf(t[after] - tau) @ W - start
+            if spec.ant is not None and tau > lo:
+                base = lay["off_ant"] + c * spec.ant.K
+                a = theta_s[base:base + spec.ant.K]
+                if np.any(a > 0):
+                    top = np.minimum(tau, t)
+                    val += (np.exp(-spec.ant.betas[None, :] * (tau - top)[:, None])
+                            - np.exp(-spec.ant.betas * (tau - lo))[None, :]) @ a
+        out[idx] = val
     return out

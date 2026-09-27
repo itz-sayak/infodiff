@@ -78,6 +78,7 @@ def analyse(m: MSXHawkes, data: EventData, ms: MainSpec, out: Path, tag: str,
     lay = m.layout
     base = m.theta_s[:, : data.n_windows].mean(axis=1)
     res["endogeneity"] = ss.endogeneity(np.maximum(base, 1e-12)).tolist() if res["rho"] < 1 else None
+    t_start = time.time()
     fine = np.geomspace(1e-3, 1e6, 361)  # 40 points per decade for quantiles
     keep = np.unique(np.searchsorted(fine, t_grid))  # coarse subset stored for plots
     keep = keep[keep < len(fine)]
@@ -112,6 +113,7 @@ def analyse(m: MSXHawkes, data: EventData, ms: MainSpec, out: Path, tag: str,
         res["per_type"][name] = entry
     t_grid = fine[keep]
     res["t_grid"] = t_grid.tolist()
+    print(f"  responses done in {time.time() - t_start:.0f}s", flush=True)
     # placebo falsification: total news-kernel mass of the PLACEBO type vs real types
     if "PLACEBO" in types:
         Wp = news_weights(m, data, types["PLACEBO"], 0.0)
@@ -130,6 +132,7 @@ def analyse(m: MSXHawkes, data: EventData, ms: MainSpec, out: Path, tag: str,
         rej = [excess_dispersion(rsd[rows_w == w])[1] < 0.05 for w in np.unique(rows_w) if (rows_w == w).sum() >= 30]
         ed_rej.append(float(np.mean(rej)) if rej else None)
     res["gof"] = gofs
+    print(f"  goodness of fit done in {time.time() - t_start:.0f}s", flush=True)
     res["ed_reject_rate_per_dim"] = ed_rej
     res["fit_reports"] = [dict(dim=r.dim, n=r.n_events, ll=r.loglik, gap=r.gap, seconds=r.seconds) for r in m.reports]
     out.mkdir(parents=True, exist_ok=True)
