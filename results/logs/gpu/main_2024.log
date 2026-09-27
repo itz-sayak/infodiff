@@ -1,3 +1,16 @@
 
 === Mon Sep 28 01:18:41 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2024
 2024: windows=169 events=1690655
+  dim  0 n=   80184 ll=    -182091.58 gap=1.6e+00 it=5240 55s
+  dim  1 n=   81083 ll=    -183461.04 gap=1.7e+00 it=5246 50s
+  dim  2 n=  210986 ll=    -301076.49 gap=7.8e+04 it=5154 114s
+  dim  3 n=  210722 ll=    -297027.25 gap=9.2e+00 it=5259 118s
+  dim  4 n=   92197 ll=    -234934.52 gap=1.7e+00 it=5181 49s
+  dim  5 n=   92492 ll=    -235099.92 gap=1.2e+04 it=5274 51s
+  dim  6 n=   48488 ll=    -145688.31 gap=9.5e+03 it=5192 29s
+  dim  7 n=   48211 ll=    -144305.49 gap=4.8e-01 it=5158 30s
+  dim  8 n=  150468 ll=     549217.67 gap=4.4e+00 it=5084 162s
+  dim  9 n=  150023 ll=     551187.46 gap=5.8e+00 it=5187 156s
+  dim 10 n=  165958 ll=     381110.14 gap=2.6e+00 it=5125 125s
+  dim 11 n=  165770 ll=     381346.33 gap=1.3e+00 it=5188 117s
+  total fit 1055s

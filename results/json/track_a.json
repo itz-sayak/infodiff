@@ -2429,6 +2429,68 @@
  {
   "scenario": "S4-multiscale",
   "seed": 4,
+  "method": "MSX-auto (ours)",
+  "key": "MSX-auto",
+  "n_train": 88305,
+  "G_err": 0.09454915961103844,
+  "rho_err": 0.011619508576604987,
+  "kern_L1": 0.156523986554465,
+  "seconds": 91.05471611022949,
+  "AUC": 1.0,
+  "AP": 1.0,
+  "dLL": 0.0003350365554245218,
+  "cert_gap": 0.00011952587738051079,
+  "R": 1,
+  "l1": 0.0
+ },
+ {
+  "scenario": "S4-multiscale",
+  "seed": 4,
+  "method": "MSX (ours)",
+  "key": "MSX",
+  "n_train": 88305,
+  "G_err": 0.0907624921656319,
+  "rho_err": 0.018153418231745877,
+  "kern_L1": 0.18604363858443532,
+  "seconds": 6.1486732959747314,
+  "AUC": 1.0,
+  "AP": 1.0,
+  "dLL": 0.0005800921557050674,
+  "cert_gap": 0.0002003605131903896
+ },
+ {
+  "scenario": "S4-multiscale",
+  "seed": 4,
+  "method": "MSX-R4 (ours, fixed Erlang-4)",
+  "key": "MSX-R4",
+  "n_train": 88305,
+  "G_err": 0.09340443480776464,
+  "rho_err": 0.01991835041161505,
+  "kern_L1": 0.20450248875650012,
+  "seconds": 19.628679752349854,
+  "AUC": 1.0,
+  "AP": 1.0,
+  "dLL": 0.0006477059934838666,
+  "cert_gap": 0.00020425002730917186
+ },
+ {
+  "scenario": "S4-multiscale",
+  "seed": 4,
+  "method": "MSX-exp (ablation: no Erlang)",
+  "key": "MSX-exp",
+  "n_train": 88305,
+  "G_err": 0.09454915961103844,
+  "rho_err": 0.011619508576604987,
+  "kern_L1": 0.156523986554465,
+  "seconds": 2.8884172439575195,
+  "AUC": 1.0,
+  "AP": 1.0,
+  "dLL": 0.0003350365554245218,
+  "cert_gap": 0.00011952587738051079
+ },
+ {
+  "scenario": "S4-multiscale",
+  "seed": 4,
   "method": "tick-ExpKern(MLE, best decay)",
   "key": "ExpKern",
   "n_train": 88305,
@@ -2440,6 +2502,12 @@
   "AP": 1.0,
   "dLL": 0.6752439370409431,
   "decay": 2.0
+ },
+ {
+  "scenario": "S4-multiscale",
+  "seed": 4,
+  "method": "SumExp",
+  "error": "RuntimeError('The sum of the influence on someone cannot be negative. Maybe did you forget to add a positive constraint to your proximal operator\\n')"
  },
  {
   "scenario": "S4-multiscale",
@@ -2469,6 +2537,19 @@
   "AUC": 1.0,
   "AP": 1.0,
   "dLL": 0.004682556980397647
+ },
+ {
+  "scenario": "S4-multiscale",
+  "seed": 4,
+  "method": "NPHC(cumulants)",
+  "key": "NPHC",
+  "n_train": 88305,
+  "G_err": 1.4771499424769488,
+  "rho_err": 0.45471661223330584,
+  "kern_L1": NaN,
+  "seconds": 2.6591720581054688,
+  "AUC": 0.53125,
+  "AP": 0.43333333333333335
  },
  {
   "scenario": "S4-multiscale",
