@@ -43,6 +43,8 @@ def main():
         env = dict(__import__("os").environ)
         if QNAME.startswith("cpu"):
             env["CUDA_VISIBLE_DEVICES"] = "-1"  # empty would *delete* the var on Windows
+        else:
+            env.pop("CUDA_VISIBLE_DEVICES", None)  # never inherit a hidden GPU
         # thread budget: <= 4 threads per job so concurrent CPU jobs stay well below 28 cores
         for var in ("OMP_NUM_THREADS", "MKL_NUM_THREADS", "OPENBLAS_NUM_THREADS", "NUMBA_NUM_THREADS",
                     "NUMEXPR_NUM_THREADS"):
