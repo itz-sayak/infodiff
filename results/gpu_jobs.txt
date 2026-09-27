@@ -4,6 +4,7 @@ main_2026 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2026
 main_2023 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2023
 main_2022 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2022
 main_pooled | D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2022,2023,2024,2025,2026 pooled
+main_train_2022_2024 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2022,2023,2024 train_2022_2024
 ept_lob_aapl | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept.py lob_aapl 0,1,2 "{\"epochs\":100,\"phases\":2}"
 easy_S2P2_lob_aapl | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner S2P2 lob_aapl 6 2019 100
 easy_NHP_lob_aapl | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner NHP lob_aapl 6 2019 100
