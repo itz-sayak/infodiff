@@ -1,3 +1,7 @@
   taxi seed=0 ep=0 val_ll=0.2140 best=0.2140
   taxi seed=0 ep=5 val_ll=0.3752 best=0.3752
   taxi seed=0 ep=10 val_ll=0.3825 best=0.3830
+  taxi seed=0 ep=15 val_ll=0.4066 best=0.4066
+  taxi seed=0 ep=20 val_ll=0.4242 best=0.4242
+  taxi seed=0 ep=25 val_ll=0.4270 best=0.4270
+{"ll_per_event": 0.4706228565739858, "n_events": 14420.0, "rmse": 0.28012198209762573, "acc": 0.917891800403595, "dataset": "taxi", "seed": 0, "val_ll": 0.4273500670200583, "epochs": 30, "seconds": 312.46376967430115, "hidden": 64, "n_rates": 8, "n_channels": 4, "phases": 2, "lr": 0.01, "gompertz": true, "n_params": 72288}

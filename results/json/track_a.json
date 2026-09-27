@@ -5,12 +5,12 @@
   "method": "MSX-auto (ours)",
   "key": "MSX-auto",
   "n_train": 75675,
-  "G_err": 0.10436064925122657,
-  "rho_err": 0.04868116092921704,
-  "kern_L1": 0.1444834759742722,
-  "seconds": 150.53758573532104,
-  "dLL": 0.00043562714723790574,
-  "cert_gap": 6.350870535243303e-06,
+  "G_err": 0.10435764452823043,
+  "rho_err": 0.048680793496908126,
+  "kern_L1": 0.14448434168415739,
+  "seconds": 66.46785235404968,
+  "dLL": 0.0004356110449341586,
+  "cert_gap": 0.00014321108028525487,
   "R": 2,
   "l1": 0.0
  },
@@ -20,12 +20,12 @@
   "method": "MSX (ours)",
   "key": "MSX",
   "n_train": 75675,
-  "G_err": 0.10436081122590354,
-  "rho_err": 0.04868118648728659,
-  "kern_L1": 0.1444836068599886,
-  "seconds": 4.193991184234619,
-  "dLL": 0.0004356268011162079,
-  "cert_gap": 1.9153521861881018e-06
+  "G_err": 0.10435764452823043,
+  "rho_err": 0.048680793496908126,
+  "kern_L1": 0.14448434168415739,
+  "seconds": 3.617814064025879,
+  "dLL": 0.0004356110449341586,
+  "cert_gap": 0.00014321108028525487
  },
  {
   "scenario": "S1-exp",
@@ -33,12 +33,12 @@
   "method": "MSX-R4 (ours, fixed Erlang-4)",
   "key": "MSX-R4",
   "n_train": 75675,
-  "G_err": 0.11364126668347081,
-  "rho_err": 0.05289534651103056,
-  "kern_L1": 0.1592269776253681,
-  "seconds": 29.800270080566406,
-  "dLL": 0.0004896427258448333,
-  "cert_gap": 6.181631761137396e-06
+  "G_err": 0.11364329506440142,
+  "rho_err": 0.05289562993619035,
+  "kern_L1": 0.15922811711986715,
+  "seconds": 15.118100643157959,
+  "dLL": 0.0004896423939390433,
+  "cert_gap": 0.0001736787671688944
  },
  {
   "scenario": "S1-exp",
@@ -130,12 +130,12 @@
   "method": "MSX-auto (ours)",
   "key": "MSX-auto",
   "n_train": 74236,
-  "G_err": 0.03231051644141478,
-  "rho_err": 0.000929891712074582,
-  "kern_L1": 0.0721085751563634,
-  "seconds": 108.57247757911682,
-  "dLL": 0.0001605445226664645,
-  "cert_gap": 2.1201085473876446e-06,
+  "G_err": 0.03230979624593823,
+  "rho_err": 0.0009285096434507034,
+  "kern_L1": 0.07211028274985448,
+  "seconds": 58.420186042785645,
+  "dLL": 0.00016054145983256433,
+  "cert_gap": 0.0002163670324080158,
   "R": 2,
   "l1": 0.0
  },
@@ -145,12 +145,12 @@
   "method": "MSX (ours)",
   "key": "MSX",
   "n_train": 74236,
-  "G_err": 0.032310529550323694,
-  "rho_err": 0.0009298455149059359,
-  "kern_L1": 0.07210862177702171,
-  "seconds": 5.730240345001221,
-  "dLL": 0.00016054442685831455,
-  "cert_gap": 6.522415787912905e-06
+  "G_err": 0.03230979624593823,
+  "rho_err": 0.0009285096434507034,
+  "kern_L1": 0.07211028274985448,
+  "seconds": 4.050686359405518,
+  "dLL": 0.00016054145983256433,
+  "cert_gap": 0.0002163670324080158
  },
  {
   "scenario": "S1-exp",
@@ -158,12 +158,12 @@
   "method": "MSX-R4 (ours, fixed Erlang-4)",
   "key": "MSX-R4",
   "n_train": 74236,
-  "G_err": 0.037771498699468394,
-  "rho_err": 0.006345573728979481,
-  "kern_L1": 0.09488519302057201,
-  "seconds": 9.063223838806152,
-  "dLL": 0.00013425736917169241,
-  "cert_gap": 1.7322054191026837e-06
+  "G_err": 0.037772423569002116,
+  "rho_err": 0.0063465065601749915,
+  "kern_L1": 0.09488653206331277,
+  "seconds": 9.208383798599243,
+  "dLL": 0.0001342533495395412,
+  "cert_gap": 0.00019632792100310326
  },
  {
   "scenario": "S1-exp",
@@ -255,12 +255,12 @@
   "method": "MSX-auto (ours)",
   "key": "MSX-auto",
   "n_train": 74734,
-  "G_err": 0.02159651765481096,
-  "rho_err": 0.010481214319845944,
-  "kern_L1": 0.05158511647103749,
-  "seconds": 70.91946983337402,
-  "dLL": 0.00020771410822606316,
-  "cert_gap": 8.640814485261217e-06,
+  "G_err": 0.021595482570978874,
+  "rho_err": 0.010481531897049035,
+  "kern_L1": 0.05158624339388123,
+  "seconds": 69.57968258857727,
+  "dLL": 0.0002077123444289106,
+  "cert_gap": 0.00010140978338313289,
   "R": 2,
   "l1": 0.0
  },
@@ -270,12 +270,12 @@
   "method": "MSX (ours)",
   "key": "MSX",
   "n_train": 74734,
-  "G_err": 0.021596476671356894,
-  "rho_err": 0.010481205348007339,
-  "kern_L1": 0.05158511198863903,
-  "seconds": 4.485713958740234,
-  "dLL": 0.00020771410141187335,
-  "cert_gap": 7.917697075754404e-06
+  "G_err": 0.021595482570978874,
+  "rho_err": 0.010481531897049035,
+  "kern_L1": 0.05158624339388123,
+  "seconds": 2.6515109539031982,
+  "dLL": 0.0002077123444289106,
+  "cert_gap": 0.00010140978338313289
  },
  {
   "scenario": "S1-exp",
@@ -283,12 +283,12 @@
   "method": "MSX-R4 (ours, fixed Erlang-4)",
   "key": "MSX-R4",
   "n_train": 74734,
-  "G_err": 0.02418845929003559,
-  "rho_err": 0.011636063765272597,
-  "kern_L1": 0.0672123874738279,
-  "seconds": 9.83198857307434,
-  "dLL": 0.00035496585908245426,
-  "cert_gap": 4.886551323579624e-06
+  "G_err": 0.024186500516005904,
+  "rho_err": 0.011636657185410848,
+  "kern_L1": 0.06721347914199073,
+  "seconds": 10.623529195785522,
+  "dLL": 0.0003549556330683093,
+  "cert_gap": 0.0001773365402186755
  },
  {
   "scenario": "S1-exp",
@@ -1064,12 +1064,6 @@
   "seconds": 4.688037395477295,
   "dLL": 0.026350764320115207,
   "key": "ExpKern"
- },
- {
-  "scenario": "S2-powerlaw",
-  "seed": 3,
-  "method": "SumExp",
-  "error": "RuntimeError('The sum of the influence on someone cannot be negative. Maybe did you forget to add a positive constraint to your proximal operator\\n')"
  },
  {
   "scenario": "S2-powerlaw",
@@ -1950,12 +1944,6 @@
  {
   "scenario": "S4-multiscale",
   "seed": 0,
-  "method": "SumExp",
-  "error": "RuntimeError('The sum of the influence on someone cannot be negative. Maybe did you forget to add a positive constraint to your proximal operator\\n')"
- },
- {
-  "scenario": "S4-multiscale",
-  "seed": 0,
   "method": "tick-ADM4",
   "key": "ADM4",
   "n_train": 88451,
@@ -2085,12 +2073,6 @@
   "AP": 1.0,
   "dLL": 0.6686596049212614,
   "decay": 2.0
- },
- {
-  "scenario": "S4-multiscale",
-  "seed": 1,
-  "method": "SumExp",
-  "error": "RuntimeError('The sum of the influence on someone cannot be negative. Maybe did you forget to add a positive constraint to your proximal operator\\n')"
  },
  {
   "scenario": "S4-multiscale",
@@ -2228,12 +2210,6 @@
  {
   "scenario": "S4-multiscale",
   "seed": 2,
-  "method": "SumExp",
-  "error": "RuntimeError('The sum of the influence on someone cannot be negative. Maybe did you forget to add a positive constraint to your proximal operator\\n')"
- },
- {
-  "scenario": "S4-multiscale",
-  "seed": 2,
   "method": "tick-ADM4",
   "key": "ADM4",
   "n_train": 88176,
@@ -2367,12 +2343,6 @@
  {
   "scenario": "S4-multiscale",
   "seed": 3,
-  "method": "SumExp",
-  "error": "RuntimeError('The sum of the influence on someone cannot be negative. Maybe did you forget to add a positive constraint to your proximal operator\\n')"
- },
- {
-  "scenario": "S4-multiscale",
-  "seed": 3,
   "method": "tick-ADM4",
   "key": "ADM4",
   "n_train": 89139,
@@ -2429,30 +2399,6 @@
  {
   "scenario": "S4-multiscale",
   "seed": 4,
-  "method": "MSX-auto",
-  "error": "AcceleratorError(\"CUDA error: unspecified launch failure\\nSearch for `cudaErrorLaunchFailure' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\\nCUDA ker"
- },
- {
-  "scenario": "S4-multiscale",
-  "seed": 4,
-  "method": "MSX",
-  "error": "AcceleratorError(\"CUDA error: unspecified launch failure\\nSearch for `cudaErrorLaunchFailure' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\\nCUDA ker"
- },
- {
-  "scenario": "S4-multiscale",
-  "seed": 4,
-  "method": "MSX-R4",
-  "error": "AcceleratorError(\"CUDA error: unspecified launch failure\\nSearch for `cudaErrorLaunchFailure' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\\nCUDA ker"
- },
- {
-  "scenario": "S4-multiscale",
-  "seed": 4,
-  "method": "MSX-exp",
-  "error": "AcceleratorError(\"CUDA error: unspecified launch failure\\nSearch for `cudaErrorLaunchFailure' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\\nCUDA ker"
- },
- {
-  "scenario": "S4-multiscale",
-  "seed": 4,
   "method": "tick-ExpKern(MLE, best decay)",
   "key": "ExpKern",
   "n_train": 88305,
@@ -2464,12 +2410,6 @@
   "AP": 1.0,
   "dLL": 0.6752439370409431,
   "decay": 2.0
- },
- {
-  "scenario": "S4-multiscale",
-  "seed": 4,
-  "method": "SumExp",
-  "error": "RuntimeError('The sum of the influence on someone cannot be negative. Maybe did you forget to add a positive constraint to your proximal operator\\n')"
  },
  {
   "scenario": "S4-multiscale",
@@ -2503,12 +2443,6 @@
  {
   "scenario": "S4-multiscale",
   "seed": 4,
-  "method": "NPHC",
-  "error": "AcceleratorError(\"CUDA error: unspecified launch failure\\nSearch for `cudaErrorLaunchFailure' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\\nCUDA ker"
- },
- {
-  "scenario": "S4-multiscale",
-  "seed": 4,
   "method": "tick-ConditionalLaw",
   "key": "CondLaw",
   "n_train": 88305,
@@ -2519,30 +2453,6 @@
   "AUC": 0.90625,
   "AP": 0.8928571428571428,
   "dLL": 0.11428779808203776
- },
- {
-  "scenario": "S5-network10",
-  "seed": 0,
-  "method": "MSX-auto",
-  "error": "AcceleratorError(\"CUDA error: unspecified launch failure\\nSearch for `cudaErrorLaunchFailure' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\\nCUDA ker"
- },
- {
-  "scenario": "S5-network10",
-  "seed": 0,
-  "method": "MSX",
-  "error": "AcceleratorError(\"CUDA error: unspecified launch failure\\nSearch for `cudaErrorLaunchFailure' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\\nCUDA ker"
- },
- {
-  "scenario": "S5-network10",
-  "seed": 0,
-  "method": "MSX-R4",
-  "error": "AcceleratorError(\"CUDA error: unspecified launch failure\\nSearch for `cudaErrorLaunchFailure' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\\nCUDA ker"
- },
- {
-  "scenario": "S5-network10",
-  "seed": 0,
-  "method": "MSX-exp",
-  "error": "AcceleratorError(\"CUDA error: unspecified launch failure\\nSearch for `cudaErrorLaunchFailure' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\\nCUDA ker"
  },
  {
   "scenario": "S5-network10",
@@ -2558,12 +2468,6 @@
   "AP": 0.9944444444444445,
   "dLL": 0.6536113202669955,
   "decay": 0.1
- },
- {
-  "scenario": "S5-network10",
-  "seed": 0,
-  "method": "SumExp",
-  "error": "RuntimeError('The sum of the influence on someone cannot be negative. Maybe did you forget to add a positive constraint to your proximal operator\\n')"
  },
  {
   "scenario": "S5-network10",
@@ -2597,12 +2501,6 @@
  {
   "scenario": "S5-network10",
   "seed": 0,
-  "method": "NPHC",
-  "error": "AcceleratorError(\"CUDA error: unspecified launch failure\\nSearch for `cudaErrorLaunchFailure' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\\nCUDA ker"
- },
- {
-  "scenario": "S5-network10",
-  "seed": 0,
   "method": "tick-ConditionalLaw",
   "key": "CondLaw",
   "n_train": 179115,
@@ -2613,30 +2511,6 @@
   "AUC": 0.9336419753086419,
   "AP": 0.7980149128540941,
   "dLL": 0.07651723124381363
- },
- {
-  "scenario": "S5-network10",
-  "seed": 1,
-  "method": "MSX-auto",
-  "error": "AcceleratorError(\"CUDA error: unspecified launch failure\\nSearch for `cudaErrorLaunchFailure' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\\nCUDA ker"
- },
- {
-  "scenario": "S5-network10",
-  "seed": 1,
-  "method": "MSX",
-  "error": "AcceleratorError(\"CUDA error: unspecified launch failure\\nSearch for `cudaErrorLaunchFailure' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\\nCUDA ker"
- },
- {
-  "scenario": "S5-network10",
-  "seed": 1,
-  "method": "MSX-R4",
-  "error": "AcceleratorError(\"CUDA error: unspecified launch failure\\nSearch for `cudaErrorLaunchFailure' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\\nCUDA ker"
- },
- {
-  "scenario": "S5-network10",
-  "seed": 1,
-  "method": "MSX-exp",
-  "error": "AcceleratorError(\"CUDA error: unspecified launch failure\\nSearch for `cudaErrorLaunchFailure' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\\nCUDA ker"
  },
  {
   "scenario": "S5-network10",
@@ -2652,12 +2526,6 @@
   "AP": 1.0,
   "dLL": 0.026680650598632942,
   "decay": 10.0
- },
- {
-  "scenario": "S5-network10",
-  "seed": 1,
-  "method": "SumExp",
-  "error": "RuntimeError('The sum of the influence on someone cannot be negative. Maybe did you forget to add a positive constraint to your proximal operator\\n')"
  },
  {
   "scenario": "S5-network10",
@@ -2691,12 +2559,6 @@
  {
   "scenario": "S5-network10",
   "seed": 1,
-  "method": "NPHC",
-  "error": "AcceleratorError(\"CUDA error: unspecified launch failure\\nSearch for `cudaErrorLaunchFailure' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\\nCUDA ker"
- },
- {
-  "scenario": "S5-network10",
-  "seed": 1,
   "method": "tick-ConditionalLaw",
   "key": "CondLaw",
   "n_train": 174790,
@@ -2707,30 +2569,6 @@
   "AUC": 0.9768518518518519,
   "AP": 0.9117547974423621,
   "dLL": 0.07472849111719683
- },
- {
-  "scenario": "S5-network10",
-  "seed": 2,
-  "method": "MSX-auto",
-  "error": "AcceleratorError(\"CUDA error: unspecified launch failure\\nSearch for `cudaErrorLaunchFailure' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\\nCUDA ker"
- },
- {
-  "scenario": "S5-network10",
-  "seed": 2,
-  "method": "MSX",
-  "error": "AcceleratorError(\"CUDA error: unspecified launch failure\\nSearch for `cudaErrorLaunchFailure' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\\nCUDA ker"
- },
- {
-  "scenario": "S5-network10",
-  "seed": 2,
-  "method": "MSX-R4",
-  "error": "AcceleratorError(\"CUDA error: unspecified launch failure\\nSearch for `cudaErrorLaunchFailure' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\\nCUDA ker"
- },
- {
-  "scenario": "S5-network10",
-  "seed": 2,
-  "method": "MSX-exp",
-  "error": "AcceleratorError(\"CUDA error: unspecified launch failure\\nSearch for `cudaErrorLaunchFailure' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\\nCUDA ker"
  },
  {
   "scenario": "S5-network10",
@@ -2746,12 +2584,6 @@
   "AP": 1.0,
   "dLL": 0.0266587707873245,
   "decay": 10.0
- },
- {
-  "scenario": "S5-network10",
-  "seed": 2,
-  "method": "SumExp",
-  "error": "RuntimeError('The sum of the influence on someone cannot be negative. Maybe did you forget to add a positive constraint to your proximal operator\\n')"
  },
  {
   "scenario": "S5-network10",
@@ -2785,12 +2617,6 @@
  {
   "scenario": "S5-network10",
   "seed": 2,
-  "method": "NPHC",
-  "error": "AcceleratorError(\"CUDA error: unspecified launch failure\\nSearch for `cudaErrorLaunchFailure' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\\nCUDA ker"
- },
- {
-  "scenario": "S5-network10",
-  "seed": 2,
   "method": "tick-ConditionalLaw",
   "key": "CondLaw",
   "n_train": 177284,
@@ -2801,30 +2627,6 @@
   "AUC": 0.9830246913580247,
   "AP": 0.939930756378125,
   "dLL": 0.07901773390142218
- },
- {
-  "scenario": "S5-network10",
-  "seed": 3,
-  "method": "MSX-auto",
-  "error": "AcceleratorError(\"CUDA error: unspecified launch failure\\nSearch for `cudaErrorLaunchFailure' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\\nCUDA ker"
- },
- {
-  "scenario": "S5-network10",
-  "seed": 3,
-  "method": "MSX",
-  "error": "AcceleratorError(\"CUDA error: unspecified launch failure\\nSearch for `cudaErrorLaunchFailure' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\\nCUDA ker"
- },
- {
-  "scenario": "S5-network10",
-  "seed": 3,
-  "method": "MSX-R4",
-  "error": "AcceleratorError(\"CUDA error: unspecified launch failure\\nSearch for `cudaErrorLaunchFailure' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\\nCUDA ker"
- },
- {
-  "scenario": "S5-network10",
-  "seed": 3,
-  "method": "MSX-exp",
-  "error": "AcceleratorError(\"CUDA error: unspecified launch failure\\nSearch for `cudaErrorLaunchFailure' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\\nCUDA ker"
  },
  {
   "scenario": "S5-network10",
@@ -2840,12 +2642,6 @@
   "AP": 0.8222222222222222,
   "dLL": 0.7739142061137758,
   "decay": 0.01
- },
- {
-  "scenario": "S5-network10",
-  "seed": 3,
-  "method": "SumExp",
-  "error": "RuntimeError('The sum of the influence on someone cannot be negative. Maybe did you forget to add a positive constraint to your proximal operator\\n')"
  },
  {
   "scenario": "S5-network10",
@@ -2875,12 +2671,6 @@
   "AUC": 1.0,
   "AP": 1.0,
   "dLL": 0.005044443232973975
- },
- {
-  "scenario": "S5-network10",
-  "seed": 3,
-  "method": "NPHC",
-  "error": "AcceleratorError(\"CUDA error: unspecified launch failure\\nSearch for `cudaErrorLaunchFailure' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\\nCUDA ker"
  },
  {
   "scenario": "S5-network10",

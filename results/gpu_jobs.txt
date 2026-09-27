@@ -1,27 +1,51 @@
-s2p2_taxi | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner S2P2 taxi 10 2019
-ept_taxi_probe | D:\Quant\.venv\Scripts\python.exe -u scripts\probe_track_b.py taxi "{\"epochs\":150,\"phases\":2};{\"epochs\":150,\"phases\":2,\"gompertz\":false};{\"epochs\":150,\"phases\":4,\"hidden\":128}"
-s2p2_taxi_bs64 | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner S2P2 taxi 10 2019 - 64
+main_2024 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2024
+main_2025 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2025
+main_2026 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2026
+main_2023 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2023
+main_2022 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2022
+main_pooled | D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2022,2023,2024,2025,2026 pooled
 ept_lob_aapl | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept.py lob_aapl 0,1,2 "{\"epochs\":100,\"phases\":2}"
-easy_S2P2_lob_aapl | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner S2P2 lob_aapl 6 2019 50 64
-easy_NHP_lob_aapl | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner NHP lob_aapl 6 2019 50 64
-easy_THP_lob_aapl | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner THP lob_aapl 6 2019 50 64
-easy_RMTPP_lob_aapl | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner RMTPP lob_aapl 6 2019 50 64
-easy_SAHP_lob_aapl | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner SAHP lob_aapl 6 2019 50 64
-easy_AttNHP_lob_aapl | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner AttNHP lob_aapl 6 2019 50 64
-easy_IntensityFree_lob_aapl | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner IntensityFree lob_aapl 6 2019 50 64
+easy_S2P2_lob_aapl | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner S2P2 lob_aapl 6 2019 100
+easy_NHP_lob_aapl | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner NHP lob_aapl 6 2019 100
+easy_THP_lob_aapl | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner THP lob_aapl 6 2019 100
+easy_RMTPP_lob_aapl | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner RMTPP lob_aapl 6 2019 100
+easy_SAHP_lob_aapl | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner SAHP lob_aapl 6 2019 100
+easy_AttNHP_lob_aapl | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner AttNHP lob_aapl 6 2019 100
+easy_IntensityFree_lob_aapl | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner IntensityFree lob_aapl 6 2019 100
 ept_lob_amzn | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept.py lob_amzn 0,1,2 "{\"epochs\":100,\"phases\":2}"
-easy_S2P2_lob_amzn | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner S2P2 lob_amzn 6 2019 50 64
-easy_NHP_lob_amzn | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner NHP lob_amzn 6 2019 50 64
-easy_THP_lob_amzn | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner THP lob_amzn 6 2019 50 64
-easy_RMTPP_lob_amzn | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner RMTPP lob_amzn 6 2019 50 64
-easy_SAHP_lob_amzn | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner SAHP lob_amzn 6 2019 50 64
-easy_AttNHP_lob_amzn | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner AttNHP lob_amzn 6 2019 50 64
-easy_IntensityFree_lob_amzn | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner IntensityFree lob_amzn 6 2019 50 64
+easy_S2P2_lob_amzn | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner S2P2 lob_amzn 6 2019 100
+easy_NHP_lob_amzn | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner NHP lob_amzn 6 2019 100
+easy_THP_lob_amzn | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner THP lob_amzn 6 2019 100
+easy_RMTPP_lob_amzn | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner RMTPP lob_amzn 6 2019 100
+easy_SAHP_lob_amzn | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner SAHP lob_amzn 6 2019 100
+easy_AttNHP_lob_amzn | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner AttNHP lob_amzn 6 2019 100
+easy_IntensityFree_lob_amzn | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner IntensityFree lob_amzn 6 2019 100
 ept_lob_goog | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept.py lob_goog 0,1,2 "{\"epochs\":100,\"phases\":2}"
-easy_S2P2_lob_goog | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner S2P2 lob_goog 6 2019 50 64
-easy_NHP_lob_goog | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner NHP lob_goog 6 2019 50 64
-easy_THP_lob_goog | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner THP lob_goog 6 2019 50 64
-easy_RMTPP_lob_goog | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner RMTPP lob_goog 6 2019 50 64
-easy_SAHP_lob_goog | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner SAHP lob_goog 6 2019 50 64
-easy_AttNHP_lob_goog | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner AttNHP lob_goog 6 2019 50 64
-easy_IntensityFree_lob_goog | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner IntensityFree lob_goog 6 2019 50 64
+easy_S2P2_lob_goog | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner S2P2 lob_goog 6 2019 100
+easy_NHP_lob_goog | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner NHP lob_goog 6 2019 100
+easy_THP_lob_goog | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner THP lob_goog 6 2019 100
+easy_RMTPP_lob_goog | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner RMTPP lob_goog 6 2019 100
+easy_SAHP_lob_goog | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner SAHP lob_goog 6 2019 100
+easy_AttNHP_lob_goog | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner AttNHP lob_goog 6 2019 100
+easy_IntensityFree_lob_goog | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner IntensityFree lob_goog 6 2019 100
+ept_lob_intc | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept.py lob_intc 0,1,2 "{\"epochs\":100,\"phases\":2}"
+easy_S2P2_lob_intc | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner S2P2 lob_intc 6 2019 100
+easy_NHP_lob_intc | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner NHP lob_intc 6 2019 100
+easy_THP_lob_intc | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner THP lob_intc 6 2019 100
+easy_RMTPP_lob_intc | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner RMTPP lob_intc 6 2019 100
+easy_SAHP_lob_intc | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner SAHP lob_intc 6 2019 100
+easy_AttNHP_lob_intc | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner AttNHP lob_intc 6 2019 100
+easy_IntensityFree_lob_intc | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner IntensityFree lob_intc 6 2019 100
+ept_lob_msft | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept.py lob_msft 0,1,2 "{\"epochs\":100,\"phases\":2}"
+easy_S2P2_lob_msft | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner S2P2 lob_msft 6 2019 100
+easy_NHP_lob_msft | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner NHP lob_msft 6 2019 100
+easy_THP_lob_msft | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner THP lob_msft 6 2019 100
+easy_RMTPP_lob_msft | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner RMTPP lob_msft 6 2019 100
+easy_SAHP_lob_msft | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner SAHP lob_msft 6 2019 100
+easy_AttNHP_lob_msft | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner AttNHP lob_msft 6 2019 100
+easy_IntensityFree_lob_msft | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner IntensityFree lob_msft 6 2019 100
+ept_taxi_5seeds | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept.py taxi 0,1,2,3,4 "{\"epochs\":300,\"phases\":2}"
+ept_taobao_5seeds | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept.py taobao 0,1,2,3,4 "{\"epochs\":300,\"phases\":2}"
+ept_stackoverflow_5seeds | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept.py stackoverflow 0,1,2,3,4 "{\"epochs\":300,\"phases\":2}"
+ept_amazon_5seeds | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept.py amazon 0,1,2,3,4 "{\"epochs\":300,\"phases\":2}"
+ept_retweet_5seeds | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept.py retweet 0,1,2,3,4 "{\"epochs\":300,\"phases\":2}"
