@@ -20,10 +20,14 @@ import torch
 from ..models.neural_pt import EPTConfig, EPTTPP
 
 RAW = Path("data/raw/easytpp")
+PROCESSED = Path("data/processed/tpp")
 
 
 def load_split(name: str, split: str):
-    df = pd.read_json(RAW / f"{name}_{split}.jsonl", lines=True)
+    f = RAW / f"{name}_{split}.jsonl"
+    if not f.exists():
+        f = PROCESSED / f"{name}_{split}.jsonl"
+    df = pd.read_json(f, lines=True)
     seqs = [(np.asarray(d, float), np.asarray(k, int)) for d, k in zip(df.time_since_last_event, df.type_event)]
     return seqs, int(df.dim_process.iloc[0])
 

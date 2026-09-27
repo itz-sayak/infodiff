@@ -61,3 +61,87 @@ max_dt: 5.7213888889
 [38;20m2026-09-27 22:59:07,242 - tpp_runner.py[pid:16996;line:62:_init_model] - INFO: Num of model parameters 35092[0m
 [38;20m2026-09-27 22:59:07,929 - base_runner.py[pid:16996;line:103:train] - INFO: Data 'taxi' loaded...[0m
 [38;20m2026-09-27 22:59:07,929 - base_runner.py[pid:16996;line:108:train] - INFO: Start S2P2 training...[0m
+C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\autograd\graph.py:979: UserWarning: Error detected in ViewBackward0. No forward pass information available. Enable detect anomaly during forward pass for more information. (Triggered internally at C:\actions-runner\_work\pytorch\pytorch\torch\csrc\autograd\python_anomaly_mode.cpp:105.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "D:\Quant\src\infodiff\baselines\easytpp_runner.py", line 78, in <module>
+    r = run_model(model, dataset, n_types, seed, max_epoch)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\src\infodiff\baselines\easytpp_runner.py", line 64, in run_model
+    log = runner.run()
+          ^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\base_runner.py", line 214, in run
+    return self.train(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\base_runner.py", line 111, in train
+    best_ll, best_epochs, best_metrics, num_params, losses = self._train_model(
+                                                             ^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\tpp_runner.py", line 98, in _train_model
+    train_metrics = self.run_one_epoch(train_loader, RunnerPhase.TRAIN, **kwargs)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\tpp_runner.py", line 206, in run_one_epoch
+    self.model_wrapper.run_batch(batch, phase=phase, padded_event_id = pad_index)
+  File "D:\Quant\external\state_space_point_process\easy_tpp\torch_wrapper.py", line 150, in run_batch
+    (loss / num_event).backward()
+  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\_tensor.py", line 623, in backward
+    torch.autograd.backward(
+  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\autograd\__init__.py", line 395, in backward
+    _engine_run_backward(
+  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\autograd\graph.py", line 979, in _engine_run_backward
+    return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+torch.AcceleratorError: CUDA error: unspecified launch failure
+Search for `cudaErrorLaunchFailure' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+
+
+=== Sun Sep 27 23:02:39 2026 attempt 2: D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner S2P2 taxi 10 2019
+[31;1m2026-09-27 23:02:44,257 - config.py[pid:7540;line:33:build_from_yaml_file] - CRITICAL: Load pipeline config class RunnerConfig[0m
+[31;1m2026-09-27 23:02:44,301 - runner_config.py[pid:7540;line:205:update_config] - CRITICAL: train model S2P2 using GPU with torch backend[0m
+[38;20m2026-09-27 23:02:44,301 - runner_config.py[pid:7540;line:45:__init__] - INFO: Save the config to D:\Quant\results\easytpp\checkpoints/taxi/S2P2/train_2026_09_27_23_02_44\S2P2_train_output.yaml[0m
+[38;20m2026-09-27 23:02:44,301 - base_runner.py[pid:7540;line:193:save_log] - INFO: Save the log to D:\Quant\results\easytpp\checkpoints/taxi/S2P2/train_2026_09_27_23_02_44\log[0m
+0.22442521993973202 0.2922880961117653
+min_dt: 0.0002777778
+max_dt: 5.7213888889
+[38;20m2026-09-27 23:02:58,126 - tpp_runner.py[pid:7540;line:62:_init_model] - INFO: Num of model parameters 35092[0m
+[38;20m2026-09-27 23:02:59,287 - base_runner.py[pid:7540;line:103:train] - INFO: Data 'taxi' loaded...[0m
+[38;20m2026-09-27 23:02:59,288 - base_runner.py[pid:7540;line:108:train] - INFO: Start S2P2 training...[0m
+C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\autograd\graph.py:979: UserWarning: Error detected in ConstantPadNdBackward0. No forward pass information available. Enable detect anomaly during forward pass for more information. (Triggered internally at C:\actions-runner\_work\pytorch\pytorch\torch\csrc\autograd\python_anomaly_mode.cpp:105.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "D:\Quant\src\infodiff\baselines\easytpp_runner.py", line 78, in <module>
+    import sys
+        ^^^^^^^
+  File "D:\Quant\src\infodiff\baselines\easytpp_runner.py", line 64, in run_model
+    cfg_path.write_text(yaml.safe_dump(cfg))
+          ^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\base_runner.py", line 214, in run
+    return self.train(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\base_runner.py", line 111, in train
+    best_ll, best_epochs, best_metrics, num_params, losses = self._train_model(
+                                                             ^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\tpp_runner.py", line 98, in _train_model
+    train_metrics = self.run_one_epoch(train_loader, RunnerPhase.TRAIN, **kwargs)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\tpp_runner.py", line 206, in run_one_epoch
+    self.model_wrapper.run_batch(batch, phase=phase, padded_event_id = pad_index)
+  File "D:\Quant\external\state_space_point_process\easy_tpp\torch_wrapper.py", line 150, in run_batch
+    (loss / num_event).backward()
+  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\_tensor.py", line 623, in backward
+    torch.autograd.backward(
+  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\autograd\__init__.py", line 395, in backward
+    _engine_run_backward(
+  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\autograd\graph.py", line 979, in _engine_run_backward
+    return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+torch.AcceleratorError: CUDA error: unspecified launch failure
+Search for `cudaErrorLaunchFailure' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+

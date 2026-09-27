@@ -1,0 +1,2 @@
+
+=== Sun Sep 27 23:04:53 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts\probe_track_b.py taxi "{\"epochs\":150,\"phases\":2};{\"epochs\":150,\"phases\":2,\"gompertz\":false};{\"epochs\":150,\"phases\":4,\"hidden\":128}"

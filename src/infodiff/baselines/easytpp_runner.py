@@ -36,7 +36,9 @@ def dataset_files(name: str) -> dict:
 
 
 def run_model(model: str, dataset: str, n_types: int, seed: int = 2019, max_epoch: int | None = None,
-              gpu: int = 0, workdir: Path = ROOT / "results" / "easytpp") -> dict:
+              gpu: int = 0, workdir: Path = ROOT / "results" / "easytpp", batch_size: int | None = None) -> dict:
+    """batch_size overrides the authors' 256 when needed: on a WDDM laptop GPU long kernels trip
+    the Windows TDR watchdog ('unspecified launch failure'); smaller batches keep kernels short."""
     from easy_tpp.config_factory import Config
     from easy_tpp.runner import Runner
 
@@ -49,6 +51,8 @@ def run_model(model: str, dataset: str, n_types: int, seed: int = 2019, max_epoc
     exp["trainer_config"]["metrics"] = []  # LL only; RMSE/acc via thinning are costly and optional
     if max_epoch:
         exp["trainer_config"]["max_epoch"] = max_epoch
+    if batch_size:
+        exp["trainer_config"]["batch_size"] = batch_size
     files = dataset_files(dataset)
     cfg = {"pipeline_config_id": "runner_config",
            "data": {dataset: dict(data_format="json", **files,
@@ -67,13 +71,14 @@ def run_model(model: str, dataset: str, n_types: int, seed: int = 2019, max_epoc
                 mark_ll=test.get("mark_ll"), time_ll=test.get("time_ll"),
                 val_ll=log["best_valid_ll"], best_epoch=log["best_valid_epoch"],
                 n_params=log["num_params"], seconds=time.time() - t,
-                max_epoch=exp["trainer_config"]["max_epoch"])
+                max_epoch=exp["trainer_config"]["max_epoch"], batch_size=exp["trainer_config"]["batch_size"])
 
 
 if __name__ == "__main__":
     import sys
     model, dataset, n_types = sys.argv[1], sys.argv[2], int(sys.argv[3])
     seed = int(sys.argv[4]) if len(sys.argv) > 4 else 2019
-    max_epoch = int(sys.argv[5]) if len(sys.argv) > 5 else None
-    r = run_model(model, dataset, n_types, seed, max_epoch)
+    max_epoch = int(sys.argv[5]) if len(sys.argv) > 5 and sys.argv[5] != "-" else None
+    bs = int(sys.argv[6]) if len(sys.argv) > 6 else None
+    r = run_model(model, dataset, n_types, seed, max_epoch, batch_size=bs)
     print("RESULT " + json.dumps(r), flush=True)

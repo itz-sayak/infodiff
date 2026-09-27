@@ -88,6 +88,34 @@ class _Problem:
         return float(dual - primal), float(primal)
 
 
+def _hessian(prob: _Problem, Xs_sp: sp.csr_matrix, Dv: torch.Tensor) -> torch.Tensor:
+    """X^T diag(Dv) X assembled blockwise (dense endo, sparse baseline/news)."""
+    P = prob.c.numel()
+    Pd = prob.Pd
+    H = torch.zeros((P, P), dtype=torch.float64, device=Dv.device)
+    if Pd:
+        XdD = prob.Xd.double() * Dv[:, None]
+        H[:Pd, :Pd] = prob.Xd.double().T @ XdD
+        H[Pd:, :Pd] = torch.sparse.mm(prob.XsT.double() if prob.dtype != torch.float64 else prob.XsT, XdD)
+        H[:Pd, Pd:] = H[Pd:, :Pd].T
+    Dn = Dv.cpu().numpy()
+    H[Pd:, Pd:] = torch.as_tensor((Xs_sp.T @ Xs_sp.multiply(Dn[:, None])).toarray(), device=Dv.device)
+    return H
+
+
+def _observed_cov(prob: _Problem, Xs_sp: sp.csr_matrix, th: torch.Tensor, rel_tol: float = 1e-6):
+    """Inverse observed information on interior parameters (theta_p > rel_tol * max theta).
+
+    Parameters on the boundary are treated as fixed at 0 (standard boundary-MLE practice)."""
+    lam = prob.lam(th).double()
+    H = _hessian(prob, Xs_sp, 1.0 / lam ** 2)
+    act = torch.where(th > rel_tol * th.max())[0]
+    Ha = H[act][:, act]
+    Ha.diagonal().add_(1e-12 * float(Ha.diagonal().max()))
+    cov = torch.linalg.inv(Ha)
+    return act.cpu().numpy(), cov.cpu().numpy()
+
+
 def _interior_point(prob: _Problem, Xs_sp: sp.csr_matrix, th: torch.Tensor, gap_tol: float,
                     max_newton: int = 200, verbose: bool = False) -> torch.Tensor:
     """Log-barrier Newton polish: max L(theta) + mu * sum log theta, mu -> 0.
@@ -112,16 +140,7 @@ def _interior_point(prob: _Problem, Xs_sp: sp.csr_matrix, th: torch.Tensor, gap_
         lam = prob.lam(th).double()
         inv = 1.0 / lam
         g = prob.xt(inv) - prob.c + mu / th
-        Dv = (inv * inv)
-        H = torch.zeros((P, P), dtype=torch.float64, device=th.device)
-        if Pd:
-            XdD = prob.Xd.double() * Dv[:, None]
-            H[:Pd, :Pd] = prob.Xd.double().T @ XdD
-            H[Pd:, :Pd] = torch.sparse.mm(prob.XsT.double() if prob.dtype != torch.float64 else prob.XsT, XdD)
-            H[:Pd, Pd:] = H[Pd:, :Pd].T
-        Dn = Dv.cpu().numpy()
-        Hss = (Xs_sp.T @ Xs_sp.multiply(Dn[:, None])).toarray()
-        H[Pd:, Pd:] = torch.as_tensor(Hss, device=th.device)
+        H = _hessian(prob, Xs_sp, inv * inv)
         H.diagonal().add_(mu / th ** 2)
         try:
             L = torch.linalg.cholesky(H)
@@ -206,8 +225,10 @@ class MSXHawkes:
 
     def __init__(self, spec: DesignSpec, l1_endo: float = 0.0, l1_exo: float = 0.0, l1_tod: float = 1e-3,
                  device: str | None = None, dtype=torch.float64, max_iter: int = 400, tol: float = 1e-9,
-                 gap_tol: float = 1e-4, newton: bool = True, verbose: bool = False):
+                 gap_tol: float = 1e-4, newton: bool = True, verbose: bool = False, store_cov: bool = False):
         self.newton = newton
+        self.store_cov = store_cov
+        self.cov: dict = {}
         self.spec = spec
         self.l1_endo, self.l1_exo, self.l1_tod = l1_endo, l1_exo, l1_tod
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
@@ -272,6 +293,10 @@ class MSXHawkes:
                 gap, ll = prob.dual_gap(th)
             thn = th.cpu().numpy()
             nd = int(act_d.sum())
+            if self.store_cov:
+                idx_red, cov = _observed_cov(prob, des.Xs, th)
+                full_idx = np.concatenate([np.where(act_d)[0], lay["Pd"] + np.where(act_s)[0]])[idx_red]
+                self.cov[i] = (full_idx, cov)
             self.theta_d[i] = 0.0
             self.theta_s[i] = 0.0
             self.theta_d[i, act_d] = thn[:nd]
@@ -299,6 +324,19 @@ class MSXHawkes:
         if m:
             th_s[rest] = 1e-2 * n / max(des.integ_s[rest].sum(), 1e-9) / m + 1e-12
         return np.concatenate([th_d, th_s])
+
+    def sample_params(self, n: int, seed: int = 0):
+        """Parametric-bootstrap draws (theta_d, theta_s) from N(theta_hat, I^{-1}) clipped at 0."""
+        rng = np.random.default_rng(seed)
+        Pd = self.theta_d.shape[1]
+        for _ in range(n):
+            td, ts = self.theta_d.copy(), self.theta_s.copy()
+            for i, (idx, cov) in self.cov.items():
+                full = np.concatenate([td[i], ts[i]])
+                L = np.linalg.cholesky(0.5 * (cov + cov.T) + 1e-15 * np.eye(len(idx)))
+                full[idx] = np.maximum(full[idx] + L @ rng.standard_normal(len(idx)), 0.0)
+                td[i], ts[i] = full[:Pd], full[Pd:]
+            yield td, ts
 
     # ------------------------------------------------------------------ accessors
     def endo_weights(self) -> np.ndarray:

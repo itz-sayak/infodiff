@@ -1,0 +1,40 @@
+\section{Data}\label{sec:data}
+
+\paragraph{Releases.}
+The calendar covers January 2022--August 2026 (670 scheduled events). US data releases
+(CPI, nonfarm payrolls, PPI, retail sales, GDP advance estimate, initial jobless claims)
+are dated by their \emph{initial} vintage in ALFRED, which removes seasonal-factor-only
+releases automatically; all are released at 08:30 America/New\_York and converted to UTC
+with daylight saving. FOMC statements (14:00 ET) and press conferences (14:30 ET) come
+from the Federal Reserve calendar; ECB decisions and press conferences from the ECB
+(13:45/14:30 CET until 21 July 2022 and 14:15/14:45 CET afterwards); Bank of Japan
+decisions from the BoJ, whose release time is not fixed (a latent onset, flagged).
+
+\paragraph{Expectations and surprises.}
+CPI expectations are the Cleveland Fed inflation nowcast for the reference month, taken
+from the last nowcast strictly before the release date; GDP expectations are the Atlanta
+Fed GDPNow forecast immediately before BEA's advance estimate. For payrolls, claims, PPI
+and retail sales we use real-time statistical expectations from the sequence of first
+prints (mean of the previous 3, 1, 6 and 6 prints respectively); survey consensus is not
+freely available and this limitation is stated wherever surprises are used. Surprises
+are standardised by the expanding standard deviation of past surprises of the same
+type (no look-ahead) and winsorised at $\pm4$.
+
+\paragraph{Prices.}
+FX (EUR/USD, USD/JPY), gold (XAU/USD) and an S\&P~500 CFD come from HistData
+millisecond bid/ask ticks (stamped in fixed EST, converted to UTC); BTC and ETH from
+Binance USD\textsuperscript{\tiny M}-futures aggregated trades. A clock check at a
+CPI release confirms activity jumps within one second of the scheduled time in both
+sources. The HistData feed has a gap from February to July 2023 for all four
+instruments; windows without at least 90\% of 10-minute blocks containing five ticks
+are excluded (per window, documented in the data card).
+
+\paragraph{Events and windows.}
+Prices are converted to $\delta$-crossing events with $\delta$ calibrated per asset so
+that the median intraday rate is about 0.2 events per second:
+$\delta=0.35$ (EUR/USD), $0.25$ (USD/JPY), $0.7$ (XAU/USD), $0.7$ (S\&P~500 CFD) and
+$3.0$ (BTC, ETH) basis points. Releases closer than 60 minutes are merged into one
+window $[\text{first}-30\,\text{min},\ \text{last}+60\,\text{min})$ with 30 minutes of
+burn-in history. Each window is matched with a placebo window at the same UTC clock
+times on the same weekday one to three weeks away and with no scheduled release within
+three hours; its pseudo-releases carry the PLACEBO type.

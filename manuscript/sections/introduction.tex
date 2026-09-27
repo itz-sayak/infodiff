@@ -1,0 +1,51 @@
+\section{Introduction}\label{sec:intro}
+
+Scheduled macroeconomic releases are the cleanest natural experiments in finance: the
+time of the shock is known to the second, its content is unknown until release, and
+its surprise relative to expectations can be measured. How fast prices absorb such
+information, and how much of the post-release activity is information versus the
+market reacting to itself, are old questions
+\citep{andersen2003micro,rambaldi2015modeling}. Hawkes processes answer the second
+question elegantly---the branching structure separates exogenous (news-driven)
+events from endogenous (self-excited) ones---and Rambaldi, Pennesi and Lillo
+\citep{rambaldi2015modeling} showed that adding a news kernel to a Hawkes model of FX
+quote activity captures the post-announcement burst.
+
+Three gaps remain. \emph{First}, the absorption speed is usually read off the news
+kernel alone (the ``half-life'' $\ln 2/\beta$ of an exponential), which ignores the
+endogenous echoes triggered by the news; when the branching ratio is close to one
+\citep{hardiman2013critical,filimonov2012quantifying} the echoes dominate the total
+response. \emph{Second}, estimation is fragile: flexible kernels are fitted by local
+optimisation of a non-convex likelihood, and branching ratios are biased upward when
+seasonality is mis-specified \citep{filimonov2015apparent}. \emph{Third}, the
+information content of the release (its surprise) enters, if at all, as a post-hoc
+correlate rather than as part of the model, and cross-market propagation is rarely
+modelled jointly.
+
+\paragraph{Contributions.}
+\begin{enumerate}
+\item \textbf{A certified estimator.} We represent every kernel---endogenous, news,
+anticipatory---in a phase-type dictionary (exponential and Erlang phases on a log grid
+of time scales). All parameters enter the intensity linearly, the log-likelihood is
+concave, and we compute the global maximum with accelerated EM and a barrier-Newton
+polish, returning a Fenchel duality gap that certifies optimality
+(Proposition~\ref{prop:gap}).
+\item \textbf{Echo-corrected absorption in closed form.} A Markov embedding turns the
+mean response to a release into $Ce^{\mathcal At}\bm z_0$. We prove that the embedding is
+stable iff the spectral radius of the branching matrix is below one
+(Theorem~\ref{thm:stab}) and obtain absorption quantiles, echo amplification and---via
+$\delta$-crossing sampling---exact expected price-discovery curves
+(Corollary~\ref{cor:abs}).
+\item \textbf{Identification by design.} Per-window baselines, time-of-day hats
+identified by matched placebo windows, and a PLACEBO news type whose fitted kernel must
+vanish give a falsification test built into the likelihood.
+\item \textbf{Surprise as a mark.} Standardised surprises from real-time nowcasts
+(Cleveland Fed CPI nowcast, Atlanta Fed GDPNow) and real-time statistical expectations
+enter the news kernel linearly and separately by sign.
+\item \textbf{EPT-TPP.} A neural temporal point process whose latent state is a
+nonnegative phase-type system: exact compensator, Bayes-optimal predictions, and it
+nests both multivariate Hawkes processes and RMTPP (Section~\ref{sec:ept}).
+\item \textbf{Benchmarks.} Synthetic recovery against six classical estimators, public
+neural-TPP benchmarks under the S2P2 protocol, LOBSTER limit-order-book streams, and
+post-release forecasting on a 2022--2026 six-asset news panel.
+\end{enumerate}

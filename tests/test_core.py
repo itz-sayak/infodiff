@@ -206,3 +206,22 @@ def test_loglik_bruteforce_erlang4():
         assert (ss.spectral_abscissa() < 0) == (ss.spectral_radius() < 1)
     finally:
         ENDO, EXO = old
+
+
+def test_observed_information_coverage():
+    """95% Wald intervals from the observed information cover the truth at ~nominal rate."""
+    d = 1
+    A = np.zeros((d, d, ENDO.K, ENDO.R))
+    A[0, 0, 1, 0] = 0.5
+    truth = HawkesTruth(endo=ENDO, A=A, mu=np.array([0.5]))
+    hits, n_rep = 0, 40
+    for rep in range(n_rep):
+        t0 = np.arange(10) * 3000.0
+        data = simulate(truth, t0=t0, t1=t0 + 2500.0, burn=100.0, seed=100 + rep)
+        dic = PhaseTypeDictionary(ENDO.betas[1:2], orders=1)  # correctly specified single kernel
+        m = MSXHawkes(DesignSpec(endo=dic), device="cpu", store_cov=True).fit(data)
+        idx, cov = m.cov[0]
+        j = list(idx).index(0)  # endogenous weight is parameter 0
+        se = np.sqrt(cov[j, j])
+        hits += abs(m.theta_d[0, 0] - 0.5) < 1.96 * se
+    assert 0.8 <= hits / n_rep <= 1.0, hits / n_rep
