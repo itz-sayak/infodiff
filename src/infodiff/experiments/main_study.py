@@ -44,9 +44,10 @@ class MainSpec:
         return DesignSpec(endo=self.endo, exo=self.exo, ant=self.ant, n_tod=self.n_tod)
 
 
-def fit(data: EventData, ms: MainSpec, device: str = "cpu", verbose: bool = True) -> MSXHawkes:
+def fit(data: EventData, ms: MainSpec, device: str | None = None, verbose: bool = True,
+        store_cov: bool = True) -> MSXHawkes:
     m = MSXHawkes(ms.design(), l1_endo=ms.l1_endo, l1_exo=ms.l1_exo, device=device, verbose=False,
-                  gap_tol=1e-2)
+                  gap_tol=1e-2, gap_rel=1e-7, store_cov=store_cov, dtype=__import__("torch").float32)
     t = time.time()
     m.fit(data)
     if verbose:
@@ -77,35 +78,39 @@ def analyse(m: MSXHawkes, data: EventData, ms: MainSpec, out: Path, tag: str,
     lay = m.layout
     base = m.theta_s[:, : data.n_windows].mean(axis=1)
     res["endogeneity"] = ss.endogeneity(np.maximum(base, 1e-12)).tolist() if res["rho"] < 1 else None
+    fine = np.geomspace(1e-3, 1e6, 361)  # 40 points per decade for quantiles
+    keep = np.unique(np.searchsorted(fine, t_grid))  # coarse subset stored for plots
+    keep = keep[keep < len(fine)]
     for name, c in types.items():
         entry = {}
         for zlab, z in (("z0", 0.0), ("zpos", 1.0), ("zneg", -1.0)):
             W = news_weights(m, data, c, z)
             if W.sum() <= 0:
                 continue
-            r = ss.news_response(ms.exo, W, t_grid)
+            r = ss.response_curves(ms.exo, W, fine)
             per_asset = {}
             for a, asset in enumerate(assets):
                 up, dn = 2 * a, 2 * a + 1
-                dims = np.array([up, dn])
-                act_tot = r.int_total[dims].sum()
-                act_dir = r.int_direct[dims].sum()
+                act_tot = r.int_total[up] + r.int_total[dn]
+                act_dir = r.int_direct[up] + r.int_direct[dn]
                 if act_dir <= 1e-9:
                     continue
+                ct = r.cum_total[:, up] + r.cum_total[:, dn]
+                cd = r.cum_direct[:, up] + r.cum_direct[:, dn]
+                q = ss.quantile_from_curve
                 row = dict(extra_events_direct=float(act_dir), extra_events_total=float(act_tot),
                            amplification=float(act_tot / act_dir),
-                           t50_direct=ss.absorption_time(ms.exo, W, 0.5, dims=dims, direct=True),
-                           t50_total=ss.absorption_time(ms.exo, W, 0.5, dims=dims),
-                           t90_direct=ss.absorption_time(ms.exo, W, 0.9, dims=dims, direct=True),
-                           t90_total=ss.absorption_time(ms.exo, W, 0.9, dims=dims))
+                           t50_direct=q(fine, cd, act_dir, 0.5), t50_total=q(fine, ct, act_tot, 0.5),
+                           t90_direct=q(fine, cd, act_dir, 0.9), t90_total=q(fine, ct, act_tot, 0.9))
                 drift = deltas[asset] * (r.cum_total[:, up] - r.cum_total[:, dn])
                 row["drift_bps_final"] = float(deltas[asset] * (r.int_total[up] - r.int_total[dn]))
-                row["drift_bps_curve"] = drift.tolist()
-                row["activity_curve_total"] = (r.total[:, up] + r.total[:, dn]).tolist()
-                row["activity_curve_direct"] = (r.direct[:, up] + r.direct[:, dn]).tolist()
+                row["drift_bps_curve"] = drift[keep].tolist()
+                row["activity_curve_total"] = (r.total[keep, up] + r.total[keep, dn]).tolist()
+                row["activity_curve_direct"] = (r.direct[keep, up] + r.direct[keep, dn]).tolist()
                 per_asset[asset] = row
             entry[zlab] = per_asset
         res["per_type"][name] = entry
+    t_grid = fine[keep]
     res["t_grid"] = t_grid.tolist()
     # placebo falsification: total news-kernel mass of the PLACEBO type vs real types
     if "PLACEBO" in types:

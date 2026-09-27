@@ -1,0 +1,47 @@
+\section{Benchmark protocol}\label{sec:bench}
+
+All result tables are regenerated from JSON files written by the scripts in
+\texttt{scripts/}; every method is run by us on identical data unless a table
+explicitly cites published numbers.
+
+\paragraph{Track A: synthetic recovery.}
+Five truths, simulated by exact cluster sampling, deliberately include kernels
+\emph{outside} the MSX class: S1 exponential (the home turf of single-decay estimators),
+S2 a true power law (Lomax, tail exponent $1.5$, as reported for FX and futures), S3 a
+gamma hump plus a fast exponential, S4 a sparse 4-dimensional multiscale network
+(10\,ms and 30\,s components), S5 a sparse 10-dimensional power-law network. Each
+scenario uses 10 windows per train and test set and five seeds. Competitors:
+tick's exponential-kernel MLE (decay chosen by training likelihood),
+sum-of-exponentials MLE on the same decay grid as MSX, the nonparametric EM of
+Lewis--Mohler type, ADM4 \citep{zhou2013learning}, the conditional-law estimator
+\citep{bacry2016estimation} (quadrature chosen by training likelihood), and NPHC
+\citep{achab2017uncovering} (our PyTorch solver; tick~0.8 ships a stub). Metrics:
+relative Frobenius error of the branching matrix, spectral-radius error, relative $L^1$
+kernel error on lags $10^{-4}$--$10^4$\,s, edge AUC/AP, and held-out log-likelihood
+deficit per event relative to the true model (\emph{dLL}, lower is better).
+MSX-auto chooses the Erlang order and an exposure-weighted $\ell_1$ level on held-out
+training windows only.
+
+\paragraph{Track B: public marked-TPP benchmarks.}
+EasyTPP splits of Amazon, Retweet, Taxi, Taobao and StackOverflow and the protocol of
+S2P2 \citep{chang2025deep}: log-likelihood per scored event with the first event of each
+sequence as conditioning, model selection on validation likelihood, five seeds.
+Published numbers are quoted from \citet{chang2025deep}; our re-run of S2P2 validates the
+harness. EPT-TPP reports the \emph{exact} likelihood; neural baselines estimate the
+compensator by Monte Carlo.
+
+\paragraph{Track C: limit-order-book event streams.}
+LOBSTER samples (AAPL, AMZN, GOOG, INTC, MSFT, 21 June 2012), six event types (limit
+orders, cancellations and market orders on each side), a chronological 60/20/20 split,
+sequences of 128 events. Neural baselines (RMTPP, NHP, THP, SAHP, AttNHP,
+IntensityFree, S2P2) run with the S2P2 authors' configurations; on our 8\,GB laptop GPU
+the batch size is reduced from 256 to 64 to avoid the Windows GPU watchdog. The classical
+Hawkes family is scored under the same protocol.
+
+\paragraph{Track D: post-release forecasting.}
+Chronological split of the news panel (train 2022--2024, test 2025--2026). Targets are
+the number of $\delta$-crossings (activity, and realised variance $\delta^2N$) and the
+signed drift in the 1, 5 and 15 minutes after each release. MSX forecasts are the closed
+form of Section~\ref{sec:theory} with the window baseline re-estimated from the
+pre-release data; baselines are same-type climatology, an event-study regression on
+pre-release activity and $|z|$, and a HAR regression on lagged activity.

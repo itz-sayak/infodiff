@@ -151,6 +151,56 @@ class StateSpaceHawkes:
                 hi = mid
         return float(np.exp(0.5 * (lo + hi)))
 
+    def response_curves(self, exo: PhaseTypeDictionary, W: np.ndarray, t_grid: np.ndarray) -> NewsResponse:
+        """Fast echo-corrected and direct responses on an increasing grid.
+
+        Uses the action of exp(t M) with the augmented generator M = [[A, z0], [0, 0]],
+        whose last column gives Z(t) = int_0^t e^{As} z0 ds (no matrix inverse, no dense
+        expm per point); then r(t) = C (A Z(t) + z0) and cum(t) = C Z(t).  Evaluated
+        segment by segment with scipy's expm_multiply."""
+        from scipy.sparse.linalg import expm_multiply
+
+        A, C, z0, Fe, Th_e, y0 = self._system(exo, W)
+
+        def curves(Am, Cm, v0):
+            n = Am.shape[0]
+            M = np.zeros((n + 1, n + 1))
+            M[:n, :n] = Am
+            M[:n, n] = v0
+            e = np.zeros(n + 1)
+            e[n] = 1.0
+            Z = np.zeros((len(t_grid), n))
+            state, t_prev = e.copy(), 0.0
+            # march along the grid: exp(dt M) applied to the running state
+            for k, t in enumerate(t_grid):
+                state = expm_multiply(M * (t - t_prev), state)
+                Z[k] = state[:n]
+                t_prev = t
+            cum = Z @ Cm.T
+            rate = (Z @ Am.T + v0) @ Cm.T
+            total = -Cm @ np.linalg.solve(Am, v0)
+            return rate, cum, total
+
+        tot, ctot, itot = curves(A, C, z0)
+        dirc, cdir, idir = curves(Fe, Th_e, y0)
+        return NewsResponse(t=np.asarray(t_grid), total=tot, direct=dirc, cum_total=ctot, cum_direct=cdir,
+                            int_total=itot, int_direct=idir)
+
+    @staticmethod
+    def quantile_from_curve(t_grid: np.ndarray, cum: np.ndarray, total: float, q: float) -> float:
+        """t with cum(t)/total = q by log-linear interpolation on the grid (inf if not reached)."""
+        if not np.isfinite(total) or total <= 0:
+            return np.nan
+        f = cum / total
+        k = np.searchsorted(f, q)
+        if k >= len(f):
+            return np.inf
+        if k == 0:
+            return float(t_grid[0])
+        f0, f1 = f[k - 1], f[k]
+        w = (q - f0) / max(f1 - f0, 1e-300)
+        return float(np.exp(np.log(t_grid[k - 1]) + w * (np.log(t_grid[k]) - np.log(t_grid[k - 1]))))
+
     def amplification(self, exo: PhaseTypeDictionary, W: np.ndarray) -> np.ndarray:
         """Total / direct expected extra events per dimension (echo multiplier)."""
         A, C, z0, Fe, Th_e, y0 = self._system(exo, W)

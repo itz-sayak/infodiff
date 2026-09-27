@@ -101,7 +101,7 @@ def test_em_certified_global_optimum():
     truth = _truth()
     data = _sim(truth, W=20)
     spec = DesignSpec(endo=ENDO, exo=EXO, ant=ANT, n_tod=0)
-    m = MSXHawkes(spec, device="cpu", gap_tol=1e-6).fit(data)
+    m = MSXHawkes(spec, device="cpu", gap_tol=1e-6, gap_rel=0.0).fit(data)
     for rep in m.reports:
         assert rep.gap < 1e-6
         # KKT: expected count equals observed count for unpenalised fits
@@ -225,3 +225,22 @@ def test_observed_information_coverage():
         se = np.sqrt(cov[j, j])
         hits += abs(m.theta_d[0, 0] - 0.5) < 1.96 * se
     assert 0.8 <= hits / n_rep <= 1.0, hits / n_rep
+
+
+def test_fast_curves_match_dense_expm():
+    rng = np.random.default_rng(3)
+    d = 2
+    A = rng.uniform(0, 1, (d, d, ENDO.K, ENDO.R))
+    A *= 0.7 / A.sum(axis=(1, 2, 3), keepdims=True)
+    W = rng.uniform(0, 2, (d, EXO.K, EXO.R))
+    ss = StateSpaceHawkes(ENDO, A)
+    t = np.geomspace(0.01, 500, 60)
+    slow = ss.news_response(EXO, W, t)
+    fast = ss.response_curves(EXO, W, t)
+    assert np.allclose(slow.cum_total, fast.cum_total, rtol=1e-6, atol=1e-9)
+    assert np.allclose(slow.total, fast.total, rtol=1e-6, atol=1e-9)
+    assert np.allclose(slow.cum_direct, fast.cum_direct, rtol=1e-6, atol=1e-9)
+    fine = np.geomspace(1e-4, 1e6, 401)
+    ff = ss.response_curves(EXO, W, fine)
+    tq = ss.quantile_from_curve(fine, ff.cum_total.sum(1), ff.int_total.sum(), 0.5)
+    assert np.isclose(tq, ss.absorption_time(EXO, W, 0.5), rtol=0.02)

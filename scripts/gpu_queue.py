@@ -10,9 +10,10 @@ import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-JOBS = ROOT / "results" / "gpu_jobs.txt"
-DONE = ROOT / "results" / "gpu_jobs.done"
-LOGS = ROOT / "results" / "logs" / "gpu"
+QNAME = sys.argv[1] if len(sys.argv) > 1 else "gpu"
+JOBS = ROOT / "results" / f"{QNAME}_jobs.txt"
+DONE = ROOT / "results" / f"{QNAME}_jobs.done"
+LOGS = ROOT / "results" / "logs" / QNAME
 
 
 def pending():
@@ -39,11 +40,14 @@ def main():
             continue
         idle = 0
         name, cmd = job
+        env = dict(__import__("os").environ)
+        if QNAME == "cpu":
+            env["CUDA_VISIBLE_DEVICES"] = ""
         for attempt in (1, 2):
             with open(LOGS / f"{name}.log", "a") as log:
                 log.write(f"\n=== {time.ctime()} attempt {attempt}: {cmd}\n")
                 log.flush()
-                rc = subprocess.call(cmd, shell=True, cwd=ROOT, stdout=log, stderr=subprocess.STDOUT)
+                rc = subprocess.call(cmd, shell=True, cwd=ROOT, stdout=log, stderr=subprocess.STDOUT, env=env)
             if rc == 0:
                 break
             time.sleep(20)

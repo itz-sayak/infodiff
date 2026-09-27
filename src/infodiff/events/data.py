@@ -109,3 +109,25 @@ class EventData:
     def counts(self) -> np.ndarray:
         """Number of in-likelihood events per dimension."""
         return np.bincount(self.types[self.in_likelihood()], minlength=self.n_dims)
+
+
+def concat_eventdata(parts: list[EventData]) -> EventData:
+    """Concatenate window sets that share dimensions, news types and mark layout."""
+    t, u, ptr, nt, nty, nm, nptr, metas = [], [], [0], [], [], [], [0], []
+    for p in parts:
+        t.append(p.times)
+        u.append(p.types)
+        ptr.extend(list(ptr[-1] + p.wptr[1:]))
+        nt.append(p.news_t)
+        nty.append(p.news_type)
+        nm.append(p.news_marks)
+        nptr.extend(list(nptr[-1] + p.news_ptr[1:]))
+        metas.extend(p.meta.get("windows", []))
+    first = parts[0]
+    meta = {k: v for k, v in first.meta.items() if k != "windows"}
+    meta["windows"] = metas
+    return EventData(times=np.concatenate(t), types=np.concatenate(u), wptr=np.asarray(ptr),
+                     t0=np.concatenate([p.t0 for p in parts]), t1=np.concatenate([p.t1 for p in parts]),
+                     n_dims=first.n_dims, tod0=np.concatenate([p.tod0 for p in parts]),
+                     news_ptr=np.asarray(nptr), news_t=np.concatenate(nt), news_type=np.concatenate(nty),
+                     news_marks=np.concatenate(nm), n_news_types=first.n_news_types, meta=meta)

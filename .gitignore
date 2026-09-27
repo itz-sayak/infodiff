@@ -16,3 +16,4 @@ manuscript/*.out
 manuscript/*.bbl
 manuscript/*.blg
 *.egg-info/
+.venv_cu126/

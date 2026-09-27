@@ -88,18 +88,30 @@ class _Problem:
         return float(dual - primal), float(primal)
 
 
-def _hessian(prob: _Problem, Xs_sp: sp.csr_matrix, Dv: torch.Tensor) -> torch.Tensor:
-    """X^T diag(Dv) X assembled blockwise (dense endo, sparse baseline/news)."""
+def _hessian(prob: _Problem, Xs_sp: sp.csr_matrix, Dv: torch.Tensor, chunk: int = 200_000) -> torch.Tensor:
+    """X^T diag(Dv) X assembled blockwise and streamed over row chunks.
+
+    Products are formed in the design dtype and accumulated in float64, so memory stays
+    O(chunk * P) on the device (the duality-gap certificate is evaluated separately in
+    float64, so reduced-precision Newton directions cannot compromise it)."""
     P = prob.c.numel()
     Pd = prob.Pd
-    H = torch.zeros((P, P), dtype=torch.float64, device=Dv.device)
-    if Pd:
-        XdD = prob.Xd.double() * Dv[:, None]
-        H[:Pd, :Pd] = prob.Xd.double().T @ XdD
-        H[Pd:, :Pd] = torch.sparse.mm(prob.XsT.double() if prob.dtype != torch.float64 else prob.XsT, XdD)
-        H[:Pd, Pd:] = H[Pd:, :Pd].T
+    dev = Dv.device
+    H = torch.zeros((P, P), dtype=torch.float64, device=dev)
+    n = Dv.numel()
     Dn = Dv.cpu().numpy()
-    H[Pd:, Pd:] = torch.as_tensor((Xs_sp.T @ Xs_sp.multiply(Dn[:, None])).toarray(), device=Dv.device)
+    for a in range(0, n, chunk):
+        b = min(n, a + chunk)
+        d = Dv[a:b].to(prob.dtype)
+        if Pd:
+            Xc = prob.Xd[a:b]
+            XdD = Xc * d[:, None]
+            H[:Pd, :Pd] += (Xc.T @ XdD).double()
+            XsT_c = _to_torch_csr(Xs_sp[a:b].T.tocsr(), dev, prob.dtype)
+            H[Pd:, :Pd] += torch.sparse.mm(XsT_c, XdD).double()
+    if Pd:
+        H[:Pd, Pd:] = H[Pd:, :Pd].T
+    H[Pd:, Pd:] = torch.as_tensor((Xs_sp.T @ Xs_sp.multiply(Dn[:, None])).toarray(), device=dev)
     return H
 
 
@@ -225,7 +237,11 @@ class MSXHawkes:
 
     def __init__(self, spec: DesignSpec, l1_endo: float = 0.0, l1_exo: float = 0.0, l1_tod: float = 1e-3,
                  device: str | None = None, dtype=torch.float64, max_iter: int = 400, tol: float = 1e-9,
-                 gap_tol: float = 1e-4, newton: bool = True, verbose: bool = False, store_cov: bool = False):
+                 gap_tol: float = 1e-4, newton: bool = True, verbose: bool = False, store_cov: bool = False,
+                 gap_rel: float = 1e-7):
+        # certificate tolerance: max(gap_tol, gap_rel * N) nats -- sub-optimality far below
+        # sampling error (O(1) nats) for large N
+        self.gap_rel = gap_rel
         self.newton = newton
         self.store_cov = store_cov
         self.cov: dict = {}
@@ -280,13 +296,14 @@ class MSXHawkes:
             th, hist, it = _squarem(prob, th0, self.max_iter, self.tol, self.verbose)
             gap, ll = prob.dual_gap(th)
             extra = 0
-            if gap > self.gap_tol and self.newton:
-                th_n = _interior_point(prob, des.Xs, th, self.gap_tol, verbose=self.verbose)
+            tol_i = max(self.gap_tol, self.gap_rel * des.n)
+            if gap > tol_i and self.newton:
+                th_n = _interior_point(prob, des.Xs, th, tol_i, verbose=self.verbose)
                 gap_n, ll_n = prob.dual_gap(th_n)
                 if ll_n >= ll - 1e-9:
                     th, gap, ll = th_n, gap_n, ll_n
                 hist.append(ll)
-            while gap > self.gap_tol and extra < 5000:  # EM fallback
+            while gap > tol_i and extra < 5000:  # EM fallback
                 for _ in range(100):
                     th, _, _ = prob.em_step(th)
                 extra += 100
