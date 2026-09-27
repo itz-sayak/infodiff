@@ -45,8 +45,9 @@ easy_RMTPP_lob_msft | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines
 easy_SAHP_lob_msft | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner SAHP lob_msft 6 2019 100
 easy_AttNHP_lob_msft | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner AttNHP lob_msft 6 2019 100
 easy_IntensityFree_lob_msft | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner IntensityFree lob_msft 6 2019 100
-ept_taxi_5seeds | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept.py taxi 0,1,2,3,4 "{\"epochs\":300,\"phases\":2}"
-ept_taobao_5seeds | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept.py taobao 0,1,2,3,4 "{\"epochs\":300,\"phases\":2}"
-ept_stackoverflow_5seeds | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept.py stackoverflow 0,1,2,3,4 "{\"epochs\":300,\"phases\":2}"
-ept_amazon_5seeds | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept.py amazon 0,1,2,3,4 "{\"epochs\":300,\"phases\":2}"
-ept_retweet_5seeds | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept.py retweet 0,1,2,3,4 "{\"epochs\":300,\"phases\":2}"
+ept_hpo | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_hpo.py taxi,taobao,stackoverflow
+ept_taxi_5seeds | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept.py taxi 0,1,2,3,4 "auto:{\"epochs\":300}"
+ept_taobao_5seeds | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept.py taobao 0,1,2,3,4 "auto:{\"epochs\":300}"
+ept_stackoverflow_5seeds | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept.py stackoverflow 0,1,2,3,4 "auto:{\"epochs\":300}"
+ept_amazon_5seeds | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept.py amazon 0,1,2,3,4 "auto:{\"epochs\":300}"
+ept_retweet_5seeds | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept.py retweet 0,1,2,3,4 "auto:{\"epochs\":300}"
