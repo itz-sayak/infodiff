@@ -152,14 +152,11 @@ class StateSpaceHawkes:
         return float(np.exp(0.5 * (lo + hi)))
 
     def response_curves(self, exo: PhaseTypeDictionary, W: np.ndarray, t_grid: np.ndarray) -> NewsResponse:
-        """Fast echo-corrected and direct responses on an increasing grid.
+        """Echo-corrected and direct responses on an increasing grid.
 
-        Uses the action of exp(t M) with the augmented generator M = [[A, z0], [0, 0]],
-        whose last column gives Z(t) = int_0^t e^{As} z0 ds (no matrix inverse, no dense
-        expm per point); then r(t) = C (A Z(t) + z0) and cum(t) = C Z(t).  Evaluated
-        segment by segment with scipy's expm_multiply."""
-        from scipy.sparse.linalg import expm_multiply
-
+        Marches the augmented generator M = [[A, z0], [0, 0]] along the grid with exact
+        dense matrix exponentials of the step lengths; the last column of the running
+        state is Z(t) = int_0^t e^{As} z0 ds, so r(t) = C (A Z(t) + z0) and cum(t) = C Z(t)."""
         A, C, z0, Fe, Th_e, y0 = self._system(exo, W)
 
         def curves(Am, Cm, v0):
@@ -167,24 +164,44 @@ class StateSpaceHawkes:
             M = np.zeros((n + 1, n + 1))
             M[:n, :n] = Am
             M[:n, n] = v0
-            e = np.zeros(n + 1)
-            e[n] = 1.0
+            state = np.zeros(n + 1)
+            state[n] = 1.0
             Z = np.zeros((len(t_grid), n))
-            state, t_prev = e.copy(), 0.0
-            # march along the grid: exp(dt M) applied to the running state
+            t_prev = 0.0
             for k, t in enumerate(t_grid):
-                state = expm_multiply(M * (t - t_prev), state)
+                state = expm(M * (t - t_prev)) @ state
                 Z[k] = state[:n]
                 t_prev = t
-            cum = Z @ Cm.T
-            rate = (Z @ Am.T + v0) @ Cm.T
-            total = -Cm @ np.linalg.solve(Am, v0)
-            return rate, cum, total
+            return (Z @ Am.T + v0) @ Cm.T, Z @ Cm.T, -Cm @ solve(Am, v0)
 
         tot, ctot, itot = curves(A, C, z0)
         dirc, cdir, idir = curves(Fe, Th_e, y0)
         return NewsResponse(t=np.asarray(t_grid), total=tot, direct=dirc, cum_total=ctot, cum_direct=cdir,
                             int_total=itot, int_direct=idir)
+
+    def refine_quantile(self, exo: PhaseTypeDictionary, W: np.ndarray, dims: np.ndarray, q: float,
+                        t_guess: float, direct: bool = False, iters: int = 3, width: float = 1.25) -> float:
+        """Polish a grid quantile with a few exact bisection steps in log t."""
+        if not np.isfinite(t_guess):
+            return t_guess
+        A, C, z0, Fe, Th_e, y0 = self._system(exo, W)
+        if direct:
+            A, C, z0 = Fe, Th_e, y0
+        c = C[np.asarray(dims)].sum(0)
+        Ainv_z0 = solve(A, z0)
+        total = -c @ Ainv_z0
+
+        def frac(tt):
+            return (c @ (solve(A, expm(A * tt) @ z0) - Ainv_z0)) / total
+
+        lo, hi = np.log(t_guess / width), np.log(t_guess * width)
+        for _ in range(iters):
+            mid = 0.5 * (lo + hi)
+            if frac(np.exp(mid)) < q:
+                lo = mid
+            else:
+                hi = mid
+        return float(np.exp(0.5 * (lo + hi)))
 
     @staticmethod
     def quantile_from_curve(t_grid: np.ndarray, cum: np.ndarray, total: float, q: float) -> float:

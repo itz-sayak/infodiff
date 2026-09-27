@@ -2985,6 +2985,68 @@
  {
   "scenario": "S5-network10",
   "seed": 3,
+  "method": "MSX-auto (ours)",
+  "key": "MSX-auto",
+  "n_train": 178220,
+  "G_err": 0.04349233844414025,
+  "rho_err": 0.021027197126636032,
+  "kern_L1": 0.07624951674804685,
+  "seconds": 626.5482993125916,
+  "AUC": 1.0,
+  "AP": 1.0,
+  "dLL": 0.0008195105796271312,
+  "cert_gap": 0.00018798084056470543,
+  "R": 1,
+  "l1": 0.01
+ },
+ {
+  "scenario": "S5-network10",
+  "seed": 3,
+  "method": "MSX (ours)",
+  "key": "MSX",
+  "n_train": 178220,
+  "G_err": 0.1084494258395414,
+  "rho_err": 0.02218789587492409,
+  "kern_L1": 0.18154570000275927,
+  "seconds": 45.53481960296631,
+  "AUC": 1.0,
+  "AP": 1.0,
+  "dLL": 0.0011972368108025154,
+  "cert_gap": 0.00020321174815762788
+ },
+ {
+  "scenario": "S5-network10",
+  "seed": 3,
+  "method": "MSX-R4 (ours, fixed Erlang-4)",
+  "key": "MSX-R4",
+  "n_train": 178220,
+  "G_err": 0.11757732990788328,
+  "rho_err": 0.03534841300266789,
+  "kern_L1": 0.21885135657385107,
+  "seconds": 121.63961291313171,
+  "AUC": 1.0,
+  "AP": 1.0,
+  "dLL": 0.0017085238098892566,
+  "cert_gap": 0.0002051846677204594
+ },
+ {
+  "scenario": "S5-network10",
+  "seed": 3,
+  "method": "MSX-exp (ablation: no Erlang)",
+  "key": "MSX-exp",
+  "n_train": 178220,
+  "G_err": 0.09098918668829388,
+  "rho_err": 0.009526536845192002,
+  "kern_L1": 0.14363572396918797,
+  "seconds": 14.251198530197144,
+  "AUC": 1.0,
+  "AP": 1.0,
+  "dLL": 0.0007942399127942851,
+  "cert_gap": 0.00020762859276146628
+ },
+ {
+  "scenario": "S5-network10",
+  "seed": 3,
   "method": "tick-ExpKern(MLE, best decay)",
   "key": "ExpKern",
   "n_train": 178220,
@@ -2996,6 +3058,12 @@
   "AP": 0.8222222222222222,
   "dLL": 0.7739142061137758,
   "decay": 0.01
+ },
+ {
+  "scenario": "S5-network10",
+  "seed": 3,
+  "method": "SumExp",
+  "error": "RuntimeError('The sum of the influence on someone cannot be negative. Maybe did you forget to add a positive constraint to your proximal operator\\n')"
  },
  {
   "scenario": "S5-network10",
@@ -3025,6 +3093,19 @@
   "AUC": 1.0,
   "AP": 1.0,
   "dLL": 0.005044443232973975
+ },
+ {
+  "scenario": "S5-network10",
+  "seed": 3,
+  "method": "NPHC(cumulants)",
+  "key": "NPHC",
+  "n_train": 178220,
+  "G_err": 1.2919380048230134,
+  "rho_err": 0.3968671401460633,
+  "kern_L1": NaN,
+  "seconds": 1.1171514987945557,
+  "AUC": 0.6388888888888888,
+  "AP": 0.35709202984026645
  },
  {
   "scenario": "S5-network10",

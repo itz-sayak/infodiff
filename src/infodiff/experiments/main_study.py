@@ -79,7 +79,7 @@ def analyse(m: MSXHawkes, data: EventData, ms: MainSpec, out: Path, tag: str,
     base = m.theta_s[:, : data.n_windows].mean(axis=1)
     res["endogeneity"] = ss.endogeneity(np.maximum(base, 1e-12)).tolist() if res["rho"] < 1 else None
     t_start = time.time()
-    fine = np.geomspace(1e-3, 1e6, 361)  # 40 points per decade for quantiles
+    fine = np.geomspace(1e-3, 1e6, 181)  # 20 points per decade; quantiles refined exactly
     keep = np.unique(np.searchsorted(fine, t_grid))  # coarse subset stored for plots
     keep = keep[keep < len(fine)]
     for name, c in types.items():
@@ -99,10 +99,12 @@ def analyse(m: MSXHawkes, data: EventData, ms: MainSpec, out: Path, tag: str,
                 ct = r.cum_total[:, up] + r.cum_total[:, dn]
                 cd = r.cum_direct[:, up] + r.cum_direct[:, dn]
                 q = ss.quantile_from_curve
+                dm = np.array([up, dn])
+                ref = lambda qq, cur, tot, direct: ss.refine_quantile(ms.exo, W, dm, qq, q(fine, cur, tot, qq), direct)
                 row = dict(extra_events_direct=float(act_dir), extra_events_total=float(act_tot),
                            amplification=float(act_tot / act_dir),
-                           t50_direct=q(fine, cd, act_dir, 0.5), t50_total=q(fine, ct, act_tot, 0.5),
-                           t90_direct=q(fine, cd, act_dir, 0.9), t90_total=q(fine, ct, act_tot, 0.9))
+                           t50_direct=ref(0.5, cd, act_dir, True), t50_total=ref(0.5, ct, act_tot, False),
+                           t90_direct=ref(0.9, cd, act_dir, True), t90_total=ref(0.9, ct, act_tot, False))
                 drift = deltas[asset] * (r.cum_total[:, up] - r.cum_total[:, dn])
                 row["drift_bps_final"] = float(deltas[asset] * (r.int_total[up] - r.int_total[dn]))
                 row["drift_bps_curve"] = drift[keep].tolist()
