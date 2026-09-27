@@ -1,0 +1,4 @@
+l1= 0.20 val_ll=    -496866.09 mean release mass    10.8 mean placebo mass     6.2 gap 7.0e-04 300s
+l1= 0.40 val_ll=    -496799.56 mean release mass     5.2 mean placebo mass     2.9 gap 7.4e-04 301s
+l1= 0.80 val_ll=    -496772.43 mean release mass     1.8 mean placebo mass     1.0 gap 7.2e-04 291s
+l1= 1.60 val_ll=    -496792.91 mean release mass     0.4 mean placebo mass     0.4 gap 7.4e-04 286s

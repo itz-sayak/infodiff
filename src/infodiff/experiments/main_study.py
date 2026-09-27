@@ -41,7 +41,7 @@ class MainSpec:
     n_tod: int = 96
     win_cols: int = 2  # per-window linear baseline (identified with the placebo windows)
     l1_endo: float = 0.0
-    l1_exo: float = 0.0
+    l1_exo: float = 0.8  # exposure-weighted L1 on news/anticipation kernels, selected on held-out 2024 windows
 
     def design(self) -> DesignSpec:
         return DesignSpec(endo=self.endo, exo=self.exo, ant=self.ant, n_tod=self.n_tod, win_cols=self.win_cols)
