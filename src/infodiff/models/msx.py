@@ -318,11 +318,15 @@ class MSXHawkes:
             gap, ll = prob.dual_gap(th)
             extra = 0
             tol_i = max(self.gap_tol, self.gap_rel * des.n)
-            if gap > tol_i and self.newton:
+            passes = 0
+            while gap > tol_i and self.newton and passes < 3:  # restart the barrier path if it stalls
                 th_n = _interior_point(prob, des.Xs, th, tol_i, verbose=self.verbose)
                 gap_n, ll_n = prob.dual_gap(th_n)
+                passes += 1
                 if ll_n >= ll - 1e-9:
                     th, gap, ll = th_n, gap_n, ll_n
+                else:
+                    break
                 hist.append(ll)
             while gap > tol_i and extra < 5000:  # EM fallback
                 for _ in range(100):

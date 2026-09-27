@@ -14,3 +14,6 @@
   dim 10 n=  165958 ll=     381110.14 gap=2.6e+00 it=5125 125s
   dim 11 n=  165770 ll=     381346.33 gap=1.3e+00 it=5188 117s
   total fit 1055s
+
+=== Mon Sep 28 01:48:40 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2024
+2024: windows=169 events=1690655
