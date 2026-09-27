@@ -41,37 +41,58 @@ def _to_torch_csr(X: sp.csr_matrix, device, dtype):
 
 
 class _Problem:
-    """Concave Poisson-linear problem on a device."""
+    """Concave Poisson-linear problem on a device.
+
+    The dense block may be *stored* in float32 (memory) but every matrix-vector product is
+    carried out in float64 over row chunks: float32 entries are exact in float64, so the
+    objective, the EM map and the duality-gap certificate are computed to float64
+    accuracy (float32 arithmetic makes the barrier line search fail on 10^5-10^6 events).
+    The sparse block is always float64."""
+
+    CHUNK = 262_144
 
     def __init__(self, design: Design, gamma_d: np.ndarray, gamma_s: np.ndarray, device: str, dtype):
         self.device, self.dtype = device, dtype
         self.Xd = torch.as_tensor(design.Xd, device=device, dtype=dtype)
-        self.Xs = _to_torch_csr(design.Xs, device, dtype)
-        self.XsT = _to_torch_csr(design.Xs.T.tocsr(), device, dtype)
+        self.Xs = _to_torch_csr(design.Xs, device, torch.float64)
+        self.XsT = _to_torch_csr(design.Xs.T.tocsr(), device, torch.float64)
         self.c = torch.as_tensor(np.concatenate([design.integ_d + gamma_d, design.integ_s + gamma_s]),
                                  device=device, dtype=torch.float64)
         self.Pd = design.Xd.shape[1]
         self.n = design.n
 
+    def _dense_mv(self, thd):
+        if self.Xd.dtype == torch.float64:
+            return torch.mv(self.Xd, thd)
+        return torch.cat([torch.mv(self.Xd[a:a + self.CHUNK].double(), thd)
+                          for a in range(0, self.n, self.CHUNK)])
+
+    def _dense_tmv(self, v):
+        if self.Xd.dtype == torch.float64:
+            return torch.mv(self.Xd.T, v)
+        out = torch.zeros(self.Pd, dtype=torch.float64, device=v.device)
+        for a in range(0, self.n, self.CHUNK):
+            out += torch.mv(self.Xd[a:a + self.CHUNK].double().T, v[a:a + self.CHUNK])
+        return out
+
     def lam(self, th):
-        thd = th[: self.Pd].to(self.dtype)
-        ths = th[self.Pd:].to(self.dtype)
-        out = torch.mv(self.Xs, ths)
+        th = th.double()
+        out = torch.mv(self.Xs, th[self.Pd:])
         if self.Pd:
-            out = out + torch.mv(self.Xd, thd)
+            out = out + self._dense_mv(th[: self.Pd])
         return out
 
     def xt(self, v):
-        v = v.to(self.dtype)
+        v = v.double()
         parts = []
         if self.Pd:
-            parts.append(torch.mv(self.Xd.T, v).double())
-        parts.append(torch.mv(self.XsT, v).double())
+            parts.append(self._dense_tmv(v))
+        parts.append(torch.mv(self.XsT, v))
         return torch.cat(parts)
 
     def loglik(self, th, lam=None):
         lam = self.lam(th) if lam is None else lam
-        return torch.log(lam.double()).sum() - torch.dot(self.c, th)
+        return torch.log(lam).sum() - torch.dot(self.c, th)
 
     def em_step(self, th):
         lam = self.lam(th)
@@ -79,7 +100,7 @@ class _Problem:
         return th * num / self.c, lam, num
 
     def dual_gap(self, th):
-        lam = self.lam(th).double()
+        lam = self.lam(th)
         num = self.xt(1.0 / lam)
         s = torch.max(num / self.c)
         # v = (1/lam)/s  ->  D(v) = -n - sum log v = -n + sum log lam + n log s
@@ -102,13 +123,13 @@ def _hessian(prob: _Problem, Xs_sp: sp.csr_matrix, Dv: torch.Tensor, chunk: int 
     Dn = Dv.cpu().numpy()
     for a in range(0, n, chunk):
         b = min(n, a + chunk)
-        d = Dv[a:b].to(prob.dtype)
+        d = Dv[a:b].double()
         if Pd:
-            Xc = prob.Xd[a:b]
+            Xc = prob.Xd[a:b].double()
             XdD = Xc * d[:, None]
-            H[:Pd, :Pd] += (Xc.T @ XdD).double()
-            XsT_c = _to_torch_csr(Xs_sp[a:b].T.tocsr(), dev, prob.dtype)
-            H[Pd:, :Pd] += torch.sparse.mm(XsT_c, XdD).double()
+            H[:Pd, :Pd] += Xc.T @ XdD
+            XsT_c = _to_torch_csr(Xs_sp[a:b].T.tocsr(), dev, torch.float64)
+            H[Pd:, :Pd] += torch.sparse.mm(XsT_c, XdD)
     if Pd:
         H[:Pd, Pd:] = H[Pd:, :Pd].T
     H[Pd:, Pd:] = torch.as_tensor((Xs_sp.T @ Xs_sp.multiply(Dn[:, None])).toarray(), device=dev)
