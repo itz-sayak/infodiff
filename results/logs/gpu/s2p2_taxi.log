@@ -1,0 +1,63 @@
+
+=== Sun Sep 27 22:22:06 2026 attempt 1: .venv/Scripts/python -u -m infodiff.baselines.easytpp_runner S2P2 taxi 10 2019
+'.venv' is not recognized as an internal or external command,
+operable program or batch file.
+
+=== Sun Sep 27 22:22:26 2026 attempt 2: .venv/Scripts/python -u -m infodiff.baselines.easytpp_runner S2P2 taxi 10 2019
+'.venv' is not recognized as an internal or external command,
+operable program or batch file.
+
+=== Sun Sep 27 22:22:47 2026 attempt 1: .venv/Scripts/python -u -m infodiff.baselines.easytpp_runner S2P2 taxi 10 2019
+'.venv' is not recognized as an internal or external command,
+operable program or batch file.
+
+=== Sun Sep 27 22:23:07 2026 attempt 2: .venv/Scripts/python -u -m infodiff.baselines.easytpp_runner S2P2 taxi 10 2019
+'.venv' is not recognized as an internal or external command,
+operable program or batch file.
+
+=== Sun Sep 27 22:23:27 2026 attempt 1: .venv/Scripts/python -u -m infodiff.baselines.easytpp_runner S2P2 taxi 10 2019
+'.venv' is not recognized as an internal or external command,
+operable program or batch file.
+
+=== Sun Sep 27 22:23:47 2026 attempt 2: .venv/Scripts/python -u -m infodiff.baselines.easytpp_runner S2P2 taxi 10 2019
+'.venv' is not recognized as an internal or external command,
+operable program or batch file.
+
+=== Sun Sep 27 22:24:07 2026 attempt 1: .venv/Scripts/python -u -m infodiff.baselines.easytpp_runner S2P2 taxi 10 2019
+'.venv' is not recognized as an internal or external command,
+operable program or batch file.
+
+=== Sun Sep 27 22:24:27 2026 attempt 2: .venv/Scripts/python -u -m infodiff.baselines.easytpp_runner S2P2 taxi 10 2019
+'.venv' is not recognized as an internal or external command,
+operable program or batch file.
+
+=== Sun Sep 27 22:24:48 2026 attempt 1: .venv/Scripts/python -u -m infodiff.baselines.easytpp_runner S2P2 taxi 10 2019
+'.venv' is not recognized as an internal or external command,
+operable program or batch file.
+
+=== Sun Sep 27 22:25:08 2026 attempt 2: .venv/Scripts/python -u -m infodiff.baselines.easytpp_runner S2P2 taxi 10 2019
+'.venv' is not recognized as an internal or external command,
+operable program or batch file.
+
+=== Sun Sep 27 22:25:28 2026 attempt 1: .venv/Scripts/python -u -m infodiff.baselines.easytpp_runner S2P2 taxi 10 2019
+'.venv' is not recognized as an internal or external command,
+operable program or batch file.
+
+=== Sun Sep 27 22:25:48 2026 attempt 2: .venv/Scripts/python -u -m infodiff.baselines.easytpp_runner S2P2 taxi 10 2019
+'.venv' is not recognized as an internal or external command,
+operable program or batch file.
+
+=== Sun Sep 27 22:26:00 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner S2P2 taxi 10 2019
+[31;1m2026-09-27 22:26:07,891 - config.py[pid:17808;line:33:build_from_yaml_file] - CRITICAL: Load pipeline config class RunnerConfig[0m
+
+=== Sun Sep 27 22:58:56 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner S2P2 taxi 10 2019
+[31;1m2026-09-27 22:58:59,035 - config.py[pid:16996;line:33:build_from_yaml_file] - CRITICAL: Load pipeline config class RunnerConfig[0m
+[31;1m2026-09-27 22:58:59,161 - runner_config.py[pid:16996;line:205:update_config] - CRITICAL: train model S2P2 using GPU with torch backend[0m
+[38;20m2026-09-27 22:58:59,161 - runner_config.py[pid:16996;line:45:__init__] - INFO: Save the config to D:\Quant\results\easytpp\checkpoints/taxi/S2P2/train_2026_09_27_22_58_59\S2P2_train_output.yaml[0m
+[38;20m2026-09-27 22:58:59,161 - base_runner.py[pid:16996;line:193:save_log] - INFO: Save the log to D:\Quant\results\easytpp\checkpoints/taxi/S2P2/train_2026_09_27_22_58_59\log[0m
+0.22442521993973202 0.2922880961117653
+min_dt: 0.0002777778
+max_dt: 5.7213888889
+[38;20m2026-09-27 22:59:07,242 - tpp_runner.py[pid:16996;line:62:_init_model] - INFO: Num of model parameters 35092[0m
+[38;20m2026-09-27 22:59:07,929 - base_runner.py[pid:16996;line:103:train] - INFO: Data 'taxi' loaded...[0m
+[38;20m2026-09-27 22:59:07,929 - base_runner.py[pid:16996;line:108:train] - INFO: Start S2P2 training...[0m

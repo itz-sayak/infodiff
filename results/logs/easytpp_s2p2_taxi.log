@@ -11,3 +11,56 @@ max_dt: 5.7213888889
 Generating test split: 0 examples [00:00, ? examples/s]Generating test split: 400 examples [00:00, 36358.39 examples/s]
 [38;20m2026-09-27 21:41:24,732 - base_runner.py[pid:30076;line:103:train] - INFO: Data 'taxi' loaded...[0m
 [38;20m2026-09-27 21:41:24,732 - base_runner.py[pid:30076;line:108:train] - INFO: Start S2P2 training...[0m
+[38;20m2026-09-27 22:16:36,062 - tpp_runner.py[pid:30076;line:104:_train_model] - INFO: [ Epoch 0 (train) ]: train loglike is -1.7167009297763804, num_events is 50454, mark_ll is -2.0635495714537004, time_ll is 0.34684862474125566[0m
+[38;20m2026-09-27 22:16:40,799 - tpp_runner.py[pid:30076;line:116:_train_model] - INFO: [ Epoch 0 (valid) ]:  valid loglike is -0.9660052818963423, num_events is 7204, mark_ll is -1.421767637770683, time_ll is 0.4557624236535258[0m
+[38;20m2026-09-27 22:16:49,937 - tpp_runner.py[pid:30076;line:136:_train_model] - INFO: [ Epoch 0 (test) ]: test loglike is -0.9394673467839806, num_events is 14420, mark_ll is -1.401040662112084, time_ll is 0.4615732814667129[0m
+[31;1m2026-09-27 22:16:49,937 - tpp_runner.py[pid:30076;line:140:_train_model] - CRITICAL: current best loglike on valid set is -0.9660 (updated at epoch-0), best updated at this epoch[0m
+[38;20m2026-09-27 22:17:32,391 - tpp_runner.py[pid:30076;line:104:_train_model] - INFO: [ Epoch 1 (train) ]: train loglike is -0.7456037557880694, num_events is 50454, mark_ll is -1.2184610029990188, time_ll is 0.472857213338821[0m
+[38;20m2026-09-27 22:17:32,487 - tpp_runner.py[pid:30076;line:116:_train_model] - INFO: [ Epoch 1 (valid) ]:  valid loglike is -0.3891069834792303, num_events is 7204, mark_ll is -0.9161183782447252, time_ll is 0.5270114286550874[0m
+[38;20m2026-09-27 22:17:32,766 - tpp_runner.py[pid:30076;line:136:_train_model] - INFO: [ Epoch 1 (test) ]: test loglike is -0.34370023222141555, num_events is 14420, mark_ll is -0.8787532642380375, time_ll is 0.5350530404819694[0m
+[31;1m2026-09-27 22:17:32,766 - tpp_runner.py[pid:30076;line:140:_train_model] - CRITICAL: current best loglike on valid set is -0.3891 (updated at epoch-1), best updated at this epoch[0m
+[38;20m2026-09-27 22:17:40,373 - tpp_runner.py[pid:30076;line:104:_train_model] - INFO: [ Epoch 2 (train) ]: train loglike is -0.18890868058531465, num_events is 50454, mark_ll is -0.725968029626925, time_ll is 0.5370593410272229[0m
+[38;20m2026-09-27 22:17:40,474 - tpp_runner.py[pid:30076;line:116:_train_model] - INFO: [ Epoch 2 (valid) ]:  valid loglike is 0.03467127722147635, num_events is 7204, mark_ll is -0.5175700931665568, time_ll is 0.5522413830966303[0m
+[38;20m2026-09-27 22:17:40,751 - tpp_runner.py[pid:30076;line:136:_train_model] - INFO: [ Epoch 2 (test) ]: test loglike is 0.07591107033823466, num_events is 14420, mark_ll is -0.48061938239532764, time_ll is 0.5565304569662362[0m
+[31;1m2026-09-27 22:17:40,751 - tpp_runner.py[pid:30076;line:140:_train_model] - CRITICAL: current best loglike on valid set is 0.0347 (updated at epoch-2), best updated at this epoch[0m
+[38;20m2026-09-27 22:17:48,494 - tpp_runner.py[pid:30076;line:104:_train_model] - INFO: [ Epoch 3 (train) ]: train loglike is 0.013938719326464918, num_events is 50454, mark_ll is -0.5138900550578869, time_ll is 0.5278287843645325[0m
+[38;20m2026-09-27 22:17:48,596 - tpp_runner.py[pid:30076;line:116:_train_model] - INFO: [ Epoch 3 (valid) ]:  valid loglike is 0.004751866291391393, num_events is 7204, mark_ll is -0.5160713259343768, time_ll is 0.5208232229382114[0m
+[38;20m2026-09-27 22:17:48,861 - tpp_runner.py[pid:30076;line:136:_train_model] - INFO: [ Epoch 3 (test) ]: test loglike is 0.06149719492241678, num_events is 14420, mark_ll is -0.46301591214459087, time_ll is 0.5245130732056172[0m
+[31;1m2026-09-27 22:17:48,861 - tpp_runner.py[pid:30076;line:140:_train_model] - CRITICAL: current best loglike on valid set is 0.0347 (updated at epoch-2)[0m
+[38;20m2026-09-27 22:17:56,465 - tpp_runner.py[pid:30076;line:104:_train_model] - INFO: [ Epoch 4 (train) ]: train loglike is 0.07330450148031847, num_events is 50454, mark_ll is -0.4716181732950745, time_ll is 0.5449226879310858[0m
+[38;20m2026-09-27 22:17:56,570 - tpp_runner.py[pid:30076;line:116:_train_model] - INFO: [ Epoch 4 (valid) ]:  valid loglike is 0.09459075843010394, num_events is 7204, mark_ll is -0.47274846358143047, time_ll is 0.5673392304839325[0m
+[38;20m2026-09-27 22:17:56,848 - tpp_runner.py[pid:30076;line:136:_train_model] - INFO: [ Epoch 4 (test) ]: test loglike is 0.1465091022803615, num_events is 14420, mark_ll is -0.437459755737474, time_ll is 0.583968866483183[0m
+[31;1m2026-09-27 22:17:56,850 - tpp_runner.py[pid:30076;line:140:_train_model] - CRITICAL: current best loglike on valid set is 0.0946 (updated at epoch-4), best updated at this epoch[0m
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "D:\Quant\src\infodiff\baselines\easytpp_runner.py", line 78, in <module>
+    r = run_model(model, dataset, n_types, seed, max_epoch)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\src\infodiff\baselines\easytpp_runner.py", line 64, in run_model
+    log = runner.run()
+          ^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\base_runner.py", line 214, in run
+    return self.train(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\base_runner.py", line 111, in train
+    best_ll, best_epochs, best_metrics, num_params, losses = self._train_model(
+                                                             ^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\tpp_runner.py", line 98, in _train_model
+    train_metrics = self.run_one_epoch(train_loader, RunnerPhase.TRAIN, **kwargs)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\tpp_runner.py", line 206, in run_one_epoch
+    self.model_wrapper.run_batch(batch, phase=phase, padded_event_id = pad_index)
+  File "D:\Quant\external\state_space_point_process\easy_tpp\torch_wrapper.py", line 131, in run_batch
+    loss, num_event, mark_ll_sum, time_ll_sum, _ = self.model.loglike_loss(
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\model\torch_model\torch_s2p2.py", line 264, in loglike_loss
+    self.compute_loglikelihood(
+  File "D:\Quant\external\state_space_point_process\easy_tpp\model\torch_model\torch_basemodel.py", line 151, in compute_loglikelihood
+    num_events = torch.masked_select(event_ll, event_ll.ne(0.0)).size()[0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+torch.AcceleratorError: CUDA error: unspecified launch failure
+Search for `cudaErrorLaunchFailure' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+

@@ -1,0 +1,48 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools,bm}
+\usepackage{booktabs,multirow,graphicx,xcolor}
+\usepackage[hidelinks]{hyperref}
+\usepackage[numbers,sort&compress]{natbib}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\dd}{\,\mathrm{d}}
+
+\title{Echo-Corrected Information Diffusion:\\
+Certified Multiscale Phase-Type Hawkes Processes for Macro-News Absorption\\
+across FX, Equities, Gold and Crypto}
+\author{Sayak Dutta}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\input{sections/abstract}
+\end{abstract}
+
+\input{sections/introduction}
+\input{sections/model}
+\input{sections/theory}
+\input{sections/ept}
+\input{sections/data}
+\input{sections/benchmarks}
+\input{sections/results}
+\input{sections/conclusion}
+
+\bibliographystyle{abbrvnat}
+\bibliography{refs}
+
+\appendix
+\input{sections/appendix}
+\end{document}

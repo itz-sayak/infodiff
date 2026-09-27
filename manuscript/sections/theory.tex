@@ -1,0 +1,110 @@
+\section{Theory}\label{sec:theory}
+
+\subsection{Exact recursion}
+\begin{lemma}[Erlang-chain recursion]\label{lem:recursion}
+Let $s_r(t)=\sum_{t_n<t}g_{kr}(t-t_n)$ for one source and one rate $\beta$. Between
+events, $\bm s=(s_0,\dots,s_{R-1})$ solves $\dot{\bm s}=\beta(N-I)\bm s$ with $N$ the
+down-shift, and at an event $s_0\mathrel{+}=\beta$. Hence, with $y=\beta\Delta$ and
+$w_j=e^{-y}y^j/j!$,
+\[
+s_r(t+\Delta)=\sum_{j\le r}w_j\,s_{r-j}(t),\qquad
+\int_t^{t+\Delta}s_r=\frac1\beta\sum_{j\le r}P(j+1,y)\,s_{r-j}(t),
+\]
+where $P$ is the regularised lower incomplete gamma function.
+\end{lemma}
+\begin{proof}
+$\frac{\dd}{\dd t}g_{kr}=\beta(g_{k,r-1}-g_{kr})$ for $r\ge1$ and
+$\frac{\dd}{\dd t}g_{k0}=-\beta g_{k0}$, with $g_{kr}(0)=\beta\mathbb 1[r=0]$. The
+matrix exponential of $\beta(N-I)\Delta$ is $e^{-y}\sum_{j<R}\frac{y^j}{j!}N^j$ since $N$
+is nilpotent and commutes with $I$; integrating term by term gives $P(j+1,y)/\beta$.
+\end{proof}
+
+\subsection{Concavity, EM and a certificate of global optimality}
+Problem \eqref{eq:ll} is the maximisation of a concave function over the nonnegative
+orthant (a Poisson linear-inverse problem). Nonnegative $\ell_1$ penalties are linear,
+$\gamma^\top\bm\theta$, and are absorbed into $\bm\Phi$. The multiplicative EM map
+\[
+\theta_p\leftarrow\theta_p\frac{\sum_n x_{np}/\lambda_n}{\Phi_p+\gamma_p}
+\]
+is monotone and keeps iterates positive; we accelerate it with SQUAREM and polish with a
+log-barrier Newton method whose Hessian $\sum_n \bm x_n\bm x_n^\top/\lambda_n^2$ is
+assembled blockwise (dense endogenous block, sparse baseline/news block).
+
+\begin{proposition}[Duality-gap certificate]\label{prop:gap}
+For any $\bm v>0$ with $X^\top\bm v\le\bm\Phi+\bm\gamma$ and any feasible $\bm\theta$,
+\[
+\ell(\bm\theta)\;\le\;D(\bm v):=-N-\sum_n\log v_n .
+\]
+Taking $\bm v=\bm\lambda^{-1}/s$ with $s=\max_p (X^\top\bm\lambda^{-1})_p/(\Phi_p+\gamma_p)$
+gives the computable bound
+$\ell^\star-\ell(\bm\theta)\le D(\bm v)-\ell(\bm\theta)=N\log s+\big(\bm\theta^\top(\bm\Phi+\bm\gamma)-N\big)$.
+\end{proposition}
+\begin{proof}
+Fenchel's inequality $\log u\le vu-1-\log v$ ($u,v>0$) applied to $u=\lambda_n$ gives
+$\sum_n\log\lambda_n\le\bm\theta^\top X^\top\bm v-N-\sum_n\log v_n$, and
+$\bm\theta^\top X^\top\bm v\le\bm\theta^\top(\bm\Phi+\bm\gamma)$ for $\bm\theta\ge0$;
+subtracting $\bm\theta^\top(\bm\Phi+\bm\gamma)$ from both sides yields $\ell(\bm\theta)\le D(\bm v)$
+for every feasible $\bm\theta$, hence also for the maximiser. With
+$v_n=1/(s\lambda_n)$, $-\sum_n\log v_n=\sum_n\log\lambda_n+N\log s$, which gives the
+stated gap. Both terms vanish at a KKT point, where $s=1$ and
+$\bm\theta^\top(\bm\Phi+\bm\gamma)=\sum_n\bm\theta^\top\bm x_n/\lambda_n=N$.
+\end{proof}
+At the optimum $s=1$ (KKT), and the expected number of events $\bm\theta^\top\bm\Phi$
+equals the observed number $N_i$ for unpenalised fits---both are checked in our tests.
+
+\subsection{Markov embedding and echo-corrected responses}
+Stack the states $s_{jkr}$ of all sources into $\bm x$, let $F$ be the block-diagonal
+Erlang-chain generator, $G_{\rm in}$ inject $\beta_k$ into phase $r=0$ of source $j$, and
+$\Theta$ the endogenous weights, so $\lambda=\mu+\Theta\bm x$. Taking expectations of the
+jump dynamics, the \emph{mean} excess intensity caused by one release with news states
+$\bm y$ ($\dot{\bm y}=F_e\bm y$, $\bm y(0)=\bm y_0$) satisfies
+\begin{equation}
+\dot{\bm z}=\mathcal A\bm z,\quad
+\mathcal A=\begin{pmatrix}F+G_{\rm in}\Theta & G_{\rm in}\Theta_e\\ 0 & F_e\end{pmatrix},\quad
+r(t)=\begin{pmatrix}\Theta&\Theta_e\end{pmatrix}\bm z(t),\quad
+\bm z(0)=\begin{pmatrix}0\\ \bm y_0\end{pmatrix}.
+\end{equation}
+
+\begin{theorem}[Stability]\label{thm:stab}
+Let $G_{ij}=\sum_{k,r}a_{ijkr}$ be the branching matrix. Then $F+G_{\rm in}\Theta$ is
+Hurwitz if and only if $\rho(G)<1$.
+\end{theorem}
+\begin{proof}
+$F$ is Metzler and Hurwitz ($-F$ is a nonsingular M-matrix: lower-triangular blocks with
+diagonal $-\beta_k<0$) and $G_{\rm in}\Theta\ge0$. For a Metzler matrix $F+P$ with $F$
+Hurwitz-Metzler and $P\ge0$, $F+P$ is Hurwitz iff $\rho(-F^{-1}P)<1$ (regular
+splitting of the M-matrix $-(F+P)$; Varga, Thm.~3.29). Now
+$\rho(-F^{-1}G_{\rm in}\Theta)=\rho(\Theta(-F)^{-1}G_{\rm in})$ and
+$\big(\Theta(-F)^{-1}G_{\rm in}\big)_{ij}=\sum_{k,r}a_{ijkr}\int_0^\infty g_{kr}=G_{ij}$,
+because $(-F)^{-1}G_{\rm in}\bm e_j$ collects the integrals of the basis densities
+excited by one event of source $j$.
+\end{proof}
+
+\begin{corollary}[Closed-form absorption]\label{cor:abs}
+Under $\rho(G)<1$, the echo-corrected response is $r(t)=C e^{\mathcal A t}\bm z_0$, its
+total is $\int_0^\infty r=-C\mathcal A^{-1}\bm z_0$, the cumulative fraction absorbed by
+time $t$ is
+\[
+F(t)=\frac{C\mathcal A^{-1}(e^{\mathcal At}-I)\bm z_0}{C\mathcal A^{-1}(-\bm z_0)},
+\]
+the echo-corrected absorption quantile is $t_q=F^{-1}(q)$, and the \emph{amplification}
+(echo multiplier) is $\int r/\int r_{\rm direct}$ with $r_{\rm direct}(t)=\Theta_e e^{F_et}\bm y_0$.
+For an asset with dimensions $(u,v)$ the expected price-discovery curve is
+$\delta_a\int_0^t (r_u-r_v)$.
+\end{corollary}
+
+\begin{remark}
+The popular ``half-life $\ln2/\beta$'' of a single exponential news kernel measures only
+$r_{\rm direct}$; when $\rho(G)$ is close to one the echoes dominate and $t_{50}$ of the
+full response can be orders of magnitude longer. Section~\ref{sec:results} quantifies
+the gap.
+\end{remark}
+
+\subsection{Closed-form conditional forecasts}
+Given the pre-release history (states $\bm x(\tau)$ computed exactly by
+Lemma~\ref{lem:recursion}), the observed surprise of the release at $\tau$, and a
+constant baseline $\bm\mu$ over the horizon,
+$\E[\bm N(\tau,\tau+h]\mid\mathcal F_\tau]=\bm\mu h+C\big[\mathcal A^{-1}(e^{\mathcal Ah}-I)\bm z_0
++\mathcal A^{-1}(\mathcal A^{-1}(e^{\mathcal Ah}-I)-hI)\bm u\big]$ with
+$\bm u=(G_{\rm in}\bm\mu,0)$. Under $\delta$-sampling this is also a realised-variance
+($\delta_a^2 N$) and drift forecast (Track~D).

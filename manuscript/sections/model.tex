@@ -1,0 +1,46 @@
+\section{The MSX-Hawkes model}\label{sec:model}
+
+\paragraph{Events.}
+For each asset $a$ we record \emph{$\delta$-crossing} events: an up (down) event whenever
+the log mid-price moves $+\delta_a$ ($-\delta_a$) away from the level of the previous
+event, with a jump of $n\delta_a$ producing $n$ tied events. This intrinsic-time
+sampling filters bid--ask bounce, makes assets comparable in basis points and, crucially,
+turns intensities into prices: the log-price change over any interval equals
+$\delta_a(N^{\uparrow}_a-N^{\downarrow}_a)$ up to one $\delta_a$. Dimension $2a$ ($2a+1$)
+counts up (down) crossings of asset $a$; there are $d=2A$ dimensions.
+
+\paragraph{Phase-type dictionary.}
+Fix rates $\beta_1,\dots,\beta_K$ on a logarithmic grid and Erlang orders $r=0,\dots,R-1$.
+The normalised basis densities
+\begin{equation}
+g_{kr}(t)=\beta_k\frac{(\beta_k t)^r}{r!}e^{-\beta_k t},\qquad \int_0^\infty g_{kr}=1,
+\end{equation}
+generate kernels $\phi(t)=\sum_{k,r}a_{kr}g_{kr}(t)$ with $a_{kr}\ge0$ and branching
+ratio $\sum_{k,r}a_{kr}$. Exponential mixtures ($R=1$) approximate every completely
+monotone kernel (Bernstein's theorem), including power laws; higher orders add humps
+($\phi(0)=0$), and phase-type densities are dense in the densities on $\R_+$.
+
+\paragraph{Intensity.}
+For target dimension $i$, window $w$ with likelihood interval $[t_0^w,t_1^w)$,
+releases $e$ at times $\tau_e$ of type $c_e$ with nonnegative mark features
+$\bm z_e=(1,z_e^+,z_e^-)$ (standardised surprise split by sign),
+\begin{align}
+\lambda_i(t)={}&\underbrace{c_{iw}+\textstyle\sum_{m}\eta_{im}h_m(\mathrm{tod}(t))}_{\text{baseline}}
++\underbrace{\sum_{j}\sum_{t_n^j<t}\sum_{k,r}a_{ijkr}\,g_{kr}(t-t_n^j)}_{\text{endogenous}}\nonumber\\
+&+\underbrace{\sum_{e:\tau_e<t}\sum_{k,r,m}b_{i c_e k r m}\,z_{em}\,g^{\rm exo}_{kr}(t-\tau_e)}_{\text{news}}
++\underbrace{\sum_{e:\tau_e>t}\sum_{k}\alpha_{ic_ek}\,\beta^{\rm ant}_k e^{-\beta^{\rm ant}_k(\tau_e-t)}}_{\text{anticipation}},
+\label{eq:intensity}
+\end{align}
+with per-window intercepts $c_{iw}$, periodic hat functions $h_m$ of local time of day
+(identified by matched placebo windows, Section~\ref{sec:data}), and all parameters
+nonnegative. Writing $\bm x(t)\ge0$ for the stacked features, $\lambda_i(t)=\bm x(t)^\top\bm\theta_i$.
+
+\paragraph{Likelihood.}
+The log-likelihood separates across targets,
+\begin{equation}
+\ell_i(\bm\theta_i)=\sum_{n:\,u_n=i}\log\big(\bm x(t_n)^\top\bm\theta_i\big)-\bm\Phi^\top\bm\theta_i,
+\qquad \bm\Phi=\sum_w\int_{t_0^w}^{t_1^w}\bm x(t)\dd t, \label{eq:ll}
+\end{equation}
+and every entry of $\bm\Phi$ and of $\bm x(t_n)$ is available in closed form: the
+endogenous features follow the exact Erlang-chain recursion of Lemma~\ref{lem:recursion}
+in $O(NdKR^2)$ time, and integrals are regularised incomplete gamma functions.

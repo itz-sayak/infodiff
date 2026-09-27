@@ -1,0 +1,2 @@
+s2p2_taxi | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner S2P2 taxi 10 2019
+ept_taxi_probe | D:\Quant\.venv\Scripts\python.exe -u scripts\probe_track_b.py taxi "{\"epochs\":150,\"phases\":2};{\"epochs\":150,\"phases\":2,\"gompertz\":false};{\"epochs\":150,\"phases\":4,\"hidden\":128}"

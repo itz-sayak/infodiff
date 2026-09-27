@@ -242,12 +242,19 @@ class MSXHawkes:
         self.reports = []
         for i in dims:
             t_start = time.time()
-            des = build_design(data, self.spec, i)
-            if des.n == 0:
+            des_full = build_design(data, self.spec, i)
+            if des_full.n == 0:
                 continue
-            gd, gs = self._gammas(des)
+            gd_full, gs_full = self._gammas(des_full)
+            th0_full = self._init_theta(des_full, data, i)
+            # parameters with zero exposure (Phi_p = 0) are unidentifiable: pin them at 0
+            act_d, act_s = des_full.integ_d > 0, des_full.integ_s > 0
+            des = Design(rows=des_full.rows, Xd=np.ascontiguousarray(des_full.Xd[:, act_d]),
+                         Xs=des_full.Xs[:, np.where(act_s)[0]].tocsr(), integ_d=des_full.integ_d[act_d],
+                         integ_s=des_full.integ_s[act_s], layout=des_full.layout)
+            gd, gs = gd_full[act_d], gs_full[act_s]
             prob = _Problem(des, gd, gs, self.device, self.dtype)
-            th0 = self._init_theta(des, data, i)
+            th0 = np.concatenate([th0_full[: lay["Pd"]][act_d], th0_full[lay["Pd"]:][act_s]])
             th0 = torch.as_tensor(th0, device=self.device, dtype=torch.float64)
             th, hist, it = _squarem(prob, th0, self.max_iter, self.tol, self.verbose)
             gap, ll = prob.dual_gap(th)
@@ -264,8 +271,11 @@ class MSXHawkes:
                 extra += 100
                 gap, ll = prob.dual_gap(th)
             thn = th.cpu().numpy()
-            self.theta_d[i] = thn[: lay["Pd"]]
-            self.theta_s[i] = thn[lay["Pd"]:]
+            nd = int(act_d.sum())
+            self.theta_d[i] = 0.0
+            self.theta_s[i] = 0.0
+            self.theta_d[i, act_d] = thn[:nd]
+            self.theta_s[i, act_s] = thn[nd:]
             integ = np.concatenate([des.integ_d, des.integ_s])
             self.reports.append(FitReport(dim=i, n_events=des.n, loglik=ll, gap=gap, iters=it + extra,
                                           seconds=time.time() - t_start,

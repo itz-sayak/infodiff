@@ -1,0 +1,40 @@
+\section{EPT-TPP: a neural point process with an exact compensator}\label{sec:ept}
+
+Neural marked TPPs (RMTPP, NHP, THP, SAHP, AttNHP, S2P2) either restrict the intensity to
+a simple parametric form between events or estimate the compensator
+$\int\lambda$ by Monte Carlo. We keep the phase-type algebra of Section~\ref{sec:theory}
+and let a recurrent network drive it.
+
+\paragraph{State and dynamics.}
+The latent state $\bm x(t)\in\R_{\ge0}^P$ consists of $C$ channels of Erlang-$R$ chains with
+learnable rates $\beta_{ck}$. Between events it evolves as
+$\dot{\bm x}=\bm F_\beta\bm x$ (Lemma~\ref{lem:recursion}). At event $n$ with mark
+$m_n$ and gap $\Delta_n$, a GRU summary $\bm h_n$ produces a gate and a nonnegative
+jump,
+\[
+\bm x(t_n^+)=\sigma(W_g\bm h_n)\odot\bm x(t_n^-)+\mathrm{softplus}(W_j\bm h_n).
+\]
+
+\paragraph{Intensity.}
+For marks $m=1,\dots,M$,
+\[
+\lambda_m(t)=\mu_m(\bm h_n)+\sum_p C_{mp}\,x_p(t)+g_m(\bm h_n)\,e^{w(\bm h_n)(t-t_n)},\qquad
+C,\mu,g\ge0,
+\]
+where the last (Gompertz) term allows increasing as well as decreasing hazards.
+
+\begin{proposition}\label{prop:ept}
+(i) $\lambda_m>0$ everywhere. (ii) The compensator between events is exact:
+$\int_{t_n}^{t_n+\Delta}\lambda_m=\mu_m\Delta+\bm C_m^\top\bm I(\Delta)+g_m\,\mathrm{expm1}(w\Delta)/w$
+with $\bm I(\Delta)$ given by Lemma~\ref{lem:recursion}. (iii) With $g=0$, identity gates and
+jumps $\mathrm{softplus}(W_j\bm h_n)=\bm e_{m_n}\otimes\bm\beta$ the model is the
+multivariate phase-type Hawkes process of Section~\ref{sec:model}; with $C=0$ it is
+RMTPP~\citep{du2016recurrent}.
+\end{proposition}
+
+Consequently training maximises the \emph{exact} log-likelihood (no sampling variance
+in gradients), evaluation reports the exact test likelihood, and next-event
+predictions are Bayes-optimal functionals of the exact density:
+$\E[\Delta]=\int_0^\infty S(s)\dd s$ and
+$\hat m=\arg\max_m\int_0^\infty\lambda_m(s)S(s)\dd s$, computed by one-dimensional
+quadrature.
