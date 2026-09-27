@@ -1,0 +1,20 @@
+Metadata-Version: 2.4
+Name: infodiff
+Version: 0.1.0
+Summary: Echo-corrected information diffusion: multiscale phase-type Hawkes models of macro-news absorption
+Requires-Python: >=3.11
+Requires-Dist: numpy
+Requires-Dist: scipy
+Requires-Dist: numba
+Requires-Dist: pandas
+Requires-Dist: polars
+Requires-Dist: pyarrow
+Requires-Dist: torch
+Requires-Dist: requests
+Requires-Dist: python-dotenv
+Requires-Dist: statsmodels
+Requires-Dist: matplotlib
+Provides-Extra: dev
+Requires-Dist: pytest; extra == "dev"
+Provides-Extra: baselines
+Requires-Dist: tick; extra == "baselines"

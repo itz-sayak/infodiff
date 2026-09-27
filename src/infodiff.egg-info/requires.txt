@@ -1,0 +1,17 @@
+numpy
+scipy
+numba
+pandas
+polars
+pyarrow
+torch
+requests
+python-dotenv
+statsmodels
+matplotlib
+
+[baselines]
+tick
+
+[dev]
+pytest
