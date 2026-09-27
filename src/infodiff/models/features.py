@@ -36,35 +36,60 @@ _CUT = 50.0  # basis values with beta*lag > _CUT are treated as exactly zero
 # Endogenous block (numba)
 # ----------------------------------------------------------------------------------
 @njit(cache=True)
-def _advance(S1, S2, C1, C2, betas, R, dt, acc):
-    d, K = S1.shape
-    for k in range(K):
-        b = betas[k]
-        e = np.exp(-b * dt)
-        one_m = (1.0 - e) / b
-        g2 = (1.0 - e * (1.0 + b * dt)) / b
-        for j in range(d):
-            s1 = S1[j, k]
-            if acc:
-                C1[j, k] += s1 * one_m
-                if R == 2:
-                    C2[j, k] += S2[j, k] * one_m + s1 * g2
-            if R == 2:
-                S2[j, k] = e * (S2[j, k] + b * dt * s1)
-            S1[j, k] = e * s1
+def _poisson_weights(bdt, R, w, Pg):
+    """w_j = e^{-y} y^j / j!,  Pg_j = P(j+1, y) = 1 - sum_{i<=j} w_i  for j < R."""
+    term = np.exp(-bdt)
+    acc = 0.0
+    for j in range(R):
+        if j > 0:
+            term = term * bdt / j
+        w[j] = term
+        acc += term
+        Pg[j] = max(1.0 - acc, 0.0)
 
 
 @njit(cache=True)
-def _advance_split(S1, S2, C1, C2, betas, R, tcur, tnext, t0):
+def _advance(S, C, betas, R, dt, acc, w, Pg, tmp):
+    """Exact Erlang-chain evolution of states S[d, K, R] over dt; if acc, add integrals to C.
+
+    Per rate block s' = beta (N - I) s:  s_r(dt) = sum_{i<=r} w_i s_{r-i},
+    int_0^dt s_r = sum_{i<=r} P(i+1, beta dt) s_{r-i} / beta."""
+    d, K = S.shape[0], S.shape[1]
+    for k in range(K):
+        b = betas[k]
+        _poisson_weights(b * dt, R, w, Pg)
+        for j in range(d):
+            nz = False
+            for r in range(R):
+                if S[j, k, r] != 0.0:
+                    nz = True
+                    break
+            if not nz:
+                continue
+            for r in range(R):
+                v = 0.0
+                ig = 0.0
+                for i in range(r + 1):
+                    v += w[i] * S[j, k, r - i]
+                    ig += Pg[i] * S[j, k, r - i]
+                tmp[r] = v
+                if acc:
+                    C[j, k, r] += ig / b
+            for r in range(R):
+                S[j, k, r] = tmp[r]
+
+
+@njit(cache=True)
+def _advance_split(S, C, betas, R, tcur, tnext, t0, w, Pg, tmp):
     if tnext <= tcur:
         return
     if tnext <= t0:
-        _advance(S1, S2, C1, C2, betas, R, tnext - tcur, False)
+        _advance(S, C, betas, R, tnext - tcur, False, w, Pg, tmp)
     elif tcur >= t0:
-        _advance(S1, S2, C1, C2, betas, R, tnext - tcur, True)
+        _advance(S, C, betas, R, tnext - tcur, True, w, Pg, tmp)
     else:
-        _advance(S1, S2, C1, C2, betas, R, t0 - tcur, False)
-        _advance(S1, S2, C1, C2, betas, R, tnext - t0, True)
+        _advance(S, C, betas, R, t0 - tcur, False, w, Pg, tmp)
+        _advance(S, C, betas, R, tnext - t0, True, w, Pg, tmp)
 
 
 @njit(cache=True)
@@ -73,66 +98,60 @@ def _endo_features(times, types, wptr, t0, t1, d, betas, R, target, want_cum):
     P = d * K * R
     W = t0.shape[0]
     n = 0
-    for w in range(W):
-        for i in range(wptr[w], wptr[w + 1]):
-            if times[i] >= t0[w] and times[i] < t1[w] and (target < 0 or types[i] == target):
+    for w_ in range(W):
+        for i in range(wptr[w_], wptr[w_ + 1]):
+            if times[i] >= t0[w_] and times[i] < t1[w_] and (target < 0 or types[i] == target):
                 n += 1
     X = np.zeros((n, P), dtype=np.float32)
     Cm = np.zeros((n if want_cum else 0, P))
     rows = np.empty(n, dtype=np.int64)
     integ = np.zeros(P)
-    S1 = np.zeros((d, K))
-    S2 = np.zeros((d, K))
-    C1 = np.zeros((d, K))
-    C2 = np.zeros((d, K))
-    r = 0
-    for w in range(W):
-        S1[:] = 0.0
-        S2[:] = 0.0
-        C1[:] = 0.0
-        C2[:] = 0.0
-        a = wptr[w]
-        b = wptr[w + 1]
-        tcur = t0[w]
+    S = np.zeros((d, K, R))
+    C = np.zeros((d, K, R))
+    w = np.zeros(R)
+    Pg = np.zeros(R)
+    tmp = np.zeros(R)
+    r_ = 0
+    for w_ in range(W):
+        S[:] = 0.0
+        C[:] = 0.0
+        a = wptr[w_]
+        b = wptr[w_ + 1]
+        tcur = t0[w_]
         if b > a and times[a] < tcur:
             tcur = times[a]
         i = a
         while i < b:
             t = times[i]
-            if t >= t1[w]:
+            if t >= t1[w_]:
                 break
-            _advance_split(S1, S2, C1, C2, betas, R, tcur, t, t0[w])
+            _advance_split(S, C, betas, R, tcur, t, t0[w_], w, Pg, tmp)
             tcur = t
             j = i
             while j < b and times[j] == t:
                 j += 1
-            if t >= t0[w]:
+            if t >= t0[w_]:
                 for m in range(i, j):
                     if target < 0 or types[m] == target:
-                        rows[r] = m
+                        rows[r_] = m
                         for src in range(d):
                             for k in range(K):
-                                c = (src * K + k) * R
-                                X[r, c] = S1[src, k]
-                                if R == 2:
-                                    X[r, c + 1] = S2[src, k]
-                                if want_cum:
-                                    Cm[r, c] = C1[src, k]
-                                    if R == 2:
-                                        Cm[r, c + 1] = C2[src, k]
-                        r += 1
+                                for rr in range(R):
+                                    c = (src * K + k) * R + rr
+                                    X[r_, c] = S[src, k, rr]
+                                    if want_cum:
+                                        Cm[r_, c] = C[src, k, rr]
+                        r_ += 1
             for m in range(i, j):
                 u = types[m]
                 for k in range(K):
-                    S1[u, k] += betas[k]
+                    S[u, k, 0] += betas[k]
             i = j
-        _advance_split(S1, S2, C1, C2, betas, R, tcur, t1[w], t0[w])
+        _advance_split(S, C, betas, R, tcur, t1[w_], t0[w_], w, Pg, tmp)
         for src in range(d):
             for k in range(K):
-                c = (src * K + k) * R
-                integ[c] += C1[src, k]
-                if R == 2:
-                    integ[c + 1] += C2[src, k]
+                for rr in range(R):
+                    integ[(src * K + k) * R + rr] += C[src, k, rr]
     return rows, X, Cm, integ
 
 
@@ -180,9 +199,10 @@ def _sparse_rows(row_t, row_w, t0, tod0, news_ptr, news_t, news_type, news_marks
                     b = exo_b[k]
                     if b * lag > 50.0:
                         continue
-                    ex = np.exp(-b * lag)
+                    val = b * np.exp(-b * lag)
                     for rr in range(exo_R):
-                        val = b * ex if rr == 0 else b * b * lag * ex
+                        if rr > 0:
+                            val = val * b * lag / rr
                         base = off_exo + ((c * Ke + k) * exo_R + rr) * M
                         for m in range(M):
                             z = news_marks[e, m]

@@ -38,11 +38,11 @@ def _blocks(dic: PhaseTypeDictionary, n_src: int):
         for k in range(K):
             b = dic.betas[k]
             i1 = (j * K + k) * R
-            F[i1, i1] = -b
             Gin[i1, j] = b
-            if R == 2:
-                F[i1 + 1, i1 + 1] = -b
-                F[i1 + 1, i1] = b
+            for r in range(R):
+                F[i1 + r, i1 + r] = -b
+                if r > 0:
+                    F[i1 + r, i1 + r - 1] = b
     return F, Gin
 
 

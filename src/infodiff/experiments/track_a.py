@@ -97,6 +97,8 @@ def run_method(name: str, train, dic: PhaseTypeDictionary) -> C.Fitted:
         return C.fit_msx_auto(train, dic)
     if name == "ADM4":
         return C.fit_tick_adm4(train, 1 / np.array([0.01, 0.1, 0.5, 1.0, 10.0, 100.0]))
+    if name == "MSX-R4":
+        return C.fit_msx(train, PhaseTypeDictionary(dic.betas, orders=4), "MSX-R4 (ours, fixed Erlang-4)")
     if name == "MSX-exp":
         return C.fit_msx(train, PhaseTypeDictionary(dic.betas, orders=1), "MSX-exp (ablation: no Erlang)")
     if name == "ExpKern":
@@ -112,12 +114,19 @@ def run_method(name: str, train, dic: PhaseTypeDictionary) -> C.Fitted:
     raise KeyError(name)
 
 
-METHODS = ["MSX", "MSX-auto", "MSX-exp", "ExpKern", "SumExp", "ADM4", "EM", "NPHC", "CondLaw"]
+METHODS = ["MSX-auto", "MSX", "MSX-R4", "MSX-exp", "ExpKern", "SumExp", "ADM4", "EM", "NPHC", "CondLaw"]
+CACHEABLE = {"ExpKern", "SumExp", "ADM4", "EM", "NPHC", "CondLaw", "MSX-exp"}  # unchanged by MSX upgrades
 
 
 def run(out_dir: Path, seeds=(0, 1, 2, 3, 4), only: list[str] | None = None, methods=METHODS) -> list[dict]:
     dic = PhaseTypeDictionary.log_grid(1e-3, 1e3, 13, orders=2)
     rows = []
+    cache_file = out_dir / "track_a.json"
+    cache = {}
+    if cache_file.exists():
+        for r in json.loads(cache_file.read_text()):
+            if "error" not in r:
+                cache[(r["scenario"], r["seed"], r.get("key", ""))] = r
     for sname, (truth, W, L) in scenarios().items():
         if only and sname not in only:
             continue
@@ -129,6 +138,10 @@ def run(out_dir: Path, seeds=(0, 1, 2, 3, 4), only: list[str] | None = None, met
             n_test = int((test.types >= 0).sum())
             ll_or = oracle_loglik(truth, test)
             for mname in methods:
+                hit = cache.get((sname, seed, mname))
+                if hit is not None and mname in CACHEABLE:
+                    rows.append(hit)
+                    continue
                 t = time.time()
                 try:
                     fit = run_method(mname, train, dic)
@@ -137,7 +150,7 @@ def run(out_dir: Path, seeds=(0, 1, 2, 3, 4), only: list[str] | None = None, met
                     print(f"{sname} seed={seed} {mname}: FAILED {e!r}"[:200], flush=True)
                     continue
                 G = np.nan_to_num(np.asarray(fit.G, float))
-                row = dict(scenario=sname, seed=seed, method=fit.name, n_train=int(len(train.times)),
+                row = dict(scenario=sname, seed=seed, method=fit.name, key=mname, n_train=int(len(train.times)),
                            G_err=float(np.linalg.norm(G - Gt) / np.linalg.norm(Gt)),
                            rho_err=float(abs(np.max(np.abs(np.linalg.eigvals(G))) - rho_t)),
                            kern_L1=kernel_l1(truth, fit), seconds=fit.seconds)
@@ -153,8 +166,13 @@ def run(out_dir: Path, seeds=(0, 1, 2, 3, 4), only: list[str] | None = None, met
                         row["dLL_error"] = repr(e)[:200]
                 if "gap" in fit.extra:
                     row["cert_gap"] = fit.extra["gap"]
+                for k in ("R", "l1", "decay"):
+                    if k in fit.extra:
+                        row[k] = fit.extra[k]
                 rows.append(row)
                 print({k: (round(v, 4) if isinstance(v, float) else v) for k, v in row.items()}, flush=True)
             out_dir.mkdir(parents=True, exist_ok=True)
-            (out_dir / "track_a.json").write_text(json.dumps(rows, indent=1))
+            done = {(r["scenario"], r["seed"], r.get("key")) for r in rows}
+            keep = [r for r in cache.values() if (r["scenario"], r["seed"], r.get("key")) not in done]
+            (out_dir / "track_a.json").write_text(json.dumps(rows + keep, indent=1))
     return rows

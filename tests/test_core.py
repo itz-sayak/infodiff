@@ -188,3 +188,21 @@ def test_residuals_true_model_are_exp1():
     for i in range(truth.d):
         g = gof(model.residuals(data, i))
         assert g.ks_p > 0.001 and abs(g.mean - 1) < 0.05
+
+
+def test_loglik_bruteforce_erlang4():
+    """Erlang-4 phases in both endogenous and exogenous dictionaries."""
+    global ENDO, EXO
+    old = ENDO, EXO
+    try:
+        ENDO = PhaseTypeDictionary.log_grid(0.05, 5.0, 2, orders=4)
+        EXO = PhaseTypeDictionary.log_grid(0.5, 20.0, 2, orders=3)
+        truth = _truth(seed=9)
+        data = _sim(truth, W=4, seed=9)
+        spec = DesignSpec(endo=ENDO, exo=EXO, ant=ANT, n_tod=24)
+        model = model_from_truth(truth, spec, data)
+        assert np.isclose(model.loglik(data), _brute_loglik(truth, spec, data), rtol=1e-9)
+        ss = StateSpaceHawkes(ENDO, truth.A)
+        assert (ss.spectral_abscissa() < 0) == (ss.spectral_radius() < 1)
+    finally:
+        ENDO, EXO = old

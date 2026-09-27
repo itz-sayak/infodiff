@@ -2,8 +2,8 @@
 
 Each dictionary element is a normalised phase-type density (integrates to 1):
 
-* order 1 (exponential):  g(t) = beta * exp(-beta t)
-* order 2 (Erlang-2):     g(t) = beta^2 * t * exp(-beta t)
+* order r+1 (Erlang-(r+1)):  g_r(t) = beta (beta t)^r exp(-beta t) / r!,   r = 0..R-1
+  (order 1 is the exponential; order R has coefficient of variation 1/sqrt(R))
 
 A kernel is a nonnegative combination  phi(t) = sum_{k,r} a_{kr} g_{kr}(t),  so the
 branching ratio is simply sum_{k,r} a_{kr}.  Exponential mixtures approximate any
@@ -20,19 +20,20 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 import numpy as np
+from scipy.special import gammainc, gammaln
 
 
 @dataclass(frozen=True)
 class PhaseTypeDictionary:
     betas: np.ndarray  # (K,) decay rates in 1/s
-    orders: int = 2  # R: 1 -> exponential only, 2 -> exponential + Erlang-2
+    orders: int = 2  # R: Erlang orders 1..R per rate (1 -> exponential only)
 
     def __post_init__(self):
         b = np.asarray(self.betas, dtype=np.float64)
         if b.ndim != 1 or np.any(b <= 0):
             raise ValueError("betas must be a 1-D array of positive rates")
-        if self.orders not in (1, 2):
-            raise ValueError("orders must be 1 or 2")
+        if not 1 <= int(self.orders) <= 12:
+            raise ValueError("orders must be in 1..12")
         object.__setattr__(self, "betas", b)
 
     @classmethod
@@ -54,30 +55,26 @@ class PhaseTypeDictionary:
 
     def pdf(self, t: np.ndarray) -> np.ndarray:
         """Basis densities at lags t >= 0 -> (len(t), K*R)."""
-        t = np.asarray(t, dtype=np.float64)[:, None]
-        b = self.betas[None, :]
-        e = np.exp(-b * t)
-        out = [b * e]
-        if self.R == 2:
-            out.append(b * b * t * e)
-        return np.stack(out, axis=-1).reshape(len(t), -1)
+        t = np.asarray(t, dtype=np.float64)[:, None, None]
+        b = self.betas[None, :, None]
+        r = np.arange(self.R)[None, None, :]
+        bt = b * t
+        with np.errstate(divide="ignore"):
+            logv = np.log(b) + r * np.log(np.where(bt > 0, bt, 1.0)) - bt - gammaln(r + 1)
+        v = np.exp(logv)
+        v = np.where((bt == 0) & (r > 0), 0.0, v)
+        return v.reshape(t.shape[0], -1)
 
     def cdf(self, t: np.ndarray) -> np.ndarray:
-        """Integral of each basis density on [0, t] -> (len(t), K*R)."""
-        t = np.maximum(np.asarray(t, dtype=np.float64), 0.0)[:, None]
-        bt = self.betas[None, :] * t
-        e = np.exp(-bt)
-        out = [1.0 - e]
-        if self.R == 2:
-            out.append(1.0 - e * (1.0 + bt))
-        return np.stack(out, axis=-1).reshape(len(t), -1)
+        """Integral of each basis density on [0, t] (regularised lower gamma) -> (len(t), K*R)."""
+        t = np.maximum(np.asarray(t, dtype=np.float64), 0.0)[:, None, None]
+        bt = self.betas[None, :, None] * t
+        r = np.arange(self.R)[None, None, :]
+        return gammainc(r + 1, bt).reshape(t.shape[0], -1)
 
     def mean_lags(self) -> np.ndarray:
-        """Mean lag of each basis density (1/beta and 2/beta) -> (K*R,)."""
-        m = [1.0 / self.betas]
-        if self.R == 2:
-            m.append(2.0 / self.betas)
-        return np.stack(m, axis=-1).reshape(-1)
+        """Mean lag of each basis density ((r+1)/beta) -> (K*R,)."""
+        return ((np.arange(self.R)[None, :] + 1) / self.betas[:, None]).reshape(-1)
 
     def kernel(self, weights: np.ndarray, t: np.ndarray) -> np.ndarray:
         """phi(t) for weights (..., K*R) -> (..., len(t))."""

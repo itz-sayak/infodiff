@@ -1,0 +1,13 @@
+[31;1m2026-09-27 21:41:15,876 - config.py[pid:30076;line:33:build_from_yaml_file] - CRITICAL: Load pipeline config class RunnerConfig[0m
+[31;1m2026-09-27 21:41:15,903 - runner_config.py[pid:30076;line:205:update_config] - CRITICAL: train model S2P2 using GPU with torch backend[0m
+[38;20m2026-09-27 21:41:15,908 - runner_config.py[pid:30076;line:45:__init__] - INFO: Save the config to D:\Quant\results\easytpp\checkpoints/taxi/S2P2/train_2026_09_27_21_41_15\S2P2_train_output.yaml[0m
+[38;20m2026-09-27 21:41:15,908 - base_runner.py[pid:30076;line:193:save_log] - INFO: Save the log to D:\Quant\results\easytpp\checkpoints/taxi/S2P2/train_2026_09_27_21_41_15\log[0m
+Generating train split: 0 examples [00:00, ? examples/s]Generating train split: 1400 examples [00:00, 254310.33 examples/s]
+0.22442521993973202 0.2922880961117653
+min_dt: 0.0002777778
+max_dt: 5.7213888889
+[38;20m2026-09-27 21:41:23,921 - tpp_runner.py[pid:30076;line:62:_init_model] - INFO: Num of model parameters 35092[0m
+Generating validation split: 0 examples [00:00, ? examples/s]Generating validation split: 200 examples [00:00, 13514.32 examples/s]
+Generating test split: 0 examples [00:00, ? examples/s]Generating test split: 400 examples [00:00, 36358.39 examples/s]
+[38;20m2026-09-27 21:41:24,732 - base_runner.py[pid:30076;line:103:train] - INFO: Data 'taxi' loaded...[0m
+[38;20m2026-09-27 21:41:24,732 - base_runner.py[pid:30076;line:108:train] - INFO: Start S2P2 training...[0m

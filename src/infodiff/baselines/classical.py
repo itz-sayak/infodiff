@@ -164,27 +164,26 @@ def fit_msx(data: EventData, dic: PhaseTypeDictionary, name: str = "MSX", l1: fl
                   extra=dict(gap=max(r.gap for r in m.reports), model=m))
 
 
-def fit_msx_auto(data: EventData, dic: PhaseTypeDictionary, l1_grid=(0.0, 0.003, 0.01, 0.03, 0.1),
+def fit_msx_auto(data: EventData, dic: PhaseTypeDictionary, orders=(1, 2, 3, 4), l1_grid=(0.0, 0.01, 0.05),
                  val_frac: float = 0.2, name: str = "MSX-auto (ours)", seed: int = 0) -> Fitted:
-    """MSX with the exposure-weighted L1 level chosen on held-out windows, then refit on all."""
+    """MSX with (Erlang order R, exposure-weighted L1) chosen on held-out windows, then refit on all."""
     t = time.time()
     W = data.n_windows
-    rng = np.random.default_rng(seed)
-    if W >= 3:
-        perm = rng.permutation(W)
-        n_val = max(1, int(round(val_frac * W)))
-        val, tr = np.sort(perm[:n_val]), np.sort(perm[n_val:])
-        d_tr, d_val = data.subset(tr), data.subset(val)
-    else:  # single long window: split in time
+    if W < 3:
         raise ValueError("fit_msx_auto needs >= 3 windows")
-    scores = []
-    for l1 in l1_grid:
-        f = fit_msx(d_tr, dic, l1=l1)
-        scores.append(f.loglik(d_val))
-    best = l1_grid[int(np.argmax(scores))]
-    f = fit_msx(data, dic, name=name, l1=best)
+    rng = np.random.default_rng(seed)
+    perm = rng.permutation(W)
+    n_val = max(1, int(round(val_frac * W)))
+    d_tr, d_val = data.subset(np.sort(perm[n_val:])), data.subset(np.sort(perm[:n_val]))
+    scores = {}
+    for R in orders:
+        dR = PhaseTypeDictionary(dic.betas, orders=R)
+        for l1 in l1_grid:
+            scores[(R, l1)] = fit_msx(d_tr, dR, l1=l1).loglik(d_val)
+    R, l1 = max(scores, key=scores.get)
+    f = fit_msx(data, PhaseTypeDictionary(dic.betas, orders=R), name=name, l1=l1)
     f.seconds = time.time() - t
-    f.extra.update(l1=best, val_scores=scores)
+    f.extra.update(R=R, l1=l1)
     return f
 
 
