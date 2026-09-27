@@ -7,7 +7,8 @@ Windows
 
 Placebo windows
     For each cluster a matched control window at the same UTC clock times on the same
-    weekday 1-3 weeks away with no scheduled release within +-3h.  Its pseudo-releases
+    weekday 1-6 weeks away with no scheduled release -- modelled, or one of 16 second-tier
+    US releases from FRED -- within +-3h.  Its pseudo-releases
     carry the extra news type PLACEBO, whose fitted kernel must be ~0 (falsification
     test); placebo windows also identify the time-of-day seasonality separately from
     the news response.
@@ -108,7 +109,7 @@ def cluster_calendar(cal: pd.DataFrame, kinds: list[str], gap: float) -> list[pd
 
 
 def _placebo_shift(cl_lo: float, cl_hi: float, busy: np.ndarray) -> float | None:
-    for weeks in (-1, 1, -2, 2, -3, 3):
+    for weeks in (-1, 1, -2, 2, -3, 3, -4, 4, -5, 5, -6, 6):
         s = weeks * 7 * 86400.0
         lo, hi = cl_lo + s - 3 * 3600, cl_hi + s + 3 * 3600
         a, b = np.searchsorted(busy, lo), np.searchsorted(busy, hi)
@@ -124,7 +125,10 @@ def build_windows(cal: pd.DataFrame, spec: WindowSpec, marks_fn=None, verbose: b
     # one placebo type per real release type (PLACEBO_<kind>): the placebo test can then be read
     # slot by slot (08:30 ET data releases vs 14:00 ET FOMC vs ECB/BoJ times)
     type_index = {k: i for i, k in enumerate(kinds + ([f"PLACEBO_{k}" for k in kinds] if spec.placebo else []))}
-    busy = np.sort(cal.t_utc.map(lambda x: x.timestamp()).values)
+    busy = cal.t_utc.map(lambda x: x.timestamp()).values
+    if "busy_extra" in spec.extra:  # unmodelled scheduled releases: placebo windows must avoid them
+        busy = np.concatenate([busy, np.asarray(spec.extra["busy_extra"], float)])
+    busy = np.sort(busy)
     clusters = cluster_calendar(cal, kinds, spec.cluster_gap)
     M = len(marks_fn(clusters[0].iloc[0])) if marks_fn else 1
 

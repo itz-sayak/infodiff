@@ -9,12 +9,14 @@ from infodiff.sources.expectations import mark_vector
 KINDS = ["CPI", "NFP", "PPI", "RETAIL", "GDP", "CLAIMS", "FOMC", "FOMCPC", "ECB", "ECBPC", "BOJ"]
 ASSETS = ["EURUSD", "USDJPY", "XAUUSD", "SPX", "BTC", "ETH"]
 cal = pd.read_parquet("data/processed/calendar_surprises.parquet")
+sec = pd.read_parquet("data/processed/secondary_releases.parquet")
+busy_extra = sec.t_utc.map(lambda x: x.timestamp()).values
 deltas = json.load(open("configs/deltas_bps.json"))
 card = {}
 for year in range(2022, 2027):
     t = time.time()
     sub = cal[cal.t_utc.dt.year == year]
-    spec = WindowSpec(kinds=KINDS, assets=ASSETS, deltas_bps=deltas)
+    spec = WindowSpec(kinds=KINDS, assets=ASSETS, deltas_bps=deltas, extra=dict(busy_extra=busy_extra))
     data = build_windows(sub, spec, marks_fn=mark_vector, verbose=False)
     save_eventdata(data, Path(f"data/processed/panel_{year}.pkl"))
     pl = sum(m["placebo"] for m in data.meta["windows"])

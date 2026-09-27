@@ -56,7 +56,7 @@ def _fred(path: str, **params) -> dict:
         r = requests.get(f"{FRED}/{path}", params=params, timeout=60)
         if r.status_code == 200:
             return r.json()
-        if r.status_code == 429:
+        if r.status_code == 429 or r.status_code >= 500:
             time.sleep(5 * (attempt + 1))
             continue
         r.raise_for_status()
@@ -172,3 +172,26 @@ def build_calendar(start: str = "2022-01-01", end: str = "2026-08-31", out: Path
         out.parent.mkdir(parents=True, exist_ok=True)
         cal.to_parquet(out)
     return cal
+
+
+# Second-tier US releases (FRED release ids).  Used only to keep placebo windows away from
+# *unmodelled* scheduled news; their exact clock time is not in FRED, so each date blocks
+# both the 08:30 and the 10:00 ET slots.
+SECONDARY_RELEASES = {54: "PCE", 95: "Durable goods (M3)", 51: "Trade balance", 27: "Housing starts",
+                      97: "New home sales", 291: "Existing home sales", 192: "JOLTS", 91: "UMich sentiment",
+                      188: "Import/export prices", 11: "Employment cost index", 13: "Industrial production",
+                      321: "Empire State", 351: "Philly Fed", 47: "Productivity", 435: "Advance indicators",
+                      229: "Construction spending"}
+
+
+def secondary_release_times(start: str, end: str) -> pd.DataFrame:
+    rows = []
+    for rid, name in SECONDARY_RELEASES.items():
+        js = _fred("release/dates", release_id=rid, realtime_start=start, realtime_end=end,
+                   include_release_dates_with_no_data="false", limit=10000)
+        for rd in js.get("release_dates", []):
+            d = date.fromisoformat(rd["date"])
+            for hh, mm in ((8, 30), (10, 0)):
+                t = datetime(d.year, d.month, d.day, hh, mm, tzinfo=NY).astimezone(UTC)
+                rows.append(dict(release_id=rid, name=name, t_utc=pd.Timestamp(t)))
+    return pd.DataFrame(rows)
