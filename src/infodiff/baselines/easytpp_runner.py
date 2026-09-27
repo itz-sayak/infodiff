@@ -83,3 +83,7 @@ if __name__ == "__main__":
     import torch
     r = run_model(model, dataset, n_types, seed, max_epoch, batch_size=bs, gpu=0 if torch.cuda.is_available() else -1)
     print("RESULT " + json.dumps(r), flush=True)
+    out = ROOT / "results" / "json" / "easytpp_results.json"
+    rows = json.loads(out.read_text()) if out.exists() else []
+    rows.append(r)
+    out.write_text(json.dumps(rows, indent=1))
