@@ -1,0 +1,19 @@
+
+=== Mon Sep 28 04:32:16 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2023
+2023: windows=107 events=1002927
+  dim  0 n=  111442 ll=    -183983.90 gap=3.1e-04 it=169 30s
+  dim  1 n=  110901 ll=    -184900.74 gap=5.8e-04 it=166 29s
+  dim  2 n=  149917 ll=    -202536.42 gap=6.2e-04 it=224 40s
+  dim  3 n=  149278 ll=    -199518.86 gap=4.2e-04 it=189 38s
+  dim  4 n=   51579 ll=    -121943.51 gap=2.8e-04 it=105 13s
+  dim  5 n=   51056 ll=    -122699.63 gap=1.8e-04 it=192 14s
+  dim  6 n=   46607 ll=    -114476.08 gap=2.2e-04 it=194 14s
+  dim  7 n=   45584 ll=    -113908.46 gap=3.1e-04 it=189 13s
+  dim  8 n=   50772 ll=     -61626.92 gap=2.2e-04 it=231 17s
+  dim  9 n=   51077 ll=     -61933.10 gap=1.9e-04 it=225 17s
+  dim 10 n=   38198 ll=     -41992.61 gap=1.5e-04 it=244 15s
+  dim 11 n=   38191 ll=     -41181.36 gap=8.4e-04 it=303 14s
+  total fit 254s
+  responses done in 86s
+  goodness of fit done in 100s
+rho 0.8867988237189426 relaxation_s 605.5612075254965 total 354s

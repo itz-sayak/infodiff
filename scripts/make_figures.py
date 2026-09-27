@@ -54,8 +54,11 @@ def fig_absorption(tag, r, typ="CPI"):
         ax.axvline(row["t50_total"], color=BLUE, lw=0.8, ls=":")
         ax.axvline(row["t50_direct"], color=ORANGE, lw=0.8, ls=":")
         ax.set_ylim(bottom=max(1e-4, np.nanmax(tot) * 1e-4))
-        ax.text(0.98, 0.95, f"$t_{{50}}$ echo {row['t50_total']:.0f}s\n$t_{{50}}$ direct {row['t50_direct']:.0f}s\n"
-                f"amplif. {row['amplification']:.1f}x", transform=ax.transAxes, ha="right", va="top", color=INK2, fontsize=6.5)
+        sec = lambda v: f"{v:.1f}s" if v < 10 else f"{v:.0f}s"
+        amp = row["amplification"]
+        amp_s = f"amplif. {amp:.1f}x" if np.isfinite(amp) else "amplif. n/a (direct < 0.5 events)"
+        ax.text(0.98, 0.95, f"$t_{{50}}$ echo {sec(row['t50_total'])}\n$t_{{50}}$ direct {sec(row['t50_direct'])}\n{amp_s}",
+                transform=ax.transAxes, ha="right", va="top", color=INK2, fontsize=6.5)
     for ax in axes.ravel()[len(assets):]:
         ax.axis("off")
     for ax in axes[-1]:
@@ -141,17 +144,19 @@ def fig_rho_by_year():
 
 
 def fig_placebo(tag, r):
-    if "placebo_mass_per_dim" not in r:
+    se = r.get("mass_se", {})
+    if not se:
         return
-    names = list(r["real_mass_per_dim"]) + ["PLACEBO"]
-    vals = [np.sum(v) for v in r["real_mass_per_dim"].values()] + [np.sum(r["placebo_mass_per_dim"])]
-    fig, ax = plt.subplots(figsize=(4.6, 2.4))
-    cols = [BLUE] * (len(names) - 1) + [GRAY]
-    ax.bar(range(len(names)), vals, color=cols, width=0.7, edgecolor="white", linewidth=1)
-    ax.set_xticks(range(len(names)), names, rotation=45, ha="right", fontsize=7)
-    ax.set_ylabel("expected extra events per release\n(direct kernel mass, all assets)")
-    ax.annotate(f"{vals[-1]:.2f}", (len(names) - 1, vals[-1]), textcoords="offset points", xytext=(0, 4),
-                ha="center", color=INK2, fontsize=7)
+    kinds = [k for k in se if not k.startswith("PLACEBO")]
+    x = np.arange(len(kinds))
+    real = [se[k]["mass"] for k in kinds]
+    plc = [se.get(f"PLACEBO_{k}", {}).get("mass", np.nan) for k in kinds]
+    fig, ax = plt.subplots(figsize=(5.2, 2.6))
+    ax.bar(x - 0.2, real, 0.38, color=BLUE, edgecolor="white", linewidth=1, label="release")
+    ax.bar(x + 0.2, plc, 0.38, color=GRAY, edgecolor="white", linewidth=1, label="matched placebo (same clock time)")
+    ax.set_xticks(x, kinds, rotation=45, ha="right", fontsize=7)
+    ax.set_ylabel("direct news-kernel mass\n(extra events per release)")
+    ax.legend(frameon=False, fontsize=7)
     fig.savefig(OUT / f"placebo_{tag}.pdf")
     plt.close(fig)
 

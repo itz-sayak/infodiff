@@ -82,3 +82,22 @@ rho 0.8501412906106303 relaxation_s 787.1939582706509 total 401s
   responses done in 89s
   goodness of fit done in 109s
 rho 0.8493910938904458 relaxation_s 788.0885667021028 total 483s
+
+=== Mon Sep 28 04:11:37 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2024
+2024: windows=178 events=1451376
+  dim  0 n=  121150 ll=    -253370.65 gap=4.7e-04 it=160 33s
+  dim  1 n=  121392 ll=    -255129.98 gap=2.8e-04 it=198 31s
+  dim  2 n=  176040 ll=    -323799.98 gap=2.2e-04 it=157 41s
+  dim  3 n=  174774 ll=    -318507.04 gap=4.1e-04 it=216 44s
+  dim  4 n=   87789 ll=    -237354.62 gap=2.6e-04 it=173 22s
+  dim  5 n=   87887 ll=    -239002.34 gap=7.3e-04 it=202 24s
+  dim  6 n=   44154 ll=    -140835.33 gap=2.2e-04 it=156 12s
+  dim  7 n=   43192 ll=    -137994.94 gap=1.8e-04 it=185 13s
+  dim  8 n=  115519 ll=    -212647.93 gap=8.2e-04 it=274 37s
+  dim  9 n=  115460 ll=    -209968.54 gap=3.8e-04 it=263 37s
+  dim 10 n=   85843 ll=    -171036.42 gap=7.6e-04 it=238 25s
+  dim 11 n=   86476 ll=    -170310.17 gap=7.4e-04 it=168 23s
+  total fit 342s
+  responses done in 86s
+  goodness of fit done in 106s
+rho 0.8510228813425622 relaxation_s 809.4984963277108 total 448s

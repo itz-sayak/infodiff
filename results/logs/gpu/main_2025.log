@@ -7,3 +7,22 @@
 
 === Mon Sep 28 03:20:27 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2025
 2025: windows=160 events=1512395
+
+=== Mon Sep 28 04:19:10 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2025
+2025: windows=170 events=1521600
+  dim  0 n=  136700 ll=    -277530.39 gap=6.4e-04 it=209 39s
+  dim  1 n=  136927 ll=    -280742.19 gap=5.1e-04 it=217 36s
+  dim  2 n=  149320 ll=    -291777.69 gap=1.5e-03 it=212 42s
+  dim  3 n=  148643 ll=    -289966.05 gap=9.0e-04 it=400 50s
+  dim  4 n=  112359 ll=    -299305.75 gap=6.8e-04 it=192 30s
+  dim  5 n=  111442 ll=    -297663.60 gap=7.1e-04 it=192 29s
+  dim  6 n=   79119 ll=    -203385.00 gap=2.3e-04 it=211 22s
+  dim  7 n=   79478 ll=    -203709.85 gap=6.2e-04 it=240 19s
+  dim  8 n=   73708 ll=    -141506.87 gap=4.2e-04 it=255 25s
+  dim  9 n=   73423 ll=    -140371.74 gap=7.4e-04 it=198 23s
+  dim 10 n=   99261 ll=    -142588.42 gap=7.0e-04 it=250 35s
+  dim 11 n=   99727 ll=    -142005.50 gap=6.2e-04 it=227 31s
+  total fit 383s
+  responses done in 86s
+  goodness of fit done in 107s
+rho 0.860097727534199 relaxation_s 735.1194245042858 total 490s
