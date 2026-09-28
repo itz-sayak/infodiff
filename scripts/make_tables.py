@@ -229,6 +229,42 @@ def numbers():
             lines.append(f"{x['l1']:.1f} & {mark}{{{x['val_ll'] - best['val_ll']:.1f}}} & {rel:.2f} & {plc:.2f} \\\\")
         lines += ["\\bottomrule", "\\end{tabular}"]
         (OUT / "l1_selection.tex").write_text("\n".join(lines))
+    # Track C: how many tickers our models win, margin over the best neural baseline
+    wins, margins = 0, []
+    neural = {"NHP", "S2P2", "THP", "RMTPP", "SAHP", "AttNHP", "IntensityFree"}
+    ez = load("easytpp_results.json") or []
+    n_done = 0
+    for tk in ["aapl", "amzn", "goog", "intc", "msft"]:
+        ours = []
+        rows = load(f"ept_lob_{tk}.json") or []
+        if rows:
+            ours.append(np.mean([r["ll_per_event"] for r in rows]))
+        for r in load(f"track_c_classical_lob_{tk}.json") or []:
+            if r.get("key") in ("MSX-auto", "MSX") and "ll_per_event" in r:
+                ours.append(r["ll_per_event"])
+        others = [r["ll_per_event"] for r in load(f"track_c_classical_lob_{tk}.json") or []
+                  if r.get("key") not in ("MSX-auto", "MSX") and "ll_per_event" in r]
+        nb = [r["ll_per_event"] for r in ez if r["dataset"] == f"lob_{tk}" and r["model"] in neural
+              and r.get("ll_per_event") is not None]
+        if ours and nb:
+            n_done += 1
+            wins += max(ours) > max(others + nb)
+            margins.append(max(ours) - max(nb))
+    if n_done:
+        out.append(f"\\newcommand{{\\trackCwins}}{{{wins}}}\\newcommand{{\\trackCdone}}{{{n_done}}}")
+        out.append(f"\\newcommand{{\\trackCmarginLo}}{{{min(margins):.2f}}}\\newcommand{{\\trackCmarginHi}}{{{max(margins):.2f}}}")
+    d = load("track_d.json")
+    if d:
+        corr = {k: np.nanmean(v["drift_corr"], axis=1) for k, v in d["drift"].items()}
+        ours = corr.get("MSX closed form (ours)")
+        cands = [v for k, v in corr.items() if "ours" not in k and np.isfinite(v).any()]
+        base = max(cands, key=lambda v: np.nanmean(v))  # martingale has undefined correlation
+        if ours is not None:
+            out.append(f"\\newcommand{{\\driftCorrOursOne}}{{{ours[0]:.2f}}}\\newcommand{{\\driftCorrBaseOne}}{{{base[0]:.2f}}}")
+        rm = {k: np.mean(v["rmse_log"], axis=1) for k, v in d["activity"].items()}
+        best = min(rm, key=lambda k: rm[k][-1])
+        out.append(f"\\newcommand{{\\bestActivityModel}}{{{best}}}")
+        out.append(f"\\newcommand{{\\nTestReleases}}{{{d['n_test']}}}")
     rhos = []
     for y in ("2022", "2023", "2024", "2025", "2026"):
         v = load(f"main_{y}.json")
