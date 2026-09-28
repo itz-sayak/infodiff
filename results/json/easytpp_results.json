@@ -110,5 +110,47 @@
   "seconds": 23.729617595672607,
   "max_epoch": 100,
   "batch_size": 64
+ },
+ {
+  "model": "S2P2",
+  "dataset": "lob_amzn",
+  "seed": 2019,
+  "ll_per_event": 0.7171308609938355,
+  "mark_ll": -1.70922210773458,
+  "time_ll": 2.4263529012769376,
+  "val_ll": 0.5279602374513214,
+  "best_epoch": 97,
+  "n_params": 34060,
+  "seconds": 288.86250400543213,
+  "max_epoch": 100,
+  "batch_size": 32
+ },
+ {
+  "model": "NHP",
+  "dataset": "lob_amzn",
+  "seed": 2019,
+  "ll_per_event": 0.8423423213776937,
+  "mark_ll": -1.588373105422883,
+  "time_ll": 2.430715527977794,
+  "val_ll": 0.6444787478509537,
+  "best_epoch": 96,
+  "n_params": 231948,
+  "seconds": 220.52391624450684,
+  "max_epoch": 100,
+  "batch_size": 64
+ },
+ {
+  "model": "RMTPP",
+  "dataset": "lob_amzn",
+  "seed": 2019,
+  "ll_per_event": -0.6860366064567792,
+  "mark_ll": -1.5819386391205623,
+  "time_ll": 0.8959021001152611,
+  "val_ll": -1.182226039188949,
+  "best_epoch": 86,
+  "n_params": 34962,
+  "seconds": 16.228167057037354,
+  "max_epoch": 100,
+  "batch_size": 64
  }
 ]

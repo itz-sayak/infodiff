@@ -1,0 +1,193 @@
+<title>Echo-Corrected News Absorption</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500&display=swap">
+<style>
+:root{
+  --paper:#f7f9fb; --panel:#ffffff; --ink:#141922; --muted:#5a6474; --rule:#dfe4ea; --grid:#edf0f4;
+  --echo:#2a78d6; --direct:#eb6834; --placebo:#8b929c; --good:#1b8a5a; --warn:#b26b00;
+  --display:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){color-scheme:dark;
+    --paper:#0e1217; --panel:#151a21; --ink:#e9edf2; --muted:#9aa4b2; --rule:#28303b; --grid:#1d242d;
+    --echo:#3987e5; --direct:#d95926; --placebo:#7d8591; --good:#36b37e; --warn:#e0a13a;}
+}
+:root[data-theme="dark"]{color-scheme:dark;
+  --paper:#0e1217; --panel:#151a21; --ink:#e9edf2; --muted:#9aa4b2; --rule:#28303b; --grid:#1d242d;
+  --echo:#3987e5; --direct:#d95926; --placebo:#7d8591; --good:#36b37e; --warn:#e0a13a;}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font:15px/1.55 var(--body);padding-inline:16px;padding-block:24px 48px}
+.wrap{max-width:1080px;margin:0 auto;display:grid;gap:28px}
+.wrap>*,section>*,.panel{min-width:0}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
+h1{font-size:clamp(28px,4.2vw,40px);font-weight:700;letter-spacing:-.01em;line-height:1.1}
+h2{font-size:20px;font-weight:600}
+.lede{color:var(--muted);max-width:68ch;margin:8px 0 0}
+.eyebrow{font:500 12px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.fact{background:var(--panel);border:1px solid var(--rule);border-radius:8px;padding:14px 16px;display:grid;gap:4px}
+.fact b{font:600 26px var(--mono);font-variant-numeric:tabular-nums}
+.fact span{color:var(--muted);font-size:13px}
+section{display:grid;gap:12px}
+.panel{background:var(--panel);border:1px solid var(--rule);border-radius:8px;padding:16px}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.seg{display:flex;flex-wrap:wrap;gap:4px}
+.seg button{font:500 13px var(--mono);border:1px solid var(--rule);background:transparent;color:var(--ink);padding:5px 10px;border-radius:6px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.seg button:focus-visible{outline:2px solid var(--echo);outline-offset:2px}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.legend i{display:inline-block;width:18px;height:3px;border-radius:2px;vertical-align:middle;margin-right:6px}
+.chart{position:relative;width:100%}
+.chart svg{width:100%;height:auto;display:block}
+.tip{position:absolute;pointer-events:none;background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:6px 8px;font:12px var(--mono);white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-top:10px}
+.stat{display:grid;gap:2px;padding:8px 10px;border-left:3px solid var(--rule)}
+.stat.e{border-color:var(--echo)} .stat.d{border-color:var(--direct)}
+.stat b{font:500 17px var(--mono);font-variant-numeric:tabular-nums} .stat span{font-size:12px;color:var(--muted)}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{padding:6px 10px;text-align:right;border-bottom:1px solid var(--grid);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{font:600 12px var(--display);letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+td{font-family:var(--mono);font-variant-numeric:tabular-nums}
+td.best{font-weight:600;color:var(--good)}
+tr.ours td:first-child{font-weight:600}
+.note{font-size:13px;color:var(--muted);max-width:75ch}
+.pill{display:inline-block;font:500 11px var(--mono);padding:2px 7px;border-radius:99px;border:1px solid currentColor}
+.pass{color:var(--good)} .fail{color:var(--muted)}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow" id="eyebrow">MSX-Hawkes · 6 markets · 2022–2026</div>
+    <h1>How fast do markets absorb macro news?</h1>
+    <p class="lede">A certified multiscale Hawkes model of δ-crossing price events around CPI, payrolls, FOMC and eight other release types. The direct reaction lasts about a second; the market's own echoes carry the response for minutes.</p>
+  </header>
+
+  <div class="facts" id="facts"></div>
+
+  <section>
+    <h2>Absorption explorer</h2>
+    <div class="panel">
+      <div class="controls">
+        <span class="eyebrow">Release</span><div class="seg" id="typeSeg" role="group" aria-label="Release type"></div>
+      </div>
+      <div class="controls" style="margin-top:8px">
+        <span class="eyebrow">Market</span><div class="seg" id="assetSeg" role="group" aria-label="Market"></div>
+      </div>
+      <div class="legend" style="margin-top:12px">
+        <span><i style="background:var(--echo)"></i>echo-corrected response</span>
+        <span><i style="background:var(--direct)"></i>direct news kernel</span>
+      </div>
+      <div class="chart" id="chart"></div>
+      <div class="stats" id="stats"></div>
+    </div>
+    <p class="note">Excess event intensity after the release (events per second, log scales). The echo-corrected curve is the closed-form mean response C·e<sup>𝒜t</sup>z₀, which includes every generation of endogenous re-trading; the direct kernel is what a naive "news half-life" measures.</p>
+  </section>
+
+  <section>
+    <h2>Placebo test</h2>
+    <div class="panel">
+      <div class="tablewrap"><table id="placebo"></table></div>
+    </div>
+    <p class="note">Direct news-kernel mass (expected extra events per release) for each release versus a matched placebo at the same clock time on a day without any scheduled release. Releases at least 1.5× their placebo pass.</p>
+  </section>
+
+  <section>
+    <h2>Benchmarks</h2>
+    <div class="panel"><h3 style="font-size:15px;margin-bottom:8px">Order books (LOBSTER): test log-likelihood per event, higher is better</h3><div class="tablewrap"><table id="trackC"></table></div></div>
+    <div class="panel"><h3 style="font-size:15px;margin-bottom:8px">Synthetic recovery: held-out likelihood deficit to the true model (10⁻³ nats/event, lower is better)</h3><div class="tablewrap"><table id="trackA"></table></div></div>
+  </section>
+</div>
+
+<script>
+const D = /*__DATA__*/null;
+const fmt = (v, d = 2) => v == null || !isFinite(v) ? "—" : Number(v).toFixed(d);
+const sec = v => !isFinite(v) ? "—" : v < 10 ? v.toFixed(1) + " s" : v < 120 ? v.toFixed(0) + " s" : (v / 60).toFixed(1) + " min";
+
+// ---- headline facts
+const sig = ["CPI", "NFP", "PPI", "FOMC"];
+const t50s = [], t90s = [], t50d = [];
+sig.forEach(k => Object.values(D.types[k] || {}).forEach(r => { t50s.push(r.t50); t90s.push(r.t90); t50d.push(r.t50d); }));
+const med = a => { const b = [...a].filter(isFinite).sort((x, y) => x - y); return b[Math.floor(b.length / 2)]; };
+const yrs = Object.values(D.years);
+document.getElementById("eyebrow").textContent = `MSX-Hawkes · 6 markets · 2022–2026 · ${yrs.reduce((a, y) => a + y.windows, 0)} event windows · ${(yrs.reduce((a, y) => a + y.events, 0) / 1e6).toFixed(1)}M price events`;
+const passN = Object.keys(D.mass).filter(k => !k.startsWith("PLACEBO") && D.mass[k].mass >= 1.5 * D.mass["PLACEBO_" + k].mass).length;
+const facts = [
+  [sec(med(t50d)), "median half-life of the direct news kernel (CPI, NFP, PPI, FOMC)"],
+  [`${Math.round(Math.min(...t50s))}–${Math.round(Math.max(...t50s))} s`, "half of the echo-corrected response (CPI, NFP, PPI, FOMC)"],
+  [`${Math.round(Math.min(...t90s) / 60)}–${Math.round(Math.max(...t90s) / 60)} min`, "until 90% of the response has arrived"],
+  [fmt(D.rho, 2), "spectral radius ρ(G): share of price events that are echoes"],
+  [`${passN} / ${Object.keys(D.mass).filter(k => !k.startsWith("PLACEBO")).length}`, "release types that beat their matched placebo"],
+];
+document.getElementById("facts").innerHTML = facts.map(([b, s]) => `<div class="fact"><b>${b}</b><span>${s}</span></div>`).join("");
+
+// ---- explorer
+const types = Object.keys(D.types);
+let curType = "CPI", curAsset = "BTC";
+function segButtons(el, items, cur, on) {
+  el.innerHTML = items.map(x => `<button type="button" aria-pressed="${x === cur}" data-v="${x}">${x}</button>`).join("");
+  el.querySelectorAll("button").forEach(b => b.onclick = () => on(b.dataset.v));
+}
+function renderSegs() {
+  segButtons(document.getElementById("typeSeg"), types, curType, v => { curType = v; if (!D.types[v][curAsset]) curAsset = Object.keys(D.types[v])[0]; renderSegs(); draw(); });
+  segButtons(document.getElementById("assetSeg"), Object.keys(D.types[curType]), curAsset, v => { curAsset = v; renderSegs(); draw(); });
+}
+function draw() {
+  const r = D.types[curType][curAsset], t = D.t;
+  const W = 760, H = 320, m = {l: 58, r: 16, t: 12, b: 40};
+  const lx = x => Math.log10(x), ys = [...r.tot, ...r.dir].filter(v => v > 0);
+  const ymax = Math.max(...ys), ymin = Math.max(ymax * 1e-4, Math.min(...ys));
+  const X = x => m.l + (lx(x) - lx(t[0])) / (lx(t[t.length - 1]) - lx(t[0])) * (W - m.l - m.r);
+  const Y = y => m.t + (1 - (Math.log10(Math.max(y, ymin)) - Math.log10(ymin)) / (Math.log10(ymax) - Math.log10(ymin))) * (H - m.t - m.b);
+  const path = arr => { let d = "", pen = false; arr.forEach((v, i) => { if (v < ymin) { pen = false; return; } d += `${pen ? "L" : "M"}${X(t[i]).toFixed(1)},${Y(v).toFixed(1)}`; pen = true; }); return d; };
+  const xt = [0.1, 1, 10, 100, 1000].filter(v => v >= t[0] && v <= t[t.length - 1]);
+  const yt = []; for (let e = Math.ceil(Math.log10(ymin)); e <= Math.floor(Math.log10(ymax)); e++) yt.push(10 ** e);
+  let g = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Response of ${curAsset} to ${curType}">`;
+  xt.forEach(v => g += `<line x1="${X(v)}" x2="${X(v)}" y1="${m.t}" y2="${H - m.b}" stroke="var(--grid)"/><text x="${X(v)}" y="${H - m.b + 16}" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="var(--mono)">${v >= 1 ? v : v} s</text>`);
+  yt.forEach(v => g += `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--grid)"/><text x="${m.l - 8}" y="${Y(v) + 4}" text-anchor="end" font-size="11" fill="var(--muted)" font-family="var(--mono)">${v.toExponential(0)}</text>`);
+  g += `<text x="${(W + m.l) / 2}" y="${H - 6}" text-anchor="middle" font-size="12" fill="var(--muted)">seconds after release</text>`;
+  [[r.t50, "var(--echo)", "t₅₀"], [r.t90, "var(--echo)", "t₉₀"], [r.t50d, "var(--direct)", "t₅₀"]].forEach(([v, c, lab]) => {
+    if (isFinite(v) && v > t[0] && v < t[t.length - 1]) g += `<line x1="${X(v)}" x2="${X(v)}" y1="${m.t}" y2="${H - m.b}" stroke="${c}" stroke-dasharray="3 3" stroke-width="1"/><text x="${X(v) + 4}" y="${m.t + 12}" font-size="11" fill="var(--muted)" font-family="var(--mono)">${lab}</text>`;
+  });
+  g += `<path d="${path(r.dir)}" fill="none" stroke="var(--direct)" stroke-width="2"/>`;
+  g += `<path d="${path(r.tot)}" fill="none" stroke="var(--echo)" stroke-width="2"/>`;
+  g += `<line id="cross" y1="${m.t}" y2="${H - m.b}" stroke="var(--muted)" stroke-width="1" visibility="hidden"/>`;
+  g += `<rect x="${m.l}" y="${m.t}" width="${W - m.l - m.r}" height="${H - m.t - m.b}" fill="transparent" id="hit"/></svg><div class="tip" hidden id="tip"></div>`;
+  const el = document.getElementById("chart"); el.innerHTML = g;
+  const svg = el.querySelector("svg"), tip = el.querySelector("#tip"), cross = el.querySelector("#cross");
+  svg.querySelector("#hit").addEventListener("pointermove", ev => {
+    const p = svg.createSVGPoint(); p.x = ev.clientX; p.y = ev.clientY; const q = p.matrixTransform(svg.getScreenCTM().inverse());
+    let i = 0, best = 1e9; t.forEach((v, k) => { const d = Math.abs(X(v) - q.x); if (d < best) { best = d; i = k; } });
+    cross.setAttribute("x1", X(t[i])); cross.setAttribute("x2", X(t[i])); cross.setAttribute("visibility", "visible");
+    tip.hidden = false; tip.innerHTML = `${sec(t[i])} after release<br><span style="color:var(--echo)">echo</span> ${r.tot[i].toExponential(2)}/s<br><span style="color:var(--direct)">direct</span> ${r.dir[i].toExponential(2)}/s`;
+    const box = el.getBoundingClientRect(); tip.style.left = Math.min(ev.clientX - box.left + 12, box.width - 170) + "px"; tip.style.top = (ev.clientY - box.top + 12) + "px";
+  });
+  svg.querySelector("#hit").addEventListener("pointerleave", () => { tip.hidden = true; cross.setAttribute("visibility", "hidden"); });
+  const st = [["e", sec(r.t50), "echo-corrected t₅₀"], ["e", sec(r.t90), "echo-corrected t₉₀"], ["d", sec(r.t50d), "direct-kernel t₅₀"],
+    ["", r.amp == null ? "n/a" : fmt(r.amp, 1) + "×", "echo amplification"],
+    ["", fmt(r.up, 2) + " / " + fmt(r.dn, 2) + " bp", "drift after +1σ / −1σ surprise"]];
+  document.getElementById("stats").innerHTML = st.map(([c, b, s]) => `<div class="stat ${c}"><b>${b}</b><span>${s}</span></div>`).join("");
+}
+renderSegs(); draw();
+
+// ---- placebo table
+const kinds = Object.keys(D.mass).filter(k => !k.startsWith("PLACEBO"));
+document.getElementById("placebo").innerHTML = `<tr><th>Release</th><th>Release mass</th><th>Placebo mass</th><th>Ratio</th><th>Result</th></tr>` +
+  kinds.map(k => { const a = D.mass[k].mass, p = D.mass["PLACEBO_" + k].mass, ratio = a / Math.max(p, 1e-9), ok = ratio >= 1.5;
+    return `<tr><td>${k}</td><td>${fmt(a)}</td><td>${fmt(p)}</td><td>${fmt(ratio, 1)}×</td><td><span class="pill ${ok ? "pass" : "fail"}">${ok ? "passes" : "not detected"}</span></td></tr>`; }).join("");
+
+// ---- Track C
+const tks = Object.keys(D.trackC), models = [...new Set(tks.flatMap(t => Object.keys(D.trackC[t])))];
+const bestC = Object.fromEntries(tks.map(t => [t, Math.max(...Object.values(D.trackC[t]).filter(isFinite))]));
+document.getElementById("trackC").innerHTML = `<tr><th>Model</th>${tks.map(t => `<th>${t}</th>`).join("")}</tr>` +
+  models.map(mn => `<tr class="${mn.includes("ours") ? "ours" : ""}"><td>${mn}</td>${tks.map(t => { const v = D.trackC[t][mn]; return `<td class="${v === bestC[t] ? "best" : ""}">${v == null ? "—" : fmt(v, 3)}</td>`; }).join("")}</tr>`).join("");
+
+// ---- Track A
+const sc = Object.keys(D.trackA), ma = [...new Set(sc.flatMap(s => Object.keys(D.trackA[s])))];
+const bestA = Object.fromEntries(sc.map(s => [s, Math.min(...Object.values(D.trackA[s]))]));
+document.getElementById("trackA").innerHTML = `<tr><th>Method</th>${sc.map(s => `<th>${s}</th>`).join("")}</tr>` +
+  ma.map(mn => `<tr class="${mn.includes("ours") ? "ours" : ""}"><td>${mn}</td>${sc.map(s => { const v = D.trackA[s][mn]; return `<td class="${v === bestA[s] ? "best" : ""}">${v == null ? "—" : fmt(1e3 * v, 2)}</td>`; }).join("")}</tr>`).join("");
+</script>
