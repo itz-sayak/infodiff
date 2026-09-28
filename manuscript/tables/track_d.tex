@@ -1,0 +1,11 @@
+\begin{tabular}{lcccccc}
+\toprule
+& \multicolumn{3}{c}{RMSE $\log(1+N)$} & \multicolumn{3}{c}{QLIKE (RV)} \\
+Method & 1m & 5m & 15m & 1m & 5m & 15m \\
+\midrule
+MSX closed form (ours) & 1.322 & 1.049 & 0.955 & 2.913 & 1.036 & 0.518 \\
+climatology & 1.440 & 1.308 & 1.199 & \textbf{1.263} & 0.916 & 0.701 \\
+event-study OLS & \textbf{1.140} & \textbf{0.925} & \textbf{0.776} & 2.552 & \textbf{0.580} & \textbf{0.372} \\
+HAR & 1.217 & 0.985 & 0.820 & 1.467 & 0.762 & 0.468 \\
+\bottomrule
+\end{tabular}

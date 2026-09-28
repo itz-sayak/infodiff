@@ -1,2 +1,9 @@
 
 === Mon Sep 28 05:54:02 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_track_d.py train_2022_2024
+MSX closed form (ours)       RMSE(log1p N) by horizon (mean over assets): [1.3219 1.0486 0.955 ]  QLIKE: [2.913  1.0357 0.5182]
+climatology                  RMSE(log1p N) by horizon (mean over assets): [1.4401 1.3085 1.1991]  QLIKE: [1.2631 0.9163 0.7005]
+event-study OLS              RMSE(log1p N) by horizon (mean over assets): [1.1398 0.9254 0.7756]  QLIKE: [2.5516 0.5804 0.372 ]
+HAR                          RMSE(log1p N) by horizon (mean over assets): [1.2166 0.9845 0.8199]  QLIKE: [1.4667 0.7624 0.4677]
+MSX closed form (ours)       drift hit-rate: [0.445 0.463 0.479]  corr: [0.17  0.061 0.053]
+martingale (zero drift)      drift hit-rate: [0.112 0.043 0.027]  corr: [nan nan nan]
+type x sign mean             drift hit-rate: [0.403 0.484 0.524]  corr: [0.059 0.019 0.035]

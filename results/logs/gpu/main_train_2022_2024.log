@@ -1,3 +1,19 @@
 
 === Mon Sep 28 05:37:14 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2022,2023,2024 train_2022_2024
 train_2022_2024: windows=454 events=5951917
+  dim  0 n=  483292 ll=    -839559.97 gap=1.6e-03 it=214 140s
+  dim  1 n=  484473 ll=    -850847.88 gap=9.8e-04 it=261 143s
+  dim  2 n=  541545 ll=    -873199.68 gap=2.1e-03 it=205 146s
+  dim  3 n=  538005 ll=    -859842.79 gap=2.0e-03 it=192 147s
+  dim  4 n=  246690 ll=    -619798.99 gap=1.5e-03 it=126 64s
+  dim  5 n=  246134 ll=    -624034.76 gap=2.5e-04 it=123 76s
+  dim  6 n=  227690 ll=    -551685.97 gap=1.7e-03 it=175 72s
+  dim  7 n=  227099 ll=    -549948.47 gap=7.1e-04 it=142 64s
+  dim  8 n=  617616 ll=     145193.64 gap=2.3e-03 it=400 241s
+  dim  9 n=  618960 ll=     146570.34 gap=1.6e-03 it=400 233s
+  dim 10 n=  513995 ll=      72567.00 gap=2.3e-03 it=400 195s
+  dim 11 n=  515931 ll=      74373.78 gap=1.7e-03 it=400 199s
+  total fit 1720s
+  responses done in 86s
+  goodness of fit done in 167s
+rho 0.8876627257160778 relaxation_s 788.030748437617 total 1888s
