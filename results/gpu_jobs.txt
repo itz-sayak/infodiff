@@ -29,6 +29,8 @@ easy_RMTPP_lob_goog | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines
 easy_SAHP_lob_goog | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner SAHP lob_goog 6 2019 100 64
 easy_AttNHP_lob_goog | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner AttNHP lob_goog 6 2019 100 64
 easy_IntensityFree_lob_goog | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner IntensityFree lob_goog 6 2019 100 64
+easy_IntensityFree_lob_aapl_300ep | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner IntensityFree lob_aapl 6 2019 300 64
+easy_S2P2_lob_aapl_300ep | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner S2P2 lob_aapl 6 2019 300 32
 ept_lob_intc | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept.py lob_intc 0,1,2 "{\"epochs\":100,\"phases\":2}"
 easy_S2P2_lob_intc | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner S2P2 lob_intc 6 2019 100 32
 easy_NHP_lob_intc | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner NHP lob_intc 6 2019 100 64
@@ -49,8 +51,6 @@ ept_hpo | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_hpo.py taxi,taoba
 ept_taxi_5seeds | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept.py taxi 0,1,2,3,4 "auto:{\"epochs\":300}"
 ept_taobao_5seeds | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept.py taobao 0,1,2,3,4 "auto:{\"epochs\":300}"
 ept_stackoverflow_5seeds | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept.py stackoverflow 0,1,2,3,4 "auto:{\"epochs\":300}"
-ept_amazon_5seeds | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept.py amazon 0,1,2,3,4 "auto:{\"epochs\":300}"
-ept_retweet_5seeds | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept.py retweet 0,1,2,3,4 "auto:{\"epochs\":300}"
+ept_amazon_5seeds | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept.py amazon 0,1,2 "auto:{\"epochs\":300}"
+ept_retweet_5seeds | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept.py retweet 0,1,2 "auto:{\"epochs\":300}"
 easy_S2P2_taxi_repro | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner S2P2 taxi 10 2019
-easy_IntensityFree_lob_aapl_300ep | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner IntensityFree lob_aapl 6 2019 300 64
-easy_S2P2_lob_aapl_300ep | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner S2P2 lob_aapl 6 2019 300 32

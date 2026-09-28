@@ -1,0 +1,57 @@
+[
+ {
+  "dataset": "lob_msft",
+  "method": "MSX-auto (ours)",
+  "key": "MSX-auto",
+  "ll_per_event": 6.309730816927393,
+  "val_ll": 6.275937131320788,
+  "seconds": 368.2913508415222,
+  "gap": 0.000263908295892179,
+  "R": 4,
+  "l1": 0.01
+ },
+ {
+  "dataset": "lob_msft",
+  "method": "MSX (ours, R=2)",
+  "key": "MSX",
+  "ll_per_event": 6.307125035357542,
+  "val_ll": 6.272957345617875,
+  "seconds": 20.573554277420044,
+  "gap": 0.0001749072689563036
+ },
+ {
+  "dataset": "lob_msft",
+  "key": "ExpKern",
+  "error": "TypeError('cannot unpack non-iterable NoneType object')"
+ },
+ {
+  "dataset": "lob_msft",
+  "key": "SumExp",
+  "error": "RuntimeError('The sum of the influence on someone cannot be negative. Maybe did you forget to add a positive constraint to your proximal operator\\n')"
+ },
+ {
+  "dataset": "lob_msft",
+  "method": "tick-EM(nonparam)",
+  "key": "EM",
+  "ll_per_event": 6.257767864026941,
+  "val_ll": 6.233503816266727,
+  "seconds": 20.771605253219604
+ },
+ {
+  "dataset": "lob_msft",
+  "method": "tick-ADM4",
+  "key": "ADM4",
+  "ll_per_event": 5.210967038173037,
+  "val_ll": 5.244995384413356,
+  "seconds": 5.130504131317139,
+  "decay": 659.8715818793514
+ },
+ {
+  "dataset": "lob_msft",
+  "method": "tick-ConditionalLaw",
+  "key": "CondLaw",
+  "ll_per_event": -1.2698364365148251,
+  "val_ll": -4.293614842465355,
+  "seconds": 38.43484687805176
+ }
+]

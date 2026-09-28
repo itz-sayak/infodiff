@@ -8,7 +8,7 @@ warnings.filterwarnings("ignore")
 from infodiff.experiments.track_b import train_one
 
 datasets = sys.argv[1].split(",")
-grid = [dict(hidden=h, n_rates=k, phases=r, epochs=100) for h, k, r in itertools.product((64, 128), (8, 16), (2, 4))]
+grid = [dict(hidden=h, n_rates=8, phases=r, epochs=100) for h, r in itertools.product((64, 128), (2, 4))]
 out = Path("results/json/ept_hpo.json")
 rows = json.loads(out.read_text()) if out.exists() else []
 done = {(r["dataset"], json.dumps(r["config"], sort_keys=True)) for r in rows}
