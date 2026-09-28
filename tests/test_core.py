@@ -276,3 +276,26 @@ def test_linear_window_baseline_bruteforce_and_residuals():
     # an unequal tent pair: fitted model's compensator matches numerical integration
     m = MSXHawkes(spec, device="cpu").fit(data)
     assert all(r.gap < 1e-2 for r in m.reports)
+
+
+def test_shared_baseline_matches_constant_truth():
+    """win_cols=0: a single shared baseline reproduces the brute-force likelihood."""
+    truth = _truth(seed=21)
+    truth.tod_w = None
+    data = _sim(truth, W=5, seed=22)
+    spec = DesignSpec(endo=ENDO, exo=EXO, ant=ANT, n_tod=0, win_cols=0)
+    model = model_from_truth(truth, spec, data)
+    ll_brute = _brute_loglik_no_tod(truth, data)
+    assert np.isclose(model.loglik(data), ll_brute, rtol=1e-9)
+    m = MSXHawkes(spec, device="cpu").fit(data)
+    assert all(r.gap < 1e-2 for r in m.reports)
+
+
+def _brute_loglik_no_tod(truth, data):
+    spec = DesignSpec(endo=ENDO, exo=EXO, ant=ANT, n_tod=24)
+    saved = truth.tod_w
+    truth.tod_w = np.zeros((truth.d, 24))
+    try:
+        return _brute_loglik(truth, spec, data)
+    finally:
+        truth.tod_w = saved

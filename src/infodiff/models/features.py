@@ -173,8 +173,13 @@ def _sparse_rows(row_t, row_w, t0, t1, win_cols, tod0, news_ptr, news_t, news_ty
             indptr[r] = nnz
         t = row_t[r]
         w = row_w[r]
-        # window baseline: constant (1 column) or linear (2 nonnegative tent columns)
-        if win_cols == 1:
+        # baseline: shared across windows (0), per-window constant (1) or linear tents (2)
+        if win_cols == 0:
+            if not count_only:
+                indices[nnz] = 0
+                data[nnz] = 1.0
+            nnz += 1
+        elif win_cols == 1:
             if not count_only:
                 indices[nnz] = w
                 data[nnz] = 1.0
@@ -238,6 +243,8 @@ def _sparse_rows(row_t, row_w, t0, t1, win_cols, tod0, news_ptr, news_t, news_ty
 
 def _window_baseline_cum(spec, theta_s, w, t, lo, hi):
     """int_{lo}^{t} of the window baseline (constant or linear tents)."""
+    if spec.win_cols == 0:
+        return theta_s[0] * (t - lo)
     if spec.win_cols == 1:
         return theta_s[w] * (t - lo)
     T = hi - lo
@@ -275,11 +282,11 @@ class DesignSpec:
     exo: PhaseTypeDictionary | None = None
     ant: PhaseTypeDictionary | None = None  # anticipation uses order-1 elements only
     n_tod: int = 0  # number of periodic time-of-day hat functions (0 disables)
-    win_cols: int = 1  # per-window baseline: 1 = constant, 2 = linear (two tent columns)
+    win_cols: int = 1  # baseline: 0 = one shared constant, 1 = per-window constant, 2 = per-window linear
 
     def layout(self, n_dims: int, n_windows: int, n_types: int, n_marks: int) -> dict:
         Pd = n_dims * self.endo.size
-        off_tod = n_windows * self.win_cols
+        off_tod = n_windows * self.win_cols if self.win_cols else 1
         off_exo = off_tod + self.n_tod
         n_exo = n_types * self.exo.size * n_marks if self.exo is not None else 0
         off_ant = off_exo + n_exo
@@ -352,7 +359,9 @@ def sparse_integrals(data: EventData, spec: DesignSpec, lay: dict) -> np.ndarray
     M = data.n_marks
     for w in range(data.n_windows):
         lo, hi = data.t0[w], data.t1[w]
-        if spec.win_cols == 1:
+        if spec.win_cols == 0:
+            out[0] += hi - lo
+        elif spec.win_cols == 1:
             out[w] += hi - lo
         else:  # each tent integrates to half the window length
             out[2 * w] += 0.5 * (hi - lo)

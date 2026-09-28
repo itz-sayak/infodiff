@@ -1,26 +1,6 @@
 [
  {
   "dataset": "lob_amzn",
-  "method": "MSX-auto (ours)",
-  "key": "MSX-auto",
-  "ll_per_event": -17.745760838289875,
-  "val_ll": -30.0352740481775,
-  "seconds": 37.26538014411926,
-  "gap": 6.40784164716024e-05,
-  "R": 4,
-  "l1": 0.0
- },
- {
-  "dataset": "lob_amzn",
-  "method": "MSX (ours, R=2)",
-  "key": "MSX",
-  "ll_per_event": -18.314678596206665,
-  "val_ll": -30.923494833421774,
-  "seconds": 2.0149986743927,
-  "gap": 5.682455775968265e-05
- },
- {
-  "dataset": "lob_amzn",
   "key": "ExpKern",
   "error": "TypeError('cannot unpack non-iterable NoneType object')"
  },

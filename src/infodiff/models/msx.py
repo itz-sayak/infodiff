@@ -362,7 +362,10 @@ class MSXHawkes:
         T = np.maximum(data.t1 - data.t0, 1e-9)
         lvl = np.maximum(0.5 * cnt / T, 1e-3 * n / T.sum())
         wc = self.spec.win_cols
-        th_s[: data.n_windows * wc] = np.repeat(lvl, wc)
+        if wc == 0:
+            th_s[0] = max(0.5 * n / T.sum(), 1e-12)
+        else:
+            th_s[: data.n_windows * wc] = np.repeat(lvl, wc)
         rest = slice(lay["off_tod"], lay["Ps"])
         m = lay["Ps"] - lay["off_tod"]
         if m:
@@ -386,6 +389,8 @@ class MSXHawkes:
     def window_levels(self, n_windows: int) -> np.ndarray:
         """(d, W) average baseline level of each window (mean of its tent weights if linear)."""
         wc = self.spec.win_cols
+        if wc == 0:
+            return np.repeat(self.theta_s[:, :1], n_windows, axis=1)
         return self.theta_s[:, : n_windows * wc].reshape(self.theta_s.shape[0], n_windows, wc).mean(-1)
 
     def endo_weights(self) -> np.ndarray:

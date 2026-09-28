@@ -150,9 +150,10 @@ def _exp_sum_loglik(decays, adj, mu):
 
 
 # ------------------------------------------------------------------ estimators
-def fit_msx(data: EventData, dic: PhaseTypeDictionary, name: str = "MSX", l1: float = 0.0, **kw) -> Fitted:
+def fit_msx(data: EventData, dic: PhaseTypeDictionary, name: str = "MSX", l1: float = 0.0,
+            shared_baseline: bool = False, **kw) -> Fitted:
     t = time.time()
-    m = MSXHawkes(DesignSpec(endo=dic), l1_endo=l1, **kw).fit(data)
+    m = MSXHawkes(DesignSpec(endo=dic, win_cols=0 if shared_baseline else 1), l1_endo=l1, **kw).fit(data)
     A = m.endo_weights()
     mu = m.window_levels(data.n_windows).mean(axis=1)
     sec = time.time() - t

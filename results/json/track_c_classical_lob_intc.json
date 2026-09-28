@@ -1,26 +1,6 @@
 [
  {
   "dataset": "lob_intc",
-  "method": "MSX-auto (ours)",
-  "key": "MSX-auto",
-  "ll_per_event": -232.96817187205778,
-  "val_ll": -514.5995668902698,
-  "seconds": 558.2651853561401,
-  "gap": 0.00044943910324946046,
-  "R": 4,
-  "l1": 0.0
- },
- {
-  "dataset": "lob_intc",
-  "method": "MSX (ours, R=2)",
-  "key": "MSX",
-  "ll_per_event": -235.578106663367,
-  "val_ll": -520.2620508880549,
-  "seconds": 36.1603102684021,
-  "gap": 0.0002806568518280983
- },
- {
-  "dataset": "lob_intc",
   "key": "ExpKern",
   "error": "TypeError('cannot unpack non-iterable NoneType object')"
  },

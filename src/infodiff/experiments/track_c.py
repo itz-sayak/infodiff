@@ -64,14 +64,14 @@ def run(dataset: str, out: Path, methods=("MSX-auto", "MSX", "ExpKern", "SumExp"
                 best = None
                 for R in (1, 2, 3, 4):
                     for l1 in (0.0, 0.01, 0.05):
-                        f = C.fit_msx(d_tr, PhaseTypeDictionary(dic.betas, orders=R), l1=l1)
+                        f = C.fit_msx(d_tr, PhaseTypeDictionary(dic.betas, orders=R), l1=l1, shared_baseline=True)
                         v = f.loglik(d_va) / n_scored(d_va)
                         if best is None or v > best[0]:
                             best = (v, R, l1, f)
                 _, R, l1, fit = best
                 fit.name, fit.extra["R"], fit.extra["l1"] = "MSX-auto (ours)", R, l1
             elif mname == "MSX":
-                fit = C.fit_msx(d_tr, dic, "MSX (ours, R=2)")
+                fit = C.fit_msx(d_tr, dic, "MSX (ours, R=2)", shared_baseline=True)
             elif mname == "ExpKern":
                 fit = C.fit_tick_expkern(d_tr, exp_grid)
             elif mname == "SumExp":

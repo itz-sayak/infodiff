@@ -1,0 +1,112 @@
+{
+ "aapl": [
+  {
+   "dataset": "lob_aapl",
+   "method": "MSX-auto (ours)",
+   "key": "MSX-auto",
+   "ll_per_event": 3.340440991643561,
+   "val_ll": 2.325921032911752,
+   "seconds": 143.50626277923584,
+   "gap": 4.891806747764349e-05,
+   "R": 4,
+   "l1": 0.0
+  },
+  {
+   "dataset": "lob_aapl",
+   "method": "MSX (ours, R=2)",
+   "key": "MSX",
+   "ll_per_event": 3.304397184490257,
+   "val_ll": 2.287334338492915,
+   "seconds": 8.154274463653564,
+   "gap": 0.00012448590132407844
+  }
+ ],
+ "amzn": [
+  {
+   "dataset": "lob_amzn",
+   "method": "MSX-auto (ours)",
+   "key": "MSX-auto",
+   "ll_per_event": -17.745760838289875,
+   "val_ll": -30.0352740481775,
+   "seconds": 37.26538014411926,
+   "gap": 6.40784164716024e-05,
+   "R": 4,
+   "l1": 0.0
+  },
+  {
+   "dataset": "lob_amzn",
+   "method": "MSX (ours, R=2)",
+   "key": "MSX",
+   "ll_per_event": -18.314678596206665,
+   "val_ll": -30.923494833421774,
+   "seconds": 2.0149986743927,
+   "gap": 5.682455775968265e-05
+  }
+ ],
+ "goog": [
+  {
+   "dataset": "lob_goog",
+   "method": "MSX-auto (ours)",
+   "key": "MSX-auto",
+   "ll_per_event": 1.4820059859578578,
+   "val_ll": -0.2244900471755295,
+   "seconds": 29.36259961128235,
+   "gap": 2.382273851253558e-05,
+   "R": 4,
+   "l1": 0.0
+  },
+  {
+   "dataset": "lob_goog",
+   "method": "MSX (ours, R=2)",
+   "key": "MSX",
+   "ll_per_event": 1.4050333580997874,
+   "val_ll": -0.3447180753767734,
+   "seconds": 1.473479986190796,
+   "gap": 5.368930033000652e-05
+  }
+ ],
+ "intc": [
+  {
+   "dataset": "lob_intc",
+   "method": "MSX-auto (ours)",
+   "key": "MSX-auto",
+   "ll_per_event": -232.96817187205778,
+   "val_ll": -514.5995668902698,
+   "seconds": 558.2651853561401,
+   "gap": 0.00044943910324946046,
+   "R": 4,
+   "l1": 0.0
+  },
+  {
+   "dataset": "lob_intc",
+   "method": "MSX (ours, R=2)",
+   "key": "MSX",
+   "ll_per_event": -235.578106663367,
+   "val_ll": -520.2620508880549,
+   "seconds": 36.1603102684021,
+   "gap": 0.0002806568518280983
+  }
+ ],
+ "msft": [
+  {
+   "dataset": "lob_msft",
+   "method": "MSX-auto (ours)",
+   "key": "MSX-auto",
+   "ll_per_event": -157.29483954331948,
+   "val_ll": -341.27047173150015,
+   "seconds": 595.8213493824005,
+   "gap": 0.0005277665331959724,
+   "R": 4,
+   "l1": 0.0
+  },
+  {
+   "dataset": "lob_msft",
+   "method": "MSX (ours, R=2)",
+   "key": "MSX",
+   "ll_per_event": -159.5168854055026,
+   "val_ll": -345.96914785593714,
+   "seconds": 37.04972457885742,
+   "gap": 0.0003158751060254872
+  }
+ ]
+}

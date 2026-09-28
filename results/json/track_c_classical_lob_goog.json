@@ -1,26 +1,6 @@
 [
  {
   "dataset": "lob_goog",
-  "method": "MSX-auto (ours)",
-  "key": "MSX-auto",
-  "ll_per_event": 1.4820059859578578,
-  "val_ll": -0.2244900471755295,
-  "seconds": 29.36259961128235,
-  "gap": 2.382273851253558e-05,
-  "R": 4,
-  "l1": 0.0
- },
- {
-  "dataset": "lob_goog",
-  "method": "MSX (ours, R=2)",
-  "key": "MSX",
-  "ll_per_event": 1.4050333580997874,
-  "val_ll": -0.3447180753767734,
-  "seconds": 1.473479986190796,
-  "gap": 5.368930033000652e-05
- },
- {
-  "dataset": "lob_goog",
   "method": "tick-ExpKern(MLE, best decay)",
   "key": "ExpKern",
   "ll_per_event": -0.31105179716988346,
