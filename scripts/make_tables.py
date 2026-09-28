@@ -99,17 +99,36 @@ def table_b():
 TK = ["aapl", "amzn", "goog", "intc", "msft"]
 
 
-def table_c():
-    res = {}  # method -> tk -> list
+def _budget_select(runs):
+    """runs: list of (budget, val_ll, test_ll). Keep the budget with the best mean validation LL."""
+    by = {}
+    for b, v, t in runs:
+        by.setdefault(b, []).append((v, t))
+    b = max(by, key=lambda k: np.mean([v for v, _ in by[k]]))
+    return [t for _, t in by[b]], b
+
+
+def track_c_results():
+    """method -> tk -> list of test LL/event.  Neural models (EPT and EasyTPP) are reported at the
+    epoch budget with the best validation likelihood, never averaged across budgets."""
+    res, raw = {}, {}
     for tk in TK:
         for r in load(f"track_c_classical_lob_{tk}.json") or []:
             if "error" not in r:
                 res.setdefault(r["method"], {}).setdefault(tk, []).append(r["ll_per_event"])
         for r in load(f"ept_lob_{tk}.json") or []:
-            res.setdefault("EPT-TPP (ours)", {}).setdefault(tk, []).append(r["ll_per_event"])
+            raw.setdefault(("EPT-TPP (ours)", tk), []).append((r.get("config", {}).get("epochs", r["epochs"]), r["val_ll"], r["ll_per_event"]))
     for r in load("easytpp_results.json") or []:
         if r["dataset"].startswith("lob_") and r.get("ll_per_event") is not None:
-            res.setdefault(r["model"], {}).setdefault(r["dataset"][4:], []).append(r["ll_per_event"])
+            raw.setdefault((r["model"], r["dataset"][4:]), []).append(
+                (r.get("max_epoch") or 100, r.get("val_ll", -np.inf), r["ll_per_event"]))
+    for (m, tk), runs in raw.items():
+        res.setdefault(m, {})[tk] = _budget_select(runs)[0]
+    return res
+
+
+def table_c():
+    res = track_c_results()
     if not res:
         return
     best = {tk: max((np.mean(v[tk]) for v in res.values() if tk in v), default=np.nan) for tk in TK}
@@ -236,23 +255,16 @@ def numbers():
     # Track C: how many tickers our models win, margin over the best neural baseline
     wins, margins = 0, []
     neural = {"NHP", "S2P2", "THP", "RMTPP", "SAHP", "AttNHP", "IntensityFree"}
-    ez = load("easytpp_results.json") or []
+    tc = track_c_results()
     n_done = 0
-    for tk in ["aapl", "amzn", "goog", "intc", "msft"]:
-        ours = []
-        rows = load(f"ept_lob_{tk}.json") or []
-        if rows:
-            ours.append(np.mean([r["ll_per_event"] for r in rows]))
-        for r in load(f"track_c_classical_lob_{tk}.json") or []:
-            if r.get("key") in ("MSX-auto", "MSX") and "ll_per_event" in r:
-                ours.append(r["ll_per_event"])
-        others = [r["ll_per_event"] for r in load(f"track_c_classical_lob_{tk}.json") or []
-                  if r.get("key") not in ("MSX-auto", "MSX") and "ll_per_event" in r]
-        nb = [r["ll_per_event"] for r in ez if r["dataset"] == f"lob_{tk}" and r["model"] in neural
-              and r.get("ll_per_event") is not None]
-        if ours and nb:
+    for tk in TK:
+        mean = {m: float(np.mean(v[tk])) for m, v in tc.items() if tk in v}
+        ours = [x for m, x in mean.items() if "ours" in m]
+        nb = [x for m, x in mean.items() if m in neural]
+        others = [x for m, x in mean.items() if "ours" not in m]
+        if ours and len(nb) == len(neural):
             n_done += 1
-            wins += max(ours) > max(others + nb)
+            wins += max(ours) > max(others)
             margins.append(max(ours) - max(nb))
     if n_done:
         out.append(f"\\newcommand{{\\trackCwins}}{{{wins}}}\\newcommand{{\\trackCdone}}{{{n_done}}}")

@@ -92,11 +92,13 @@ attention models with Monte-Carlo compensators (NHP, THP, AttNHP) fall well behi
 exact-likelihood phase-type models. Two implementation notes matter for fairness. First,
 LOBSTER timestamps contain ties, which EasyTPP rejects; all models are trained and
 scored on the same files in which tied messages are displaced by $U(0,100\,\text{ns})$.
-Second, on our 8\,GB GPU the neural baselines run with batch sizes 32--64 instead of 256
-and a 100-epoch budget shared by every model; the strongest two are additionally re-run
-for the authors' 300 epochs. The Hawkes backbone is essential for EPT: without it EPT
-underperforms plain MSX (superseded run, Appendix), with it EPT is the best model on
-AAPL.
+Second, on our 8\,GB GPU the neural baselines run with batch sizes 32--64 instead of 256.
+Every neural model is trained with a 100-epoch budget and the strongest competitors
+additionally with longer budgets; for each model the table reports the budget with the
+best \emph{validation} likelihood, so longer training can only help the baselines. The
+Hawkes backbone is essential for EPT: without it EPT underperforms plain MSX (superseded
+run, Appendix); with it EPT is the best model on AAPL and INTC, while MSX-auto is best on
+AMZN and GOOG.
 
 \begin{table}[t]\centering\scriptsize
 \caption{Track C: test log-likelihood per event on LOBSTER (6 event types, 128-event
