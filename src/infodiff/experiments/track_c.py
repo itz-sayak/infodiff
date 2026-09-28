@@ -52,8 +52,11 @@ def run(dataset: str, out: Path, methods=("MSX-auto", "MSX", "ExpKern", "SumExp"
     lo, hi = float(np.quantile(gaps, 0.01)), float(np.quantile(gaps, 0.999)) * 5
     dic = PhaseTypeDictionary.log_grid(lo, hi, 12, orders=2)
     exp_grid = 1.0 / np.geomspace(lo * 3, hi / 3, 6)
-    rows = []
+    rows = json.loads(out.read_text()) if out.exists() else []
+    done = {r.get("key") for r in rows if "error" not in r}
     for mname in methods:
+        if mname in done:
+            continue
         t = time.time()
         try:
             if mname == "MSX-auto":
@@ -78,7 +81,9 @@ def run(dataset: str, out: Path, methods=("MSX-auto", "MSX", "ExpKern", "SumExp"
             elif mname == "ADM4":
                 fit = C.fit_tick_adm4(d_tr, exp_grid)
             elif mname == "CondLaw":
-                fit = C.fit_tick_claw(d_tr, [(lo, lo, hi / 10, hi, "log")])
+                # the conditional-law lag grid must stay coarse enough to fit in memory
+                ml = max(lo, 1e-4)
+                fit = C.fit_tick_claw(d_tr, [(ml, ml, min(hi / 10, 10.0), min(hi, 60.0), "log")])
             else:
                 raise KeyError(mname)
             row = dict(dataset=dataset, method=fit.name, key=mname,
