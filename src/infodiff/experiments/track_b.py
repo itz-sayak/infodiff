@@ -73,12 +73,15 @@ def evaluate(model: EPTTPP, seqs, n_marks, device, predict: bool = False, s_max:
                 st, mu = st[sel], mu[sel]
                 tgt_dt = dts[:, 1:].reshape(-1)[sel]
                 tgt_mk = mk[:, 1:].reshape(-1)[sel]
-                for a in range(0, st.shape[0], 4096):
-                    e_dt, p_mk, _ = model.predict_next(st[a:a + 4096], mu[a:a + 4096],
-                                                       torch.full((min(4096, st.shape[0] - a),), s_max, device=device),
-                                                       h=hh[a:a + 4096])
-                    se.append(((e_dt - tgt_dt[a:a + 4096]) ** 2).cpu().numpy())
-                    acc.append((p_mk == tgt_mk[a:a + 4096]).float().cpu().numpy())
+                # chunk so that the (chunk, grid, state) tensors stay ~<= 0.4 GB on an 8 GB GPU
+                width = st.shape[-1] + n_marks * (1 + (model.J if model.cfg.renewal else 0))
+                ch = int(max(16, min(4096, 1e8 / (400 * width))))
+                for a in range(0, st.shape[0], ch):
+                    e_dt, p_mk, _ = model.predict_next(st[a:a + ch], mu[a:a + ch],
+                                                       torch.full((min(ch, st.shape[0] - a),), s_max, device=device),
+                                                       h=hh[a:a + ch])
+                    se.append(((e_dt - tgt_dt[a:a + ch]) ** 2).cpu().numpy())
+                    acc.append((p_mk == tgt_mk[a:a + ch]).float().cpu().numpy())
     out = dict(ll_per_event=tot_ll / tot_n, n_events=tot_n)
     if predict:
         out["rmse"] = float(np.sqrt(np.concatenate(se).mean()))
@@ -87,7 +90,8 @@ def evaluate(model: EPTTPP, seqs, n_marks, device, predict: bool = False, s_max:
 
 
 def train_one(name: str, seed: int, hidden=64, n_rates=8, n_channels=4, phases=2, lr=1e-2, epochs=300, patience=40,
-              bs=64, device=None, verbose=False, weight_decay=0.0, dropout=0.0, gompertz=True, warmup=0.01) -> dict:
+              bs=64, device=None, verbose=False, weight_decay=0.0, dropout=0.0, gompertz=True, warmup=0.01,
+              renewal=False, rn_scales=24, rn_orders=(1, 4, 16), input_v2=None) -> dict:
     device = device or ("cuda" if torch.cuda.is_available() else "cpu")
     torch.manual_seed(seed)
     rng = np.random.default_rng(seed)
@@ -97,9 +101,20 @@ def train_one(name: str, seed: int, hidden=64, n_rates=8, n_channels=4, phases=2
     gaps = np.concatenate([d[1:] for d, _ in tr])
     gaps = gaps[gaps > 0]
     tau_min, tau_max = float(np.quantile(gaps, 0.02)), float(np.quantile(gaps, 0.995)) * 5
+    input_v2 = renewal if input_v2 is None else input_v2
+    q001, q01, q999 = (float(np.quantile(gaps, q)) for q in (0.001, 0.01, 0.999))
+    eps = 0.1 * q01
+    lg = np.log(gaps + eps)
     cfg = EPTConfig(n_marks=M, hidden=hidden, n_rates=n_rates, n_channels=n_channels, tau_min=tau_min,
-                    tau_max=tau_max, dropout=dropout, phases=phases, gompertz=gompertz)
+                    tau_max=tau_max, dropout=dropout, phases=phases, gompertz=gompertz,
+                    renewal=renewal, rn_scales=rn_scales, rn_orders=tuple(rn_orders),
+                    rn_lo=0.5 * q001, rn_hi=5 * q999, input_v2=input_v2, gap_eps=eps,
+                    gap_mu=float(lg.mean()), gap_sd=float(lg.std() + 1e-6), tie_thr=10 * q01)
     model = EPTTPP(cfg).to(device)
+    if renewal:  # renewal mark law starts at the empirical mark frequencies
+        freq = np.bincount(np.concatenate([k[1:] for _, k in tr]), minlength=M) + 1.0
+        with torch.no_grad():
+            model.rn_qb.copy_(torch.log(torch.tensor(freq / freq.sum(), dtype=torch.float32))[None].expand_as(model.rn_qb))
     opt = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
     steps = epochs * math.ceil(len(tr) / bs)
     n_warm = max(1, int(warmup * steps))
@@ -132,6 +147,8 @@ def train_one(name: str, seed: int, hidden=64, n_rates=8, n_channels=4, phases=2
     res = evaluate(model, te, M, device, predict=True, s_max=s_max)
     res.update(dataset=name, seed=seed, val_ll=best, epochs=ep + 1, seconds=time.time() - t0,
                hidden=hidden, n_rates=n_rates, n_channels=n_channels, phases=phases, lr=lr, gompertz=gompertz,
+               model="EPT-X" if renewal else "EPT", renewal=renewal, input_v2=input_v2,
+               rn_scales=rn_scales if renewal else None, rn_orders=list(rn_orders) if renewal else None,
                n_params=int(sum(p.numel() for p in model.parameters())))
     return res
 

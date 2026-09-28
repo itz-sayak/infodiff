@@ -117,7 +117,8 @@ def track_c_results():
             if "error" not in r:
                 res.setdefault(r["method"], {}).setdefault(tk, []).append(r["ll_per_event"])
         for r in load(f"ept_lob_{tk}.json") or []:
-            raw.setdefault(("EPT-TPP (ours)", tk), []).append((r.get("config", {}).get("epochs", r["epochs"]), r["val_ll"], r["ll_per_event"]))
+            nm = "EPT-X (ours)" if r.get("model") == "EPT-X" else "EPT-TPP (ours)"
+            raw.setdefault((nm, tk), []).append((r.get("config", {}).get("epochs", r["epochs"]), r["val_ll"], r["ll_per_event"]))
     for r in load("easytpp_results.json") or []:
         if r["dataset"].startswith("lob_") and r.get("ll_per_event") is not None:
             raw.setdefault((r["model"], r["dataset"][4:]), []).append(

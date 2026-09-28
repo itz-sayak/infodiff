@@ -34,7 +34,7 @@ compensator remains exact.
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import numpy as np
 import torch
@@ -58,6 +58,18 @@ class EPTConfig:
     hawkes_backbone: bool = True  # explicit linear multivariate phase-type Hawkes state
     hb_rates: int = 10
     hb_phases: int = 2
+    # EPT-X: history-conditioned defective hyper-Erlang renewal channel (competing risks)
+    renewal: bool = False
+    rn_scales: int = 24  # log-grid of mean gaps [rn_lo, rn_hi]
+    rn_orders: tuple = field(default_factory=lambda: (1, 4, 16))  # Erlang orders per scale
+    rn_lo: float = 1e-10
+    rn_hi: float = 1e3
+    # input encoding v2: standardised log-gap + tie flag (v1 saturates below ~1e-7 t_scale)
+    input_v2: bool = False
+    gap_eps: float = 1e-12
+    gap_mu: float = 0.0
+    gap_sd: float = 1.0
+    tie_thr: float = 0.0
 
 
 class EPTTPP(nn.Module):
@@ -71,7 +83,7 @@ class EPTTPP(nn.Module):
         # one learnable rate per (channel, k); Erlang-R mean lag = R / beta
         self.log_beta = nn.Parameter(torch.log(self.R / taus).repeat(Cn) + 0.05 * torch.randn(Cn * K))
         self.emb = nn.Embedding(cfg.n_marks + 1, cfg.mark_emb)  # last index = BOS
-        self.gru = nn.GRUCell(cfg.mark_emb + 2, cfg.hidden)
+        self.gru = nn.GRUCell(cfg.mark_emb + (3 if cfg.input_v2 else 2), cfg.hidden)
         self.drop = nn.Dropout(cfg.dropout)
         self.jump = nn.Linear(cfg.hidden, self.P)
         self.gate = nn.Linear(cfg.hidden, self.P)
@@ -94,6 +106,19 @@ class EPTTPP(nn.Module):
             self.Ch_raw = nn.Parameter(torch.full((cfg.n_marks, self.Ph), -5.0))
         else:
             self.Ph = 0
+        if cfg.renewal:
+            S, O = cfg.rn_scales, len(cfg.rn_orders)
+            taus = torch.logspace(math.log10(cfg.rn_lo), math.log10(cfg.rn_hi), S)
+            R = torch.tensor(cfg.rn_orders, dtype=torch.float32)
+            # atom j = s * O + o: Erlang(R_o, beta = R_o / tau_s), mean tau_s
+            self.register_buffer("rn_R", R.repeat(S))
+            self.register_buffer("rn_beta", (R[None, :] / taus[:, None]).flatten())
+            self.J = S * O
+            self.rn_w = nn.Linear(cfg.hidden, self.J + 1)  # last logit: defect ("no renewal event")
+            self.rn_q = nn.Linear(cfg.hidden, S * cfg.n_marks)  # mark law per time scale
+            self.rn_qb = nn.Parameter(torch.zeros(S, cfg.n_marks))
+            nn.init.zeros_(self.rn_q.weight)
+            nn.init.zeros_(self.rn_q.bias)
         nn.init.constant_(self.gate.bias, 2.0)  # start close to additive (Hawkes-like) updates
         nn.init.constant_(self.jump.bias, -1.0)
         nn.init.constant_(self.mu.bias, -2.0)
@@ -177,6 +202,53 @@ class EPTTPP(nn.Module):
         integ = g1 * ia.unsqueeze(-1) + g2 * ik.unsqueeze(-1)
         return val, integ
 
+    # ------------------------------------------------------------ EPT-X renewal channel
+    def _rn_heads(self, h):
+        """log atom weights (B, J+1; last = defect) and log mark law per scale (B, S, M)."""
+        S, M = self.cfg.rn_scales, self.cfg.n_marks
+        logw = torch.log_softmax(self.rn_w(h), -1)
+        logq = torch.log_softmax(self.rn_q(h).view(-1, S, M) + self.rn_qb[None], -1)
+        return logw, logq
+
+    def _rn_logf_logQ(self, dt):
+        """Erlang log-density and log-survival of every atom at lag dt (...,) -> (..., J).
+        Integer order R:  Q(R, y) = e^{-y} sum_{i<R} y^i / i!  (exact, stable in log space)."""
+        y = self.rn_beta * dt.unsqueeze(-1)
+        logy = torch.log(y.clamp_min(1e-30))
+        R = self.rn_R
+        logf = torch.log(self.rn_beta) + (R - 1) * logy - y - torch.lgamma(R)
+        i = torch.arange(int(R.max()), device=dt.device, dtype=dt.dtype)
+        terms = i * logy.unsqueeze(-1) - torch.lgamma(i + 1)
+        terms = torch.where(i < R.unsqueeze(-1), terms, torch.full_like(terms, -math.inf))
+        logQ = -y + torch.logsumexp(terms, -1)
+        return logf, logQ
+
+    def _rn_logS(self, logw, logQ):
+        """log survival of the defective mixture: defect atom has Q = 1."""
+        body = logw[..., :-1] + logQ
+        return torch.logsumexp(torch.cat([body, logw[..., -1:].expand(*body.shape[:-1], 1)], -1), -1)
+
+    def _rn_log_lam(self, logw, logq, dt, marks=None):
+        """log renewal intensity of each mark (..., M), or of the given marks (...,), and the
+        compensator -log S(dt)."""
+        O = len(self.cfg.rn_orders)
+        logf, logQ = self._rn_logf_logQ(dt)
+        logS = self._rn_logS(logw, logQ)
+        base = logw[..., :-1] + logf  # (..., J)
+        if marks is not None:
+            lq = logq.gather(-1, marks[:, None, None].expand(-1, logq.shape[1], 1))[..., 0]  # (B, S)
+            lp = torch.logsumexp(base + lq.repeat_interleave(O, -1), -1)
+            return lp - logS, -logS
+        lq = logq.repeat_interleave(O, -2)  # (..., J, M)
+        lp = torch.logsumexp(base.unsqueeze(-1) + lq, -2)
+        return lp - logS.unsqueeze(-1), -logS
+
+    def _gap_features(self, gap):
+        if not self.cfg.input_v2:
+            return [torch.log1p(gap / self.t_scale)[:, None], torch.log(gap / self.t_scale + 1e-3)[:, None]]
+        z = (torch.log(gap + self.cfg.gap_eps) - self.cfg.gap_mu) / self.cfg.gap_sd
+        return [z[:, None], torch.log1p(gap / self.t_scale)[:, None], (gap < self.cfg.tie_thr).to(gap.dtype)[:, None]]
+
     # ------------------------------------------------------------ forward pass
     def forward(self, dts, marks, mask):
         """dts, marks, mask: (B, L); dts[:,0] ignored (first event is conditioning).
@@ -192,6 +264,7 @@ class EPTTPP(nn.Module):
         xh = torch.zeros(B, self.Ph, device=dev, dtype=dts.dtype) if hb else None
         Chb = F.softplus(self.Ch_raw) if hb else None
         mixing = self.cfg.mark_mixing
+        rn = self.cfg.renewal
         Cm = None if mixing else self.C()
         Csum = None if mixing else Cm.sum(0)
         log_lam, comp, states, mus, hs = [], [], [], [], []
@@ -210,14 +283,18 @@ class EPTTPP(nn.Module):
                     lam_all = lam_all + xh_left @ Chb.T
                     c_n = c_n + integ_h @ Chb.sum(0)
                 m = marks[:, n].clamp(max=self.cfg.n_marks - 1)
-                log_lam.append(torch.log(lam_all.gather(1, m[:, None])[:, 0] + 1e-12))
+                ll_n = torch.log(lam_all.gather(1, m[:, None])[:, 0] + 1e-12)
+                if rn:
+                    lr, cr = self._rn_log_lam(rn_w, rn_q, dt, m)
+                    ll_n = torch.logaddexp(ll_n, lr)
+                    c_n = c_n + cr
+                log_lam.append(ll_n)
                 comp.append(c_n)
             else:
                 x_left = x
                 xh_left = xh
             gap = dts[:, n] if n > 0 else torch.zeros(B, device=dev, dtype=dts.dtype)
-            inp = torch.cat([self.emb(marks[:, n].clamp(max=self.cfg.n_marks)),
-                             torch.log1p(gap / self.t_scale)[:, None], torch.log(gap / self.t_scale + 1e-3)[:, None]], -1)
+            inp = torch.cat([self.emb(marks[:, n].clamp(max=self.cfg.n_marks))] + self._gap_features(gap), -1)
             h_new = self.gru(self.drop(inp), h)
             valid = mask[:, n].unsqueeze(-1)
             h = torch.where(valid, h_new, h)
@@ -233,6 +310,8 @@ class EPTTPP(nn.Module):
             g, w = self._gomp(h)
             if mixing:
                 Cm = self.C(h)
+            if rn:
+                rn_w, rn_q = self._rn_heads(h)
             hs.append(h)
             states.append(torch.cat([x, xh], -1) if hb else x)
             mus.append(mu if g is None else torch.cat([mu, g, w], -1))
@@ -270,13 +349,23 @@ class EPTTPP(nn.Module):
             xh_t, ih = self._evolve_hb(xh[:, None, :].expand(N, G, -1), grid)
             lam = lam + xh_t @ Chb.T
             Lam = Lam + ih @ Chb.sum(0)
+        if self.cfg.renewal:
+            logw, logq = self._rn_heads(h)
+            lr, cr = self._rn_log_lam(logw[:, None, :], logq[:, None, :, :], grid)
+            lam = lam + torch.exp(lr)
+            Lam = Lam + cr
         return lam, Lam
 
     @torch.no_grad()
     def predict_next(self, x, mu, s_max: torch.Tensor, n_grid: int = 400, h=None):
         """Bayes-optimal next gap E[dt] and marginal mark argmax from post-event state."""
         u = torch.linspace(0, 1, n_grid, device=x.device, dtype=x.dtype)
-        grid = s_max[:, None] * (torch.expm1(6 * u) / math.expm1(6))[None, :]  # dense near 0
+        if self.cfg.renewal:  # log grid from below the fastest atom: the burst mode is resolved
+            lo = torch.log(torch.as_tensor(self.cfg.rn_lo * 1e-2, dtype=x.dtype, device=x.device))
+            g = torch.exp(lo + (torch.log(s_max)[:, None] - lo) * u[None, 1:])
+            grid = torch.cat([torch.zeros_like(g[:, :1]), g], 1)
+        else:
+            grid = s_max[:, None] * (torch.expm1(6 * u) / math.expm1(6))[None, :]  # dense near 0
         lam, Lam = self._curve(x, mu, grid, h)
         S = torch.exp(-Lam)
         dens_m = lam * S[..., None]
