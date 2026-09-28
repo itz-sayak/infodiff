@@ -33,5 +33,35 @@
   "ll_per_event": -1.6361680770576295,
   "val_ll": -8.512100936955148,
   "seconds": 38.44061994552612
+ },
+ {
+  "dataset": "lob_msft",
+  "method": "MSX-auto (ours)",
+  "key": "MSX-auto",
+  "ll_per_event": 6.309726992236041,
+  "val_ll": 6.275728705291793,
+  "seconds": 369.79124760627747,
+  "gap": 0.00022918579634279013,
+  "R": 4,
+  "l1": 0.01
+ },
+ {
+  "dataset": "lob_msft",
+  "method": "MSX (ours, R=2)",
+  "key": "MSX",
+  "ll_per_event": 6.3071198861355615,
+  "val_ll": 6.272726639250577,
+  "seconds": 20.51304292678833,
+  "gap": 0.0001788282534107566
+ },
+ {
+  "dataset": "lob_msft",
+  "key": "ExpKern",
+  "error": "TypeError('cannot unpack non-iterable NoneType object')"
+ },
+ {
+  "dataset": "lob_msft",
+  "key": "SumExp",
+  "error": "RuntimeError('The sum of the influence on someone cannot be negative. Maybe did you forget to add a positive constraint to your proximal operator\\n')"
  }
 ]

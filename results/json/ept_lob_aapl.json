@@ -20,5 +20,49 @@
    "epochs": 100,
    "phases": 2
   }
+ },
+ {
+  "ll_per_event": 3.377801309647062,
+  "n_events": 33655.0,
+  "rmse": 0.4301823675632477,
+  "acc": 0.45544496178627014,
+  "dataset": "lob_aapl",
+  "seed": 1,
+  "val_ll": 2.4303816179927136,
+  "epochs": 100,
+  "seconds": 898.4101138114929,
+  "hidden": 64,
+  "n_rates": 8,
+  "n_channels": 4,
+  "phases": 2,
+  "lr": 0.01,
+  "gompertz": true,
+  "n_params": 55204,
+  "config": {
+   "epochs": 100,
+   "phases": 2
+  }
+ },
+ {
+  "ll_per_event": 3.384011302648195,
+  "n_events": 33655.0,
+  "rmse": 0.43033868074417114,
+  "acc": 0.45636606216430664,
+  "dataset": "lob_aapl",
+  "seed": 2,
+  "val_ll": 2.4353696729198497,
+  "epochs": 95,
+  "seconds": 915.8256494998932,
+  "hidden": 64,
+  "n_rates": 8,
+  "n_channels": 4,
+  "phases": 2,
+  "lr": 0.01,
+  "gompertz": true,
+  "n_params": 55204,
+  "config": {
+   "epochs": 100,
+   "phases": 2
+  }
  }
 ]

@@ -37,5 +37,30 @@
   "ll_per_event": -32.78436064645451,
   "val_ll": -37.090093617987314,
   "seconds": 33.495192527770996
+ },
+ {
+  "dataset": "lob_goog",
+  "method": "MSX-auto (ours)",
+  "key": "MSX-auto",
+  "ll_per_event": 2.882904797958723,
+  "val_ll": 2.303532340639743,
+  "seconds": 34.37652540206909,
+  "gap": 2.7102740205009468e-05,
+  "R": 4,
+  "l1": 0.05
+ },
+ {
+  "dataset": "lob_goog",
+  "method": "MSX (ours, R=2)",
+  "key": "MSX",
+  "ll_per_event": 2.8698167350866877,
+  "val_ll": 2.2870293845389726,
+  "seconds": 2.3539793491363525,
+  "gap": 1.6476527889608406e-05
+ },
+ {
+  "dataset": "lob_goog",
+  "key": "SumExp",
+  "error": "RuntimeError('The sum of the influence on someone cannot be negative. Maybe did you forget to add a positive constraint to your proximal operator\\n')"
  }
 ]
