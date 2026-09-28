@@ -4,3 +4,4 @@ reanalyse_2024 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2024
 reanalyse_2025 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2025
 reanalyse_2026 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2026
 reanalyse_pooled | D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2022,2023,2024,2025,2026 pooled
+trackd_eval | D:\Quant\.venv\Scripts\python.exe -u scripts/run_track_d.py train_2022_2024

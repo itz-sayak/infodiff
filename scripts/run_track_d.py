@@ -13,7 +13,13 @@ from infodiff.models.msx import MSXHawkes
 tag = sys.argv[1] if len(sys.argv) > 1 else "train_2022_2024"
 train = concat_eventdata([load_eventdata(Path(f"data/processed/panel_{y}.pkl")) for y in (2022, 2023, 2024)])
 test = concat_eventdata([load_eventdata(Path(f"data/processed/panel_{y}.pkl")) for y in (2025, 2026)])
-blob = pickle.load(open(f"results/models/msx_{tag}.pkl", "rb"))
+import time
+mfile = Path(f"results/models/msx_{tag}.pkl")
+for _ in range(480):  # wait up to 4 h for the GPU training fit
+    if mfile.exists() and Path(f"results/json/main_{tag}.json").exists():
+        break
+    time.sleep(30)
+blob = pickle.load(open(mfile, "rb"))
 m = MSXHawkes(blob["spec"].design())
 m.theta_d, m.theta_s, m.layout, m.n_dims = blob["theta_d"], blob["theta_s"], blob["layout"], train.n_dims
 tr = D.collect(train, None, None)

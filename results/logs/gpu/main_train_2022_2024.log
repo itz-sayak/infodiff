@@ -1,2 +1,3 @@
 
 === Mon Sep 28 05:37:14 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2022,2023,2024 train_2022_2024
+train_2022_2024: windows=454 events=5951917
