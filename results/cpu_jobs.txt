@@ -1,6 +1,6 @@
-main_2024 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2024
-main_2025 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2025
-main_2026 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2026
-main_2023 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2023
-main_2022 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2022
-main_pooled | D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2022,2023,2024,2025,2026 pooled
+reanalyse_2022 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2022
+reanalyse_2023 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2023
+reanalyse_2024 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2024
+reanalyse_2025 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2025
+reanalyse_2026 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2026
+reanalyse_pooled | D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2022,2023,2024,2025,2026 pooled

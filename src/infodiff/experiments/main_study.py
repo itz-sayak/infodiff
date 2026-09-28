@@ -131,8 +131,11 @@ def analyse(m: MSXHawkes, data: EventData, ms: MainSpec, out: Path, tag: str,
                            amplification=float(act_tot / act_dir) if act_dir >= 0.5 else float("nan"),
                            t50_direct=ref(0.5, cd, act_dir, True), t50_total=ref(0.5, ct, act_tot, False),
                            t90_direct=ref(0.9, cd, act_dir, True), t90_total=ref(0.9, ct, act_tot, False))
-                drift = deltas[asset] * (r.cum_total[:, up] - r.cum_total[:, dn])
-                row["drift_bps_final"] = float(deltas[asset] * (r.int_total[up] - r.int_total[dn]))
+                # each event moves the price by (mean size) x delta: one event per timestamp may
+                # cross several delta levels (size mark)
+                step = deltas[asset] * data.meta.get("mean_event_size", {}).get(asset, 1.0)
+                drift = step * (r.cum_total[:, up] - r.cum_total[:, dn])
+                row["drift_bps_final"] = float(step * (r.int_total[up] - r.int_total[dn]))
                 row["drift_bps_curve"] = drift[keep].tolist()
                 row["activity_curve_total"] = (r.total[keep, up] + r.total[keep, dn]).tolist()
                 row["activity_curve_direct"] = (r.direct[keep, up] + r.direct[keep, dn]).tolist()

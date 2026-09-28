@@ -126,6 +126,14 @@ def concat_eventdata(parts: list[EventData]) -> EventData:
     first = parts[0]
     meta = {k: v for k, v in first.meta.items() if k != "windows"}
     meta["windows"] = metas
+    if all("mean_event_size" in p.meta for p in parts):  # event-count weighted across parts
+        assets = first.meta.get("assets", [])
+        sizes = {}
+        for a_idx, a in enumerate(assets):
+            w = np.array([np.isin(p.types, [2 * a_idx, 2 * a_idx + 1]).sum() for p in parts], float)
+            v = np.array([p.meta["mean_event_size"][a] for p in parts])
+            sizes[a] = float((w * v).sum() / max(w.sum(), 1.0))
+        meta["mean_event_size"] = sizes
     return EventData(times=np.concatenate(t), types=np.concatenate(u), wptr=np.asarray(ptr),
                      t0=np.concatenate([p.t0 for p in parts]), t1=np.concatenate([p.t1 for p in parts]),
                      n_dims=first.n_dims, tod0=np.concatenate([p.tod0 for p in parts]),
