@@ -38,18 +38,13 @@ for r in ta:
     d = data["trackA"].setdefault(r["scenario"], {}).setdefault(r["method"], [])
     d.append(r["dLL"])
 data["trackA"] = {s: {m: float(np.mean(v)) for m, v in ms.items()} for s, ms in data["trackA"].items()}
-for tk in ["aapl", "amzn", "goog", "intc", "msft"]:
-    row = {}
-    for r in load(f"track_c_classical_lob_{tk}.json") or []:
-        if "ll_per_event" in r:
-            row[r["method"]] = r["ll_per_event"]
-    ept = load(f"ept_lob_{tk}.json")
-    if ept:
-        row["EPT-TPP (ours)"] = float(np.mean([r["ll_per_event"] for r in ept]))
-    for r in load("easytpp_results.json") or []:
-        if r["dataset"] == f"lob_{tk}" and r.get("ll_per_event") is not None:
-            row[r["model"]] = r["ll_per_event"]
-    data["trackC"][tk.upper()] = row
+import sys
+sys.path.insert(0, str(ROOT / "scripts"))
+from make_tables import TK, track_c_results  # same validation-best budget selection as the paper
+
+tc = track_c_results()
+for tk in TK:
+    data["trackC"][tk.upper()] = {m: float(np.mean(v[tk])) for m, v in tc.items() if tk in v}
 
 html = (ROOT / "dashboard" / "template.html").read_text(encoding="utf-8")
 out = html.replace("/*__DATA__*/null", json.dumps(data, separators=(",", ":")))

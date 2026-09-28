@@ -5,7 +5,7 @@ import itertools, json, sys, warnings
 from pathlib import Path
 import numpy as np
 warnings.filterwarnings("ignore")
-from infodiff.experiments.track_b import train_one
+from infodiff.experiments.track_b import train_one_safe as train_one
 
 datasets = sys.argv[1].split(",")
 grid = [dict(hidden=h, n_rates=8, phases=r, epochs=100) for h, r in itertools.product((64, 128), (2, 4))]

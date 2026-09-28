@@ -157,3 +157,18 @@ def run(out: Path, datasets=("taxi", "taobao", "stackoverflow", "amazon", "retwe
             out.parent.mkdir(parents=True, exist_ok=True)
             out.write_text(json.dumps(rows, indent=1))
     return rows
+
+
+def train_one_safe(name: str, seed: int, bs=64, min_bs=8, **kw) -> dict:
+    """train_one, halving the batch size on CUDA out-of-memory (8 GB GPU; many-mark datasets)."""
+    while True:
+        try:
+            r = train_one(name, seed, bs=bs, **kw)
+            r["batch_size"] = bs
+            return r
+        except torch.OutOfMemoryError:
+            torch.cuda.empty_cache()
+            if bs // 2 < min_bs:
+                raise
+            bs //= 2
+            print(f"OOM on {name}: retrying with batch size {bs}", flush=True)

@@ -37,6 +37,8 @@ Benchmarks:
 - **LOBSTER order books** (test log-likelihood per event). MSX-auto beats every
   classical Hawkes estimator on AMZN, GOOG, INTC and MSFT. On AAPL, tick-EM is slightly
   ahead (3.370 vs 3.361), and EPT-TPP with the Hawkes backbone is best overall (3.380).
+  Against seven neural baselines, our models are best on AAPL, AMZN and GOOG;
+  IntensityFree is best on INTC (6.79 vs our 6.02) and MSFT (7.07 vs 6.53).
 - **Synthetic kernel recovery.** MSX-auto is within 10⁻³ nats/event of the true model in
   all five scenarios. It has the lowest deficit on hump-shaped, multiscale and network
   kernels. tick is better on a pure exponential kernel (ExpKern 0.05 vs 0.24 ×10⁻³) and

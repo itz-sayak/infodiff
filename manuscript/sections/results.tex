@@ -85,9 +85,15 @@ release-free day.}\label{fig:placebo}
 \subsection{Track C: limit-order-book event streams}
 Table~\ref{tab:track-c} reports test log-likelihood per event on the five LOBSTER
 stocks. Among all classical and neural models our models hold the best result on
-\trackCwins{} of the \trackCdone{} stocks for which every model has finished, and our best
-model exceeds the best neural baseline by \trackCmarginLo--\trackCmarginHi{} nats per event.
-The strongest neural competitors on this data are IntensityFree and S2P2; recurrent and
+\trackCwins{} of the \trackCdone{} stocks (AAPL, AMZN, GOOG). On INTC and MSFT, the two
+largest streams, IntensityFree is best by a wide margin (6.79 vs.\ 6.02 and 7.07 vs.\
+6.53 nats per event), and it is the strongest competitor throughout; its advantage over
+S2P2 lies almost entirely in the inter-event-time term. A likely reason is the time-scale
+structure of these streams: more than half of the test gaps are below one microsecond
+(simultaneous LOBSTER messages separated by the tie-breaking jitter), a mode that a
+mixture of log-normals in log-time captures directly, whereas EPT and MSX spread a fixed
+number of phase-type rates over nine decades of time scales. Among the remaining neural
+baselines, recurrent and
 attention models with Monte-Carlo compensators (NHP, THP, AttNHP) fall well behind the
 exact-likelihood phase-type models. Two implementation notes matter for fairness. First,
 LOBSTER timestamps contain ties, which EasyTPP rejects; all models are trained and
@@ -97,8 +103,8 @@ Every neural model is trained with a 100-epoch budget and the strongest competit
 additionally with longer budgets; for each model the table reports the budget with the
 best \emph{validation} likelihood, so longer training can only help the baselines. The
 Hawkes backbone is essential for EPT: without it EPT underperforms plain MSX (superseded
-run, Appendix); with it EPT is the best model on AAPL and INTC, while MSX-auto is best on
-AMZN and GOOG.
+run, Appendix); with it EPT is the best model on AAPL and our best model on INTC and MSFT,
+while MSX-auto is best on AMZN and GOOG.
 
 \begin{table}[t]\centering\scriptsize
 \caption{Track C: test log-likelihood per event on LOBSTER (6 event types, 128-event

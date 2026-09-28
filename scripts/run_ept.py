@@ -4,7 +4,7 @@
 import json, sys, warnings
 from pathlib import Path
 warnings.filterwarnings("ignore")
-from infodiff.experiments.track_b import train_one
+from infodiff.experiments.track_b import train_one_safe as train_one
 
 ds, seeds = sys.argv[1], [int(s) for s in sys.argv[2].split(",")]
 if sys.argv[3].startswith("auto"):  # validation-selected config (+ optional overrides after ':')

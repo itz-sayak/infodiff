@@ -1,0 +1,98 @@
+[
+ {
+  "ll_per_event": 0.4150413312131588,
+  "n_events": 14420.0,
+  "rmse": 0.2813248336315155,
+  "acc": 0.9176144003868103,
+  "dataset": "taxi",
+  "seed": 0,
+  "val_ll": 0.3737919038034425,
+  "epochs": 100,
+  "seconds": 551.9214446544647,
+  "hidden": 64,
+  "n_rates": 8,
+  "n_channels": 4,
+  "phases": 2,
+  "lr": 0.01,
+  "gompertz": true,
+  "n_params": 74288,
+  "config": {
+   "hidden": 64,
+   "n_rates": 8,
+   "phases": 2,
+   "epochs": 100
+  }
+ },
+ {
+  "ll_per_event": 0.4235856774445215,
+  "n_events": 14420.0,
+  "rmse": 0.28065869212150574,
+  "acc": 0.9180305004119873,
+  "dataset": "taxi",
+  "seed": 0,
+  "val_ll": 0.38245482923983204,
+  "epochs": 100,
+  "seconds": 623.7398722171783,
+  "hidden": 64,
+  "n_rates": 8,
+  "n_channels": 4,
+  "phases": 4,
+  "lr": 0.01,
+  "gompertz": true,
+  "n_params": 124912,
+  "config": {
+   "hidden": 64,
+   "n_rates": 8,
+   "phases": 4,
+   "epochs": 100
+  }
+ },
+ {
+  "ll_per_event": 0.4224671341344487,
+  "n_events": 14420.0,
+  "rmse": 0.28101885318756104,
+  "acc": 0.9175450801849365,
+  "dataset": "taxi",
+  "seed": 0,
+  "val_ll": 0.3793397656683787,
+  "epochs": 100,
+  "seconds": 566.0599212646484,
+  "hidden": 128,
+  "n_rates": 8,
+  "n_channels": 4,
+  "phases": 2,
+  "lr": 0.01,
+  "gompertz": true,
+  "n_params": 169264,
+  "config": {
+   "hidden": 128,
+   "n_rates": 8,
+   "phases": 2,
+   "epochs": 100
+  }
+ },
+ {
+  "ll_per_event": 0.4153539565003034,
+  "n_events": 14420.0,
+  "rmse": 0.28155016899108887,
+  "acc": 0.9158113598823547,
+  "dataset": "taxi",
+  "seed": 0,
+  "val_ll": 0.3684900803806913,
+  "epochs": 100,
+  "seconds": 629.0150158405304,
+  "hidden": 128,
+  "n_rates": 8,
+  "n_channels": 4,
+  "phases": 4,
+  "lr": 0.01,
+  "gompertz": true,
+  "n_params": 269040,
+  "config": {
+   "hidden": 128,
+   "n_rates": 8,
+   "phases": 4,
+   "epochs": 100
+  }
+ }
+]
