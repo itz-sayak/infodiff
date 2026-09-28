@@ -1,30 +1,30 @@
-{"dataset": "lob_aapl", "method": "MSX-auto (ours)", "key": "MSX-auto", "ll_per_event": 3.340440991643561, "val_ll": 2.325921032911752, "seconds": 143.50626277923584, "gap": 4.891806747764349e-05, "R": 4, "l1": 0.0}
-{"dataset": "lob_aapl", "method": "MSX (ours, R=2)", "key": "MSX", "ll_per_event": 3.304397184490257, "val_ll": 2.287334338492915, "seconds": 8.154274463653564, "gap": 0.00012448590132407844}
-{"dataset": "lob_aapl", "method": "tick-ExpKern(MLE, best decay)", "key": "ExpKern", "ll_per_event": 1.961073172523558, "val_ll": 1.2499174485105335, "seconds": 11.687888383865356, "decay": 299.30774837324145}
 {"dataset": "lob_aapl", "key": "SumExp", "error": "RuntimeError('The sum of the influence on someone cannot be negative. Maybe did you forget to add a positive constraint to your proximal operator\\n')"}
-{"dataset": "lob_aapl", "method": "tick-EM(nonparam)", "key": "EM", "ll_per_event": 3.369951166968729, "val_ll": 2.430032624549897, "seconds": 8.677361726760864}
-{"dataset": "lob_aapl", "method": "tick-ADM4", "key": "ADM4", "ll_per_event": 1.9610701255985405, "val_ll": 1.2499150428912391, "seconds": 8.074375629425049, "decay": 299.30774837324145}
-Exception in thread Thread-3 (_worker):
-Traceback (most recent call last):
-  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\threading.py", line 1045, in _bootstrap_inner
-Exception in thread Thread-4 (_worker):
-Traceback (most recent call last):
-  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\threading.py", line 1045, in _bootstrap_inner
-    self.run()
-  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\threading.py", line 982, in run
-    self._target(*self._args, **self._kwargs)    
-self.run()  File "D:\Quant\.venv\Lib\site-packages\tick\base\threadpool.py", line 26, in _worker
-
-  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\threading.py", line 982, in run
-    work['callable'](*work['args'], **work['kwargs'])
-    self._target(*self._args, **self._kwargs)
-  File "D:\Quant\.venv\Lib\site-packages\tick\hawkes\inference\hawkes_conditional_law.py", line 664, in _PointProcessCondLaw
-  File "D:\Quant\.venv\Lib\site-packages\tick\base\threadpool.py", line 26, in _worker
-    work['callable'](*work['args'], **work['kwargs'])
-  File "D:\Quant\.venv\Lib\site-packages\tick\hawkes\inference\hawkes_conditional_law.py", line 663, in _PointProcessCondLaw
-        claw_Y = np.zeros(len(self._lags) - 1)claw_X = np.zeros(len(self._lags) - 1)
-
-                         ^^^^ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-^numpy._core._exceptions^^.^_ArrayMemoryError^^: ^Unable to allocate 4.50 GiB for an array with shape (603498978,) and data type float64^
-
-numpy._core._exceptions._ArrayMemoryError: Unable to allocate 4.50 GiB for an array with shape (603498978,) and data type float64
+{"dataset": "lob_aapl", "method": "tick-ConditionalLaw", "key": "CondLaw", "ll_per_event": -1.0183128619114832, "val_ll": -3.278758151377458, "seconds": 33.483304023742676}
+{"dataset": "lob_amzn", "method": "MSX-auto (ours)", "key": "MSX-auto", "ll_per_event": -17.745760838289875, "val_ll": -30.0352740481775, "seconds": 37.26538014411926, "gap": 6.40784164716024e-05, "R": 4, "l1": 0.0}
+{"dataset": "lob_amzn", "method": "MSX (ours, R=2)", "key": "MSX", "ll_per_event": -18.314678596206665, "val_ll": -30.923494833421774, "seconds": 2.0149986743927, "gap": 5.682455775968265e-05}
+{"dataset": "lob_amzn", "key": "ExpKern", "error": "TypeError('cannot unpack non-iterable NoneType object')"}
+{"dataset": "lob_amzn", "key": "SumExp", "error": "RuntimeError('The sum of the influence on someone cannot be negative. Maybe did you forget to add a positive constraint to your proximal operator\\n')"}
+{"dataset": "lob_amzn", "method": "tick-EM(nonparam)", "key": "EM", "ll_per_event": 2.2430174439854467, "val_ll": 1.8295654979357316, "seconds": 3.294297218322754}
+{"dataset": "lob_amzn", "method": "tick-ADM4", "key": "ADM4", "ll_per_event": 1.0663415289017013, "val_ll": 0.7530191436963103, "seconds": 4.454525709152222, "decay": 178.91719649641777}
+{"dataset": "lob_amzn", "method": "tick-ConditionalLaw", "key": "CondLaw", "ll_per_event": -17.809884099043664, "val_ll": -20.892274547465554, "seconds": 32.19254922866821}
+{"dataset": "lob_goog", "method": "MSX-auto (ours)", "key": "MSX-auto", "ll_per_event": 1.4820059859578578, "val_ll": -0.2244900471755295, "seconds": 29.36259961128235, "gap": 2.382273851253558e-05, "R": 4, "l1": 0.0}
+{"dataset": "lob_goog", "method": "MSX (ours, R=2)", "key": "MSX", "ll_per_event": 1.4050333580997874, "val_ll": -0.3447180753767734, "seconds": 1.473479986190796, "gap": 5.368930033000652e-05}
+{"dataset": "lob_goog", "method": "tick-ExpKern(MLE, best decay)", "key": "ExpKern", "ll_per_event": -0.31105179716988346, "val_ll": -0.7556499744445797, "seconds": 3.071244716644287, "decay": 2.443524563054141}
+{"dataset": "lob_goog", "key": "SumExp", "error": "RuntimeError('The sum of the influence on someone cannot be negative. Maybe did you forget to add a positive constraint to your proximal operator\\n')"}
+{"dataset": "lob_goog", "method": "tick-EM(nonparam)", "key": "EM", "ll_per_event": 2.8513205293071513, "val_ll": 2.29939170529406, "seconds": 2.686502456665039}
+{"dataset": "lob_goog", "method": "tick-ADM4", "key": "ADM4", "ll_per_event": 1.3063733933223973, "val_ll": 1.0655446591858282, "seconds": 5.650927782058716, "decay": 170.85459602984585}
+{"dataset": "lob_goog", "method": "tick-ConditionalLaw", "key": "CondLaw", "ll_per_event": -32.78436064645451, "val_ll": -37.090093617987314, "seconds": 33.495192527770996}
+{"dataset": "lob_intc", "method": "MSX-auto (ours)", "key": "MSX-auto", "ll_per_event": -232.96817187205778, "val_ll": -514.5995668902698, "seconds": 558.2651853561401, "gap": 0.00044943910324946046, "R": 4, "l1": 0.0}
+{"dataset": "lob_intc", "method": "MSX (ours, R=2)", "key": "MSX", "ll_per_event": -235.578106663367, "val_ll": -520.2620508880549, "seconds": 36.1603102684021, "gap": 0.0002806568518280983}
+{"dataset": "lob_intc", "key": "ExpKern", "error": "TypeError('cannot unpack non-iterable NoneType object')"}
+{"dataset": "lob_intc", "key": "SumExp", "error": "RuntimeError('The sum of the influence on someone cannot be negative. Maybe did you forget to add a positive constraint to your proximal operator\\n')"}
+{"dataset": "lob_intc", "method": "tick-EM(nonparam)", "key": "EM", "ll_per_event": 5.7719114083885215, "val_ll": 5.099954215365239, "seconds": 23.69422149658203}
+{"dataset": "lob_intc", "method": "tick-ADM4", "key": "ADM4", "ll_per_event": 4.786230034549233, "val_ll": 4.249542965736716, "seconds": 8.568544864654541, "decay": 714.0953736227733}
+{"dataset": "lob_intc", "method": "tick-ConditionalLaw", "key": "CondLaw", "ll_per_event": 2.0539230292401762, "val_ll": 1.1228817791260735, "seconds": 35.26474380493164}
+{"dataset": "lob_msft", "method": "MSX-auto (ours)", "key": "MSX-auto", "ll_per_event": -157.29483954331948, "val_ll": -341.27047173150015, "seconds": 595.8213493824005, "gap": 0.0005277665331959724, "R": 4, "l1": 0.0}
+{"dataset": "lob_msft", "method": "MSX (ours, R=2)", "key": "MSX", "ll_per_event": -159.5168854055026, "val_ll": -345.96914785593714, "seconds": 37.04972457885742, "gap": 0.0003158751060254872}
+{"dataset": "lob_msft", "key": "ExpKern", "error": "TypeError('cannot unpack non-iterable NoneType object')"}
+{"dataset": "lob_msft", "key": "SumExp", "error": "RuntimeError('The sum of the influence on someone cannot be negative. Maybe did you forget to add a positive constraint to your proximal operator\\n')"}
+{"dataset": "lob_msft", "method": "tick-EM(nonparam)", "key": "EM", "ll_per_event": 6.257753966272713, "val_ll": 6.233229647137086, "seconds": 22.156780004501343}
+{"dataset": "lob_msft", "method": "tick-ADM4", "key": "ADM4", "ll_per_event": 5.210965202085307, "val_ll": 5.244977693146653, "seconds": 5.478425025939941, "decay": 659.8706295301101}
+{"dataset": "lob_msft", "method": "tick-ConditionalLaw", "key": "CondLaw", "ll_per_event": -1.6361680770576295, "val_ll": -8.512100936955148, "seconds": 38.44061994552612}
