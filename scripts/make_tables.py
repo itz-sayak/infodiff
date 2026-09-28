@@ -215,6 +215,10 @@ def numbers():
     if v2.exists():
         a = json.loads(v2.read_text())
         out.append(f"\\newcommand{{\\vTwoPlacebo}}{{{np.sum(a['placebo_mass_per_dim']):.1f}}}")
+    nb = sup / "ept_lob_aapl_no_backbone.json"
+    if nb.exists():
+        rows = [r for r in json.loads(nb.read_text()) if r.get("epochs", 0) >= 100]
+        out.append(f"\newcommand{{\eptNoBackbone}}{{{np.mean([r['ll_per_event'] for r in rows]):.2f}}}")
     l1 = load("l1_select_2024.json")
     if l1:
         rows = sorted(l1, key=lambda x: x["l1"])

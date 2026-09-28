@@ -35,3 +35,11 @@ $\ell_1=\lOneSelected$, where release and placebo masses separate.
 log-likelihood relative to the best level).}\label{tab:l1}
 \input{tables/l1_selection}
 \end{table}
+
+\section{EPT ablation: the Hawkes backbone}
+Without the explicit linear Hawkes state, EPT reached \eptNoBackbone{} nats per event on
+LOBSTER AAPL (three seeds, 100 epochs), below the classical MSX estimator; the network
+had to rediscover mark-specific linear excitation through its gated jumps and did not
+within the epoch budget. Adding the backbone---a residual path that makes the model
+exactly MSX when the neural read-outs vanish---lifts EPT above both MSX and the best
+classical and neural baselines (Table~\ref{tab:track-c}).
