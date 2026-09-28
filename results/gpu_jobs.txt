@@ -52,3 +52,5 @@ ept_stackoverflow_5seeds | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept.
 ept_amazon_5seeds | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept.py amazon 0,1,2,3,4 "auto:{\"epochs\":300}"
 ept_retweet_5seeds | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept.py retweet 0,1,2,3,4 "auto:{\"epochs\":300}"
 easy_S2P2_taxi_repro | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner S2P2 taxi 10 2019
+easy_IntensityFree_lob_aapl_300ep | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner IntensityFree lob_aapl 6 2019 300 64
+easy_S2P2_lob_aapl_300ep | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner S2P2 lob_aapl 6 2019 300 32
