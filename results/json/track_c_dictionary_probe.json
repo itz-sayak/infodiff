@@ -1,0 +1,5 @@
+{"dataset": "lob_intc", "metric": "validation LL/event, MSX shared baseline, R=2, l1=0",
+ "rows": [{"q_lo": 0.01, "lo": 2.1e-09, "K": 12, "val": 5.1353}, {"q_lo": 0.01, "lo": 2.1e-09, "K": 24, "val": 5.1427},
+          {"q_lo": 0.01, "lo": 2.1e-09, "K": 40, "val": 5.1438}, {"q_lo": 0.001, "lo": 1.8e-10, "K": 12, "val": 5.1292},
+          {"q_lo": 0.001, "lo": 1.8e-10, "K": 24, "val": 5.1437}, {"q_lo": 0.001, "lo": 1.8e-10, "K": 40, "val": 5.1442}],
+ "reference": "IntensityFree (1500 epochs) validation LL 6.076"}

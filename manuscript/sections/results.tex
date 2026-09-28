@@ -92,7 +92,13 @@ S2P2 lies almost entirely in the inter-event-time term. A likely reason is the t
 structure of these streams: more than half of the test gaps are below one microsecond
 (simultaneous LOBSTER messages separated by the tie-breaking jitter), a mode that a
 mixture of log-normals in log-time captures directly, whereas EPT and MSX spread a fixed
-number of phase-type rates over nine decades of time scales. Among the remaining neural
+number of phase-type rates over nine decades of time scales. Resolution alone is not the
+explanation: on INTC, a denser MSX dictionary (40 instead of 12 rates, down to
+0.2\,ns) raises the validation likelihood by only 0.01 nats per event, against a gap of
+about 0.9 to IntensityFree. We conjecture that the limit is structural---a linear
+Hawkes intensity cannot put half of the conditional probability mass on sub-microsecond
+gaps without also inflating the branching ratio---which suggests modelling simultaneous messages as a
+batch mark rather than as separate events, as we do in the macro study. Among the remaining neural
 baselines, recurrent and
 attention models with Monte-Carlo compensators (NHP, THP, AttNHP) fall well behind the
 exact-likelihood phase-type models. Two implementation notes matter for fairness. First,
