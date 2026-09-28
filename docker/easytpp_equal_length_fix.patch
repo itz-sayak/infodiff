@@ -1,8 +1,18 @@
 diff --git a/easy_tpp/preprocess/event_tokenizer.py b/easy_tpp/preprocess/event_tokenizer.py
-index 91f3585..ed463df 100644
+index 91f3585..9af3e67 100644
 --- a/easy_tpp/preprocess/event_tokenizer.py
 +++ b/easy_tpp/preprocess/event_tokenizer.py
-@@ -515,6 +515,7 @@ class EventTokenizer:
+@@ -381,7 +381,8 @@ class EventTokenizer:
+         # check whether we need to pad it
+         seq_lens = np.array([len(seq) for seq in required_input])
+         is_all_seq_equal_max_length = np.all(seq_lens == max_length)
+-        needs_to_be_padded = padding_strategy != PaddingStrategy.DO_NOT_PAD and ~is_all_seq_equal_max_length
++        # infodiff patch: always build padded arrays (equal-length batches used to fall through as lists)
++        needs_to_be_padded = padding_strategy != PaddingStrategy.DO_NOT_PAD
+ 
+         batch_output = dict()
+ 
+@@ -515,6 +516,7 @@ class EventTokenizer:
  
          """
  
