@@ -14,8 +14,9 @@ events.  Times are seconds after the start of each sequence.
 
 Ties.  6-10% of messages share a nanosecond timestamp with their predecessor (one order
 walking several queue entries).  EasyTPP requires strictly positive gaps, so each tied
-message is displaced by an independent U(0, 100 ns) offset (seeded) and events are
-re-sorted -- the same randomisation-within-resolution device as Rambaldi et al. (2015).
+message is displaced by an independent U(0, 100 ns) offset (seeded), events are re-sorted,
+and any residual tie (float64 resolution) is separated by 1 ns -- the same
+randomisation-within-resolution device as Rambaldi et al. (2015).
 All models are trained and scored on the identical jittered files.
 """
 from __future__ import annotations
@@ -45,7 +46,17 @@ def lobster_events(msg_csv: Path) -> tuple[np.ndarray, np.ndarray]:
     rng = np.random.default_rng(2012)
     t_out = t_out + tied * rng.uniform(0.0, 1e-7, len(t_out))
     o = np.argsort(t_out, kind="stable")
-    return t_out[o], k_out[o]
+    t_out, k_out = t_out[o], k_out[o]
+    # jitter below float64 resolution at t ~ 5e4 s can leave exact ties: enforce >= 1 ns spacing
+    for i in np.where(np.diff(t_out) <= 0)[0] + 1:
+        if t_out[i] <= t_out[i - 1]:
+            t_out[i] = t_out[i - 1] + 1e-9
+    bad = np.where(np.diff(t_out) <= 0)[0]
+    while len(bad):  # cascade (rare)
+        for i in bad + 1:
+            t_out[i] = max(t_out[i], t_out[i - 1] + 1e-9)
+        bad = np.where(np.diff(t_out) <= 0)[0]
+    return t_out, k_out
 
 
 def to_sequences(t: np.ndarray, k: np.ndarray, seq_len: int) -> list[dict]:

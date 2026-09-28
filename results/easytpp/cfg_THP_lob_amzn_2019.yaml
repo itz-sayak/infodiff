@@ -1,0 +1,41 @@
+THP_train:
+  base_config:
+    backend: torch
+    base_dir: D:\Quant\results\easytpp\checkpoints/
+    dataset_id: lob_amzn
+    model_id: THP
+    runner_id: std_tpp
+    stage: train
+  model_config:
+    hidden_size: 128
+    loss_integral_num_sample_per_step: 10
+    num_heads: 4
+    num_layers: 1
+    use_mc_samples: true
+  trainer_config:
+    batch_size: 64
+    gpu: 0
+    learning_rate: 0.01
+    lr_decay_style: cosine
+    lr_scheduler: true
+    max_epoch: 100
+    metrics: []
+    optimizer: adam
+    seed: 2019
+    shuffle: true
+    use_tfb: false
+    valid_freq: 1
+    warmup_pct: 0.01
+    weight_decay: 0.0
+data:
+  lob_amzn:
+    data_format: json
+    data_specs:
+      num_event_types: 6
+      pad_token_id: 6
+      padding_side: right
+      truncation_side: right
+    test_dir: D:\Quant\data\processed\tpp\lob_amzn_test.json
+    train_dir: D:\Quant\data\processed\tpp\lob_amzn_train.json
+    valid_dir: D:\Quant\data\processed\tpp\lob_amzn_validation.json
+pipeline_config_id: runner_config
