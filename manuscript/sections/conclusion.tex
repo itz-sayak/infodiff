@@ -1,1 +1,13 @@
-% placeholder: written after all tracks complete
+\section{Conclusion}\label{sec:conclusion}
+Making every kernel a nonnegative combination of phase-type densities turns Hawkes
+estimation into a certified convex problem and turns news responses into matrix
+exponentials. Three findings stand out. First, the ``half-life'' of news is not a
+property of the news kernel: echoes lengthen absorption by one to two orders of
+magnitude, and the correction is available in closed form. Second, falsification
+matters: our first two specifications produced plausible-looking news effects that the
+placebo test exposed as artefacts of long kernels, ties and boundary bias. Third, a
+linear Hawkes backbone makes a neural point process both exact and competitive on
+order-book data. Limitations: expectations for payrolls, claims, PPI and retail sales
+are statistical rather than survey-based; the FX feed has a gap in the first half of
+2023; neural baselines were trained with reduced batch sizes on an 8\,GB GPU; and on the
+public EasyTPP benchmarks EPT does not reach the state of the art (Section~\ref{sec:results}).

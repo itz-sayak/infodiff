@@ -1,1 +1,19 @@
-% placeholder: written after all tracks complete
+How fast do prices absorb scheduled macroeconomic news, and how much of the post-release
+activity is the market reacting to itself? We model $\delta$-crossing price events of six
+markets---EUR/USD, USD/JPY, gold, the S\&P~500, bitcoin and ether---around 670 scheduled
+releases (2022--2026) with a multiscale phase-type Hawkes process whose parameters all
+enter linearly. The log-likelihood is then concave, and we compute the global maximum
+with a Fenchel duality-gap certificate. A Markov embedding gives the echo-corrected
+response to a release in closed form; we prove it is stable iff the spectral radius of
+the branching matrix is below one. A built-in placebo test on matched release-free days,
+with a penalty chosen on held-out windows, separates genuine news effects from artefacts:
+CPI, payrolls, PPI, the FOMC statement and retail sales pass it, second-tier releases and
+the ECB and BoJ do not. For the releases that pass, the direct reaction is absorbed in
+about a second, but echoes stretch half of the response to \tEchoLo--\tEchoHi{}\,s and
+ninety percent to \tNinetyLo--\tNinetyHi{} minutes; the branching ratio is
+$\rho(G)=\rhoPooled$ and declines from 2022 to 2026. On synthetic benchmarks the certified
+estimator recovers multiscale and network kernels with 7--10$\times$ smaller likelihood
+deficits than six classical estimators. We also introduce EPT-TPP, a neural point process
+with an exact compensator and a linear Hawkes backbone; on LOBSTER limit-order-book data
+our models achieve the best test likelihood among classical and neural baselines,
+including the current state of the art.

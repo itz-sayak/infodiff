@@ -96,5 +96,19 @@
   "seconds": 38.337230920791626,
   "max_epoch": 100,
   "batch_size": 64
+ },
+ {
+  "model": "THP",
+  "dataset": "lob_amzn",
+  "seed": 2019,
+  "ll_per_event": -0.947552900845248,
+  "mark_ll": -1.5851003597052424,
+  "time_ll": 0.6375475263114726,
+  "val_ll": -1.3580882689041311,
+  "best_epoch": 37,
+  "n_params": 51224,
+  "seconds": 23.729617595672607,
+  "max_epoch": 100,
+  "batch_size": 64
  }
 ]
