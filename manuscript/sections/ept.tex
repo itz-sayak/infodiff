@@ -18,14 +18,16 @@ jump,
 \paragraph{Intensity.}
 For marks $m=1,\dots,M$,
 \[
-\lambda_m(t)=\mu_m(\bm h_n)+\sum_p C_{mp}\,x_p(t)+g_m(\bm h_n)\,e^{w(\bm h_n)(t-t_n)},\qquad
-C,\mu,g\ge0,
+\lambda_m(t)=\mu_m(\bm h_n)+\sum_p C_{mp}\,x_p(t)+g_{1m}(\bm h_n)\,e^{-a(\bm h_n)s}
++g_{2m}(\bm h_n)\bigl(1-e^{-\kappa(\bm h_n)s}\bigr),\qquad s=t-t_n,
 \]
-where the last (Gompertz) term allows increasing as well as decreasing hazards.
+with $C,\mu,g_1,g_2,a,\kappa\ge0$: bounded decaying and rising-but-saturating hazards (an
+unbounded Gompertz term overflows on heavy-tailed gaps).
 
 \begin{proposition}\label{prop:ept}
 (i) $\lambda_m>0$ everywhere. (ii) The compensator between events is exact:
-$\int_{t_n}^{t_n+\Delta}\lambda_m=\mu_m\Delta+\bm C_m^\top\bm I(\Delta)+g_m\,\mathrm{expm1}(w\Delta)/w$
+$\int_{t_n}^{t_n+\Delta}\lambda_m=\mu_m\Delta+\bm C_m^\top\bm I(\Delta)
++g_{1m}(1-e^{-a\Delta})/a+g_{2m}\bigl(\Delta-(1-e^{-\kappa\Delta})/\kappa\bigr)$
 with $\bm I(\Delta)$ given by Lemma~\ref{lem:recursion}. (iii) With $g=0$, identity gates and
 jumps $\mathrm{softplus}(W_j\bm h_n)=\bm e_{m_n}\otimes\bm\beta$ the model is the
 multivariate phase-type Hawkes process of Section~\ref{sec:model}; with $C=0$ it is
@@ -38,3 +40,44 @@ predictions are Bayes-optimal functionals of the exact density:
 $\E[\Delta]=\int_0^\infty S(s)\dd s$ and
 $\hat m=\arg\max_m\int_0^\infty\lambda_m(s)S(s)\dd s$, computed by one-dimensional
 quadrature.
+
+\subsection{EPT-X: a renewal channel for within-cascade timing}\label{sec:eptx}
+Order-book streams contain cascades: a single marketable order produces several messages
+within nanoseconds, so more than half of all inter-event gaps lie six to nine orders of
+magnitude below the typical gap. A linear Hawkes intensity can place that much
+conditional mass on sub-microsecond gaps only by inflating its branching ratio, and a
+finer kernel dictionary does not help (Section~\ref{sec:results}). EPT-X adds, by
+superposition, a second channel that models the \emph{next gap} directly while keeping the
+compensator exact.
+
+\paragraph{Defective hyper-Erlang channel.} Fix a dictionary of $J$ Erlang atoms
+$(R_j,\beta_j)$ whose means $R_j/\beta_j$ lie on a logarithmic grid spanning the data's
+time scales, with orders $R_j\in\{1,4,16\}$ (coefficient of variation $R_j^{-1/2}$, so
+high orders give sharp modes in log-time). After event $n$ the history $\bm h_n$ selects
+weights $\bm w(\bm h_n)$ on the simplex over the $J$ atoms and a \emph{defect} atom $w_\infty$,
+and a mark law $q_{m\mid j}(\bm h_n)$ for each time scale. The channel's joint density of the
+next gap $s$ and mark $m$ and its survival function are
+\[
+p(s,m)=\sum_{j=1}^J w_j\,q_{m\mid j}\,\frac{\beta_j^{R_j}s^{R_j-1}e^{-\beta_js}}{(R_j-1)!},\qquad
+S_X(s)=w_\infty+\sum_{j=1}^J w_j\,e^{-\beta_js}\sum_{i<R_j}\frac{(\beta_js)^i}{i!}.
+\]
+EPT-X superposes this channel on EPT (including its Hawkes backbone):
+$\lambda_m(t)=\lambda^{\mathrm{EPT}}_m(t)+p(s,m)/S_X(s)$.
+
+\begin{proposition}\label{prop:eptx}
+(i) The compensator over $(t_n,t_n+\Delta]$ is $\Lambda^{\mathrm{EPT}}(\Delta)-\log S_X(\Delta)$, in closed
+form. (ii) With $w_\infty=1$ EPT-X is exactly EPT, which in turn nests the multivariate
+phase-type Hawkes process. (iii) Given $\bm h_n$, the renewal channel is the absorption
+time of a finite continuous-time Markov chain (a phase-type law), so its survival,
+quantiles and moments are closed-form matrix functionals. (iv) Since mixtures of
+Erlang distributions are dense in the distributions on $(0,\infty)$
+\citep{tijms1994stochastic,lee2010modeling}, the channel can approximate any conditional
+gap law as the dictionary is refined---the expressiveness of a conditional mixture
+density \citep{shchur2020intensity}, with an exact intensity and compensator.
+\end{proposition}
+
+The two channels have distinct roles: the renewal channel describes \emph{within-cascade}
+timing and the mark mix of a cascade (the mark law depends on which time scale fires),
+while the Hawkes channel describes \emph{cross-cascade} excitation. The GRU also receives
+the standardised log-gap, because a linear gap feature cannot distinguish nanosecond ties
+from zero.
