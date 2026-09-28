@@ -1,28 +1,23 @@
-S2P2_train:
+IntensityFree_train:
   base_config:
     backend: torch
     base_dir: D:\Quant\results\easytpp\checkpoints/
     dataset_id: lob_aapl
-    model_id: S2P2
+    model_id: IntensityFree
     runner_id: std_tpp
     stage: train
   model_config:
-    hidden_size: 128
+    dropout: 0.0
+    hidden_size: 32
     loss_integral_num_sample_per_step: 10
     model_specs:
-      P: 16
-      act_func: gelu
-      dropout_rate: 0.1
-      for_loop: false
-      int_backward_variant: true
-      int_forward_variant: false
-      post_norm: true
-      pre_norm: false
-      relative_time: true
-    num_layers: 4
+      num_mix_components: 3
+    num_layers: 1
+    sharing_param_layer: false
+    use_ln: false
     use_mc_samples: true
   trainer_config:
-    batch_size: 32
+    batch_size: 64
     gpu: 0
     learning_rate: 0.01
     lr_decay_style: cosine
@@ -34,7 +29,7 @@ S2P2_train:
     shuffle: true
     use_tfb: false
     valid_freq: 1
-    warmup_pct: 0.01
+    warmup_pct: 0.1
     weight_decay: 0.0
 data:
   lob_aapl:

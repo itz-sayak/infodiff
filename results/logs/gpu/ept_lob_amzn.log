@@ -1,0 +1,2 @@
+
+=== Mon Sep 28 08:03:10 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept.py lob_amzn 0,1,2 "{\"epochs\":100,\"phases\":2}"
