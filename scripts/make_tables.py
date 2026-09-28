@@ -204,6 +204,31 @@ def numbers():
         ed = [x for x in r["ed_reject_rate_per_dim"] if x is not None]
         out.append(f"\\newcommand{{\\edLo}}{{{100 * min(ed):.0f}}}\\newcommand{{\\edHi}}{{{100 * max(ed):.0f}}}")
         out.append(f"\\newcommand{{\\gapMaxPooled}}{{{max(x['gap'] for x in r['fit_reports']):.4f}}}")
+    # specification history (superseded runs are kept, never deleted)
+    sup = J / "superseded"
+    v1 = sup / "main_2024_v1_placebo_failed.json"
+    v2 = sup / "main_2024_v2_single_placebo.json"
+    if v1.exists():
+        a = json.loads(v1.read_text())
+        out.append(f"\\newcommand{{\\vOnePlacebo}}{{{np.sum(a['placebo_mass_per_dim']):.0f}}}")
+        out.append(f"\\newcommand{{\\vOneKSmax}}{{{max(g['ks'] for g in a['gof']):.2f}}}")
+    if v2.exists():
+        a = json.loads(v2.read_text())
+        out.append(f"\\newcommand{{\\vTwoPlacebo}}{{{np.sum(a['placebo_mass_per_dim']):.1f}}}")
+    l1 = load("l1_select_2024.json")
+    if l1:
+        rows = sorted(l1, key=lambda x: x["l1"])
+        best = max(rows, key=lambda x: x["val_ll"])
+        out.append(f"\\newcommand{{\\lOneSelected}}{{{best['l1']:.1f}}}")
+        lines = ["\\begin{tabular}{cccc}", "\\toprule",
+                 "$\\ell_1$ level & held-out LL (rel.) & mean release mass & mean placebo mass \\\\", "\\midrule"]
+        for x in rows:
+            rel = np.mean([v for k, v in x["mass"].items() if not k.startswith("PLACEBO")])
+            plc = np.mean([v for k, v in x["mass"].items() if k.startswith("PLACEBO")])
+            mark = "\\textbf" if x is best else ""
+            lines.append(f"{x['l1']:.1f} & {mark}{{{x['val_ll'] - best['val_ll']:.1f}}} & {rel:.2f} & {plc:.2f} \\\\")
+        lines += ["\\bottomrule", "\\end{tabular}"]
+        (OUT / "l1_selection.tex").write_text("\n".join(lines))
     rhos = []
     for y in ("2022", "2023", "2024", "2025", "2026"):
         v = load(f"main_{y}.json")

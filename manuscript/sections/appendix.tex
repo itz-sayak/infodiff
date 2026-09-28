@@ -1,0 +1,37 @@
+\section{Specification history and the placebo test}\label{app:history}
+
+We report the specifications that \emph{failed} the built-in falsification test, because
+the failures are informative and because the final specification was chosen by them, not
+by the results we hoped for. All superseded outputs are kept in
+\texttt{results/json/superseded/}.
+
+\paragraph{Version 1.} News kernels with time scales up to 30 minutes and Erlang order 3
+(mean lags up to 90 minutes), a constant baseline per window, time-of-day hats in UTC, and
+events that could be tied (a trade sweeping several $\delta$ levels produced several events
+with the same millisecond timestamp). The single PLACEBO type absorbed \vOnePlacebo{} extra
+events per pseudo-release---comparable to real releases---and crypto residuals had KS
+statistics up to \vOneKSmax. Diagnosis: news kernels longer than the post-release window
+acted as within-window trend absorbers, and ties (55\% of BTC events) violated the
+orderliness of a simple point process.
+
+\paragraph{Version 2.} One event per timestamp (with a size mark), news kernels restricted
+to 0.1--300\,s, a per-window \emph{linear} baseline, and New-York-time seasonality. The
+placebo mass fell to \vTwoPlacebo{} and residual fit improved by an order of magnitude, but
+the placebo remained significant under Wald standard errors. Splitting the placebo by
+release slot showed placebo mass at every slot, including 14:00\,ET on non-FOMC days, which
+ruled out ``unmodelled 08:30 releases'' as the whole explanation.
+
+\paragraph{Version 3 (final).} Two further changes. (i) Placebo days must avoid sixteen
+second-tier US releases (PCE, durable goods, trade, housing, JOLTS, sentiment, \dots) as
+well as the modelled ones. (ii) Nonnegative news kernels are estimated with an
+exposure-weighted $\ell_1$ penalty whose level is chosen by the profile likelihood of
+held-out windows (Table~\ref{tab:l1}); without it, each of the several hundred nonnegative
+weights has positive expected value under the null, so release and placebo masses are
+equally inflated (boundary bias). The held-out likelihood peaks at
+$\ell_1=\lOneSelected$, where release and placebo masses separate.
+
+\begin{table}[h]\centering\scriptsize
+\caption{Selection of the news-kernel penalty on held-out 2024 windows (profile
+log-likelihood relative to the best level).}\label{tab:l1}
+\input{tables/l1_selection}
+\end{table}

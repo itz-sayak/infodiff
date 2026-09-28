@@ -2,3 +2,6 @@
 === Mon Sep 28 05:38:39 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2022
 2022: windows=169 events=3497614
 loaded results\models\msx_2022.pkl max gap 0.0018117459840141237
+  responses done in 110s
+  goodness of fit done in 164s
+rho 0.9131797044127438 relaxation_s 904.8767814422928 total 164s
