@@ -20,3 +20,64 @@ certificate of Proposition~\ref{prop:gap} was at most $3.3\times10^{-4}$ nats ov
 \label{tab:track-a}
 \resizebox{\linewidth}{!}{\input{tables/track_a}}
 \end{table}
+
+\subsection{Main study: how fast do markets absorb scheduled macro news?}
+The pooled 2022--2026 model (732 windows, 8.4 million $\delta$-crossing events, twelve
+dimensions) is certified optimal to within \gapMaxPooled{} nats per dimension. The
+spectral radius of the branching matrix is $\rho(G)=\rhoPooled$: roughly seven in every
+eight price events are endogenous echoes. Fitted year by year, $\rho(G)$ declines from 2022
+to 2026 (\rhoByYear), and the slowest echo mode relaxes in about \relaxPooled{} minutes.
+
+\paragraph{Falsification.} Figure~\ref{fig:placebo} compares, for every release type, the
+direct news-kernel mass with that of a matched placebo at the same clock time on a day
+without any scheduled release (neither the \nKinds{} modelled types nor sixteen second-tier
+US releases). With the exposure-weighted $\ell_1$ level selected on held-out windows,
+\nPassPlacebo{} of the \nKinds{} release types exceed their placebo by at least 50\%: CPI
+(\placeboCpi$\times$), payrolls (\placeboNfp$\times$), PPI (\placeboPpi$\times$), the FOMC
+statement (\placeboFomc$\times$) and retail sales (\placeboRetail$\times$). Jobless claims,
+ECB and BoJ decisions and the press conferences do not have a detectable \emph{direct}
+effect beyond their placebos---an honest negative that the unregularised fit would have
+hidden: without the penalty, nonnegative news kernels absorb as much mass on placebo days
+as on release days (boundary bias), and the first specification with long news kernels
+failed the test outright (Appendix).
+
+\paragraph{Echo-corrected absorption.} For the releases that pass the placebo test, the
+direct news kernel is absorbed almost instantly (median $t_{50}$ of \tDirMed{}\,s), but the
+market's own echoes stretch the response: half of the total extra activity arrives within
+\tEchoLo--\tEchoHi{}\,s and ninety percent within \tNinetyLo--\tNinetyHi{} minutes
+(Figure~\ref{fig:absorption}, Table~\ref{tab:absorption}). The textbook ``news
+half-life'' $\ln 2/\beta$ therefore understates absorption time by one to two orders of
+magnitude.
+
+\paragraph{Price discovery.} Signed surprises enter the news kernel separately by sign, so
+the model yields expected drift curves (Figure~\ref{fig:drift}). The signs are economically
+coherent: hotter-than-expected inflation and stronger payrolls depress crypto and lift the
+dollar, while cooler prints do the opposite.
+
+\paragraph{Goodness of fit.} Time-rescaled residuals have Kolmogorov--Smirnov statistics of
+at most \ksMax{} against Exp(1), and the per-window excess-dispersion test rejects in
+\edLo--\edHi\% of windows, compared with 42\% (power-law kernel) and 93\% (double
+exponential) reported for EBS FX data by \citet{rambaldi2015modeling}.
+
+\begin{figure}[t]\centering
+\includegraphics[width=0.75\linewidth]{figures/placebo_pooled.pdf}
+\caption{Placebo test. Direct news-kernel mass (expected extra events per release, all
+assets) for each release type and for a matched placebo at the same clock time on a
+release-free day.}\label{fig:placebo}
+\end{figure}
+
+\begin{figure}[t]\centering
+\includegraphics[width=\linewidth]{figures/absorption_CPI_pooled.pdf}
+\caption{Echo-corrected response to a CPI release (blue) versus the direct news kernel
+(orange), per asset; dotted lines mark $t_{50}$.}\label{fig:absorption}
+\end{figure}
+
+\begin{figure}[t]\centering
+\includegraphics[width=\linewidth]{figures/drift_CPI_pooled.pdf}
+\caption{Expected price-discovery curves after a $\pm1$ standard-deviation CPI surprise.}\label{fig:drift}
+\end{figure}
+
+\begin{table}[t]\centering\scriptsize
+\caption{Absorption by release and asset (pooled model).}\label{tab:absorption}
+\resizebox{\linewidth}{!}{\input{tables/main_absorption}}
+\end{table}

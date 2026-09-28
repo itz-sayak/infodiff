@@ -179,8 +179,43 @@ def table_main():
     (OUT / f"main_absorption.tex").write_text("\n".join(lines))
 
 
+def numbers():
+    """LaTeX macros for every number quoted in the prose (computed, never typed)."""
+    out = []
+    r = load("main_pooled.json")
+    if r:
+        out.append(f"\\newcommand{{\\rhoPooled}}{{{r['rho']:.2f}}}")
+        out.append(f"\\newcommand{{\\relaxPooled}}{{{r['relaxation_time_s'] / 60:.0f}}}")
+        se = r["mass_se"]
+        kinds = [k for k in se if not k.startswith("PLACEBO")]
+        ratio = {k: se[k]["mass"] / max(se[f"PLACEBO_{k}"]["mass"], 1e-9) for k in kinds}
+        for k in ("CPI", "NFP", "PPI", "FOMC", "RETAIL"):
+            out.append(f"\\newcommand{{\\placebo{k.capitalize()}}}{{{ratio[k]:.1f}}}")
+        out.append(f"\\newcommand{{\\nPassPlacebo}}{{{sum(v >= 1.5 for v in ratio.values())}}}")
+        out.append(f"\\newcommand{{\\nKinds}}{{{len(kinds)}}}")
+        sig = ("CPI", "NFP", "PPI", "FOMC")
+        t50d = [x["t50_direct"] for k in sig for x in r["per_type"][k]["z0"].values()]
+        t50e = [x["t50_total"] for k in sig for x in r["per_type"][k]["z0"].values()]
+        t90e = [x["t90_total"] for k in sig for x in r["per_type"][k]["z0"].values()]
+        out.append(f"\\newcommand{{\\tDirMed}}{{{np.median(t50d):.1f}}}")
+        out.append(f"\\newcommand{{\\tEchoLo}}{{{min(t50e):.0f}}}\\newcommand{{\\tEchoHi}}{{{max(t50e):.0f}}}")
+        out.append(f"\\newcommand{{\\tNinetyLo}}{{{min(t90e) / 60:.0f}}}\\newcommand{{\\tNinetyHi}}{{{max(t90e) / 60:.0f}}}")
+        out.append(f"\\newcommand{{\\ksMax}}{{{max(g['ks'] for g in r['gof']):.3f}}}")
+        ed = [x for x in r["ed_reject_rate_per_dim"] if x is not None]
+        out.append(f"\\newcommand{{\\edLo}}{{{100 * min(ed):.0f}}}\\newcommand{{\\edHi}}{{{100 * max(ed):.0f}}}")
+        out.append(f"\\newcommand{{\\gapMaxPooled}}{{{max(x['gap'] for x in r['fit_reports']):.4f}}}")
+    rhos = []
+    for y in ("2022", "2023", "2024", "2025", "2026"):
+        v = load(f"main_{y}.json")
+        if v:
+            rhos.append(f"{v['rho']:.2f}")
+    if rhos:
+        out.append(f"\\newcommand{{\\rhoByYear}}{{{', '.join(rhos)}}}")
+    (ROOT / "manuscript" / "numbers.tex").write_text("\n".join(out) + "\n")
+
+
 if __name__ == "__main__":
-    for f in (table_a, table_b, table_c, table_d, table_main):
+    for f in (table_a, table_b, table_c, table_d, table_main, numbers):
         try:
             f()
             print("ok", f.__name__)
