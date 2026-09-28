@@ -81,3 +81,40 @@ release-free day.}\label{fig:placebo}
 \caption{Absorption by release and asset (pooled model).}\label{tab:absorption}
 \resizebox{\linewidth}{!}{\input{tables/main_absorption}}
 \end{table}
+
+\subsection{Track C: limit-order-book event streams}
+Table~\ref{tab:track-c} reports test log-likelihood per event on the five LOBSTER
+stocks. Among all classical and neural models our models hold the best result on
+\trackCwins{} of the \trackCdone{} stocks for which every model has finished, and our best
+model exceeds the best neural baseline by \trackCmarginLo--\trackCmarginHi{} nats per event.
+The strongest neural competitors on this data are IntensityFree and S2P2; recurrent and
+attention models with Monte-Carlo compensators (NHP, THP, AttNHP) fall well behind the
+exact-likelihood phase-type models. Two implementation notes matter for fairness. First,
+LOBSTER timestamps contain ties, which EasyTPP rejects; all models are trained and
+scored on the same files in which tied messages are displaced by $U(0,100\,\text{ns})$.
+Second, on our 8\,GB GPU the neural baselines run with batch sizes 32--64 instead of 256
+and a 100-epoch budget shared by every model; the strongest two are additionally re-run
+for the authors' 300 epochs. The Hawkes backbone is essential for EPT: without it EPT
+underperforms plain MSX (superseded run, Appendix), with it EPT is the best model on
+AAPL.
+
+\begin{table}[t]\centering\scriptsize
+\caption{Track C: test log-likelihood per event on LOBSTER (6 event types, 128-event
+sequences, chronological split). Bold: best per stock.}\label{tab:track-c}
+\resizebox{\linewidth}{!}{\input{tables/track_c}}
+\end{table}
+
+\subsection{Track D: forecasting the post-release burst}
+On the \nTestReleases{} releases of 2025--2026, a model fitted on 2022--2024 forecasts the
+number of $\delta$-crossings in the first 1, 5 and 15 minutes (Table~\ref{tab:track-d}).
+The closed-form MSX forecast improves on same-type climatology at every horizon but is
+beaten by the \bestActivityModel{} and HAR regressions, which are fitted directly to this
+target; we report this negative result as is. For the \emph{direction} of the post-release
+move the structural model is informative: the correlation between the forecast and the
+realised signed drift over the first minute is \driftCorrOursOne{}, against
+\driftCorrBaseOne{} for the best baseline (mean drift by release type and surprise sign).
+
+\begin{table}[t]\centering\scriptsize
+\caption{Track D: post-release activity forecasts (mean over assets; lower is better).}\label{tab:track-d}
+\input{tables/track_d}
+\end{table}
