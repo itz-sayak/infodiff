@@ -21,13 +21,8 @@ def test_exact_compensator_matches_quadrature():
         H = m._last_h
         M = cfg.n_marks
         for n in range(1, L):
-            x0, pk, h = states[:, n - 1], mus[:, n - 1], H[:, n - 1]
-            mu, g, w = pk[:, :M], pk[:, M:3 * M], pk[:, 3 * M:3 * M + 2]
             grid = torch.linspace(0, 1, 20001, dtype=torch.float64)[None, :] * dts[:, n:n + 1]
-            xs, _ = m.evolve(x0[:, None, :].expand(-1, grid.shape[1], -1), grid)
-            lam = mu[:, None, :] + m._readout(m.C(h), xs)
-            gv, _ = m._gomp_terms(g[:, None, :], w[:, None, :].expand(-1, grid.shape[1], -1), grid)
-            lam = lam + gv
+            lam, _ = m._curve(states[:, n - 1], mus[:, n - 1], grid, H[:, n - 1])
             num = torch.trapezoid(lam.sum(-1), grid, dim=1)
             assert torch.allclose(num, comp[:, n - 1], rtol=1e-5, atol=1e-8), (num, comp[:, n - 1])
             # log-intensity of the observed mark at the event matches the curve end-point

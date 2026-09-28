@@ -1,0 +1,231 @@
+
+=== Mon Sep 28 06:46:09 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner S2P2 lob_aapl 6 2019 100
+[31;1m2026-09-28 06:46:12,227 - config.py[pid:28988;line:33:build_from_yaml_file] - CRITICAL: Load pipeline config class RunnerConfig[0m
+[31;1m2026-09-28 06:46:12,228 - runner_config.py[pid:28988;line:205:update_config] - CRITICAL: train model S2P2 using GPU with torch backend[0m
+[38;20m2026-09-28 06:46:12,230 - runner_config.py[pid:28988;line:45:__init__] - INFO: Save the config to D:\Quant\results\easytpp\checkpoints/lob_aapl/S2P2/train_2026_09_28_06_46_12\S2P2_train_output.yaml[0m
+[38;20m2026-09-28 06:46:12,231 - base_runner.py[pid:28988;line:193:save_log] - INFO: Save the log to D:\Quant\results\easytpp\checkpoints/lob_aapl/S2P2/train_2026_09_28_06_46_12\log[0m
+Generating train split: 0 examples [00:00, ? examples/s]Generating train split: 525 examples [00:00, 11328.32 examples/s]
+0.20842144932044016 0.6263620563223178
+min_dt: 7.275957614183426e-12
+max_dt: 17.26781208600005
+[38;20m2026-09-28 06:46:17,991 - tpp_runner.py[pid:28988;line:62:_init_model] - INFO: Num of model parameters 34060[0m
+Generating validation split: 0 examples [00:00, ? examples/s]Generating validation split: 134 examples [00:00, 15850.33 examples/s]
+Generating test split: 0 examples [00:00, ? examples/s]Generating test split: 265 examples [00:00, 26115.24 examples/s]
+[38;20m2026-09-28 06:46:18,816 - base_runner.py[pid:28988;line:103:train] - INFO: Data 'lob_aapl' loaded...[0m
+[38;20m2026-09-28 06:46:18,816 - base_runner.py[pid:28988;line:108:train] - INFO: Start S2P2 training...[0m
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "D:\Quant\src\infodiff\baselines\easytpp_runner.py", line 84, in <module>
+    r = run_model(model, dataset, n_types, seed, max_epoch, batch_size=bs, gpu=0 if torch.cuda.is_available() else -1)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\src\infodiff\baselines\easytpp_runner.py", line 68, in run_model
+    log = runner.run()
+          ^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\base_runner.py", line 214, in run
+    return self.train(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\base_runner.py", line 111, in train
+    best_ll, best_epochs, best_metrics, num_params, losses = self._train_model(
+                                                             ^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\tpp_runner.py", line 98, in _train_model
+    train_metrics = self.run_one_epoch(train_loader, RunnerPhase.TRAIN, **kwargs)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\tpp_runner.py", line 204, in run_one_epoch
+    for batch in data_loader:
+  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\utils\data\dataloader.py", line 725, in __next__
+    data = self._next_data()
+           ^^^^^^^^^^^^^^^^^
+  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\utils\data\dataloader.py", line 785, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\utils\data\_utils\fetch.py", line 57, in fetch
+    return self.collate_fn(data)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\preprocess\data_collator.py", line 41, in __call__
+    batch = self.tokenizer.pad(
+            ^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\preprocess\event_tokenizer.py", line 333, in pad
+    batch_output = self._pad(
+                   ^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\preprocess\event_tokenizer.py", line 416, in _pad
+    batch_output[self.model_input_names[4]] = self.make_attn_mask_for_pad_sequence(
+                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\preprocess\event_tokenizer.py", line 518, in make_attn_mask_for_pad_sequence
+    seq_num, seq_len = pad_seqs.shape
+                       ^^^^^^^^^^^^^^
+AttributeError: 'list' object has no attribute 'shape'
+
+=== Mon Sep 28 06:46:39 2026 attempt 2: D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner S2P2 lob_aapl 6 2019 100
+[31;1m2026-09-28 06:46:41,616 - config.py[pid:31896;line:33:build_from_yaml_file] - CRITICAL: Load pipeline config class RunnerConfig[0m
+[31;1m2026-09-28 06:46:41,616 - runner_config.py[pid:31896;line:205:update_config] - CRITICAL: train model S2P2 using GPU with torch backend[0m
+[38;20m2026-09-28 06:46:41,619 - runner_config.py[pid:31896;line:45:__init__] - INFO: Save the config to D:\Quant\results\easytpp\checkpoints/lob_aapl/S2P2/train_2026_09_28_06_46_41\S2P2_train_output.yaml[0m
+[38;20m2026-09-28 06:46:41,619 - base_runner.py[pid:31896;line:193:save_log] - INFO: Save the log to D:\Quant\results\easytpp\checkpoints/lob_aapl/S2P2/train_2026_09_28_06_46_41\log[0m
+0.20842144932044016 0.6263620563223178
+min_dt: 7.275957614183426e-12
+max_dt: 17.26781208600005
+[38;20m2026-09-28 06:46:45,591 - tpp_runner.py[pid:31896;line:62:_init_model] - INFO: Num of model parameters 34060[0m
+[38;20m2026-09-28 06:46:46,311 - base_runner.py[pid:31896;line:103:train] - INFO: Data 'lob_aapl' loaded...[0m
+[38;20m2026-09-28 06:46:46,311 - base_runner.py[pid:31896;line:108:train] - INFO: Start S2P2 training...[0m
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "D:\Quant\src\infodiff\baselines\easytpp_runner.py", line 84, in <module>
+    r = run_model(model, dataset, n_types, seed, max_epoch, batch_size=bs, gpu=0 if torch.cuda.is_available() else -1)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\src\infodiff\baselines\easytpp_runner.py", line 68, in run_model
+    log = runner.run()
+          ^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\base_runner.py", line 214, in run
+    return self.train(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\base_runner.py", line 111, in train
+    best_ll, best_epochs, best_metrics, num_params, losses = self._train_model(
+                                                             ^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\tpp_runner.py", line 98, in _train_model
+    train_metrics = self.run_one_epoch(train_loader, RunnerPhase.TRAIN, **kwargs)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\tpp_runner.py", line 204, in run_one_epoch
+    for batch in data_loader:
+  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\utils\data\dataloader.py", line 725, in __next__
+    data = self._next_data()
+           ^^^^^^^^^^^^^^^^^
+  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\utils\data\dataloader.py", line 785, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\utils\data\_utils\fetch.py", line 57, in fetch
+    return self.collate_fn(data)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\preprocess\data_collator.py", line 41, in __call__
+    batch = self.tokenizer.pad(
+            ^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\preprocess\event_tokenizer.py", line 333, in pad
+    batch_output = self._pad(
+                   ^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\preprocess\event_tokenizer.py", line 416, in _pad
+    batch_output[self.model_input_names[4]] = self.make_attn_mask_for_pad_sequence(
+                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\preprocess\event_tokenizer.py", line 518, in make_attn_mask_for_pad_sequence
+    seq_num, seq_len = pad_seqs.shape
+                       ^^^^^^^^^^^^^^
+AttributeError: 'list' object has no attribute 'shape'
+
+=== Mon Sep 28 06:49:00 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner S2P2 lob_aapl 6 2019 100
+[31;1m2026-09-28 06:49:01,748 - config.py[pid:21868;line:33:build_from_yaml_file] - CRITICAL: Load pipeline config class RunnerConfig[0m
+[31;1m2026-09-28 06:49:01,749 - runner_config.py[pid:21868;line:205:update_config] - CRITICAL: train model S2P2 using GPU with torch backend[0m
+[38;20m2026-09-28 06:49:01,751 - runner_config.py[pid:21868;line:45:__init__] - INFO: Save the config to D:\Quant\results\easytpp\checkpoints/lob_aapl/S2P2/train_2026_09_28_06_49_01\S2P2_train_output.yaml[0m
+[38;20m2026-09-28 06:49:01,752 - base_runner.py[pid:21868;line:193:save_log] - INFO: Save the log to D:\Quant\results\easytpp\checkpoints/lob_aapl/S2P2/train_2026_09_28_06_49_01\log[0m
+0.20842144932044016 0.6263620563223178
+min_dt: 7.275957614183426e-12
+max_dt: 17.26781208600005
+[38;20m2026-09-28 06:49:06,295 - tpp_runner.py[pid:21868;line:62:_init_model] - INFO: Num of model parameters 34060[0m
+[38;20m2026-09-28 06:49:06,983 - base_runner.py[pid:21868;line:103:train] - INFO: Data 'lob_aapl' loaded...[0m
+[38;20m2026-09-28 06:49:06,983 - base_runner.py[pid:21868;line:108:train] - INFO: Start S2P2 training...[0m
+Traceback (most recent call last):
+  File "D:\Quant\external\state_space_point_process\easy_tpp\preprocess\event_tokenizer.py", line 88, in convert_to_tensors
+    tensor = as_tensor(value)
+             ^^^^^^^^^^^^^^^^
+TypeError: 'list' object cannot be interpreted as an integer
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "D:\Quant\src\infodiff\baselines\easytpp_runner.py", line 84, in <module>
+    r = run_model(model, dataset, n_types, seed, max_epoch, batch_size=bs, gpu=0 if torch.cuda.is_available() else -1)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\src\infodiff\baselines\easytpp_runner.py", line 68, in run_model
+    log = runner.run()
+          ^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\base_runner.py", line 214, in run
+    return self.train(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\base_runner.py", line 111, in train
+    best_ll, best_epochs, best_metrics, num_params, losses = self._train_model(
+                                                             ^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\tpp_runner.py", line 98, in _train_model
+    train_metrics = self.run_one_epoch(train_loader, RunnerPhase.TRAIN, **kwargs)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\tpp_runner.py", line 204, in run_one_epoch
+    for batch in data_loader:
+  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\utils\data\dataloader.py", line 725, in __next__
+    data = self._next_data()
+           ^^^^^^^^^^^^^^^^^
+  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\utils\data\dataloader.py", line 785, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\utils\data\_utils\fetch.py", line 57, in fetch
+    return self.collate_fn(data)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\preprocess\data_collator.py", line 41, in __call__
+    batch = self.tokenizer.pad(
+            ^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\preprocess\event_tokenizer.py", line 340, in pad
+    return BatchEncoding(batch_output, tensor_type=return_tensors)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\preprocess\event_tokenizer.py", line 40, in __init__
+    self.convert_to_tensors(tensor_type=tensor_type, prepend_batch_axis=prepend_batch_axis)
+  File "D:\Quant\external\state_space_point_process\easy_tpp\preprocess\event_tokenizer.py", line 97, in convert_to_tensors
+    raise ValueError(
+ValueError: Unable to create tensor, you should probably activate truncation and/or padding with 'padding=True' 'truncation=True' to have batched tensors with the same length. Perhaps your features (`type_seqs` in this case) have excessive nesting (inputs type `list` where type `int` is expected).
+
+=== Mon Sep 28 06:49:28 2026 attempt 2: D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner S2P2 lob_aapl 6 2019 100
+[31;1m2026-09-28 06:49:29,833 - config.py[pid:35552;line:33:build_from_yaml_file] - CRITICAL: Load pipeline config class RunnerConfig[0m
+[31;1m2026-09-28 06:49:29,835 - runner_config.py[pid:35552;line:205:update_config] - CRITICAL: train model S2P2 using GPU with torch backend[0m
+[38;20m2026-09-28 06:49:29,837 - runner_config.py[pid:35552;line:45:__init__] - INFO: Save the config to D:\Quant\results\easytpp\checkpoints/lob_aapl/S2P2/train_2026_09_28_06_49_29\S2P2_train_output.yaml[0m
+[38;20m2026-09-28 06:49:29,838 - base_runner.py[pid:35552;line:193:save_log] - INFO: Save the log to D:\Quant\results\easytpp\checkpoints/lob_aapl/S2P2/train_2026_09_28_06_49_29\log[0m
+0.20842144932044016 0.6263620563223178
+min_dt: 7.275957614183426e-12
+max_dt: 17.26781208600005
+[38;20m2026-09-28 06:49:33,902 - tpp_runner.py[pid:35552;line:62:_init_model] - INFO: Num of model parameters 34060[0m
+[38;20m2026-09-28 06:49:34,622 - base_runner.py[pid:35552;line:103:train] - INFO: Data 'lob_aapl' loaded...[0m
+[38;20m2026-09-28 06:49:34,622 - base_runner.py[pid:35552;line:108:train] - INFO: Start S2P2 training...[0m
+Traceback (most recent call last):
+  File "D:\Quant\external\state_space_point_process\easy_tpp\preprocess\event_tokenizer.py", line 88, in convert_to_tensors
+    tensor = as_tensor(value)
+             ^^^^^^^^^^^^^^^^
+TypeError: 'list' object cannot be interpreted as an integer
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "D:\Quant\src\infodiff\baselines\easytpp_runner.py", line 84, in <module>
+    r = run_model(model, dataset, n_types, seed, max_epoch, batch_size=bs, gpu=0 if torch.cuda.is_available() else -1)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\src\infodiff\baselines\easytpp_runner.py", line 68, in run_model
+    log = runner.run()
+          ^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\base_runner.py", line 214, in run
+    return self.train(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\base_runner.py", line 111, in train
+    best_ll, best_epochs, best_metrics, num_params, losses = self._train_model(
+                                                             ^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\tpp_runner.py", line 98, in _train_model
+    train_metrics = self.run_one_epoch(train_loader, RunnerPhase.TRAIN, **kwargs)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\tpp_runner.py", line 204, in run_one_epoch
+    for batch in data_loader:
+  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\utils\data\dataloader.py", line 725, in __next__
+    data = self._next_data()
+           ^^^^^^^^^^^^^^^^^
+  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\utils\data\dataloader.py", line 785, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\utils\data\_utils\fetch.py", line 57, in fetch
+    return self.collate_fn(data)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\preprocess\data_collator.py", line 41, in __call__
+    batch = self.tokenizer.pad(
+            ^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\preprocess\event_tokenizer.py", line 340, in pad
+    return BatchEncoding(batch_output, tensor_type=return_tensors)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\preprocess\event_tokenizer.py", line 40, in __init__
+    self.convert_to_tensors(tensor_type=tensor_type, prepend_batch_axis=prepend_batch_axis)
+  File "D:\Quant\external\state_space_point_process\easy_tpp\preprocess\event_tokenizer.py", line 97, in convert_to_tensors
+    raise ValueError(
+ValueError: Unable to create tensor, you should probably activate truncation and/or padding with 'padding=True' 'truncation=True' to have batched tensors with the same length. Perhaps your features (`type_seqs` in this case) have excessive nesting (inputs type `list` where type `int` is expected).

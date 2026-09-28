@@ -64,5 +64,27 @@
    "epochs": 100,
    "phases": 2
   }
+ },
+ {
+  "ll_per_event": 2.850116604261068,
+  "n_events": 33655.0,
+  "rmse": 0.4368771016597748,
+  "acc": 0.4278116226196289,
+  "dataset": "lob_aapl",
+  "seed": 2,
+  "val_ll": 2.065882907068986,
+  "epochs": 100,
+  "seconds": 632.804839849472,
+  "hidden": 64,
+  "n_rates": 8,
+  "n_channels": 4,
+  "phases": 2,
+  "lr": 0.01,
+  "gompertz": true,
+  "n_params": 54484,
+  "config": {
+   "epochs": 100,
+   "phases": 2
+  }
  }
 ]

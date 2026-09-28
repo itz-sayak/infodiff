@@ -1,0 +1,108 @@
+
+=== Mon Sep 28 06:47:07 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner NHP lob_aapl 6 2019 100
+[31;1m2026-09-28 06:47:09,131 - config.py[pid:34908;line:33:build_from_yaml_file] - CRITICAL: Load pipeline config class RunnerConfig[0m
+[31;1m2026-09-28 06:47:09,132 - runner_config.py[pid:34908;line:205:update_config] - CRITICAL: train model NHP using GPU with torch backend[0m
+[38;20m2026-09-28 06:47:09,134 - runner_config.py[pid:34908;line:45:__init__] - INFO: Save the config to D:\Quant\results\easytpp\checkpoints/lob_aapl/NHP/train_2026_09_28_06_47_09\NHP_train_output.yaml[0m
+[38;20m2026-09-28 06:47:09,135 - base_runner.py[pid:34908;line:193:save_log] - INFO: Save the log to D:\Quant\results\easytpp\checkpoints/lob_aapl/NHP/train_2026_09_28_06_47_09\log[0m
+0.20842144932044016 0.6263620563223178
+min_dt: 7.275957614183426e-12
+max_dt: 17.26781208600005
+[38;20m2026-09-28 06:47:14,001 - tpp_runner.py[pid:34908;line:62:_init_model] - INFO: Num of model parameters 231948[0m
+[38;20m2026-09-28 06:47:14,680 - base_runner.py[pid:34908;line:103:train] - INFO: Data 'lob_aapl' loaded...[0m
+[38;20m2026-09-28 06:47:14,681 - base_runner.py[pid:34908;line:108:train] - INFO: Start NHP training...[0m
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "D:\Quant\src\infodiff\baselines\easytpp_runner.py", line 84, in <module>
+    r = run_model(model, dataset, n_types, seed, max_epoch, batch_size=bs, gpu=0 if torch.cuda.is_available() else -1)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\src\infodiff\baselines\easytpp_runner.py", line 68, in run_model
+    log = runner.run()
+          ^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\base_runner.py", line 214, in run
+    return self.train(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\base_runner.py", line 111, in train
+    best_ll, best_epochs, best_metrics, num_params, losses = self._train_model(
+                                                             ^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\tpp_runner.py", line 98, in _train_model
+    train_metrics = self.run_one_epoch(train_loader, RunnerPhase.TRAIN, **kwargs)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\tpp_runner.py", line 204, in run_one_epoch
+    for batch in data_loader:
+  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\utils\data\dataloader.py", line 725, in __next__
+    data = self._next_data()
+           ^^^^^^^^^^^^^^^^^
+  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\utils\data\dataloader.py", line 785, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\utils\data\_utils\fetch.py", line 57, in fetch
+    return self.collate_fn(data)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\preprocess\data_collator.py", line 41, in __call__
+    batch = self.tokenizer.pad(
+            ^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\preprocess\event_tokenizer.py", line 333, in pad
+    batch_output = self._pad(
+                   ^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\preprocess\event_tokenizer.py", line 416, in _pad
+    batch_output[self.model_input_names[4]] = self.make_attn_mask_for_pad_sequence(
+                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\preprocess\event_tokenizer.py", line 518, in make_attn_mask_for_pad_sequence
+    seq_num, seq_len = pad_seqs.shape
+                       ^^^^^^^^^^^^^^
+AttributeError: 'list' object has no attribute 'shape'
+
+=== Mon Sep 28 06:47:35 2026 attempt 2: D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner NHP lob_aapl 6 2019 100
+[31;1m2026-09-28 06:47:37,522 - config.py[pid:21768;line:33:build_from_yaml_file] - CRITICAL: Load pipeline config class RunnerConfig[0m
+[31;1m2026-09-28 06:47:37,523 - runner_config.py[pid:21768;line:205:update_config] - CRITICAL: train model NHP using GPU with torch backend[0m
+[38;20m2026-09-28 06:47:37,525 - runner_config.py[pid:21768;line:45:__init__] - INFO: Save the config to D:\Quant\results\easytpp\checkpoints/lob_aapl/NHP/train_2026_09_28_06_47_37\NHP_train_output.yaml[0m
+[38;20m2026-09-28 06:47:37,525 - base_runner.py[pid:21768;line:193:save_log] - INFO: Save the log to D:\Quant\results\easytpp\checkpoints/lob_aapl/NHP/train_2026_09_28_06_47_37\log[0m
+0.20842144932044016 0.6263620563223178
+min_dt: 7.275957614183426e-12
+max_dt: 17.26781208600005
+[38;20m2026-09-28 06:47:42,305 - tpp_runner.py[pid:21768;line:62:_init_model] - INFO: Num of model parameters 231948[0m
+[38;20m2026-09-28 06:47:43,021 - base_runner.py[pid:21768;line:103:train] - INFO: Data 'lob_aapl' loaded...[0m
+[38;20m2026-09-28 06:47:43,022 - base_runner.py[pid:21768;line:108:train] - INFO: Start NHP training...[0m
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "D:\Quant\src\infodiff\baselines\easytpp_runner.py", line 84, in <module>
+    r = run_model(model, dataset, n_types, seed, max_epoch, batch_size=bs, gpu=0 if torch.cuda.is_available() else -1)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\src\infodiff\baselines\easytpp_runner.py", line 68, in run_model
+    log = runner.run()
+          ^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\base_runner.py", line 214, in run
+    return self.train(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\base_runner.py", line 111, in train
+    best_ll, best_epochs, best_metrics, num_params, losses = self._train_model(
+                                                             ^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\tpp_runner.py", line 98, in _train_model
+    train_metrics = self.run_one_epoch(train_loader, RunnerPhase.TRAIN, **kwargs)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\runner\tpp_runner.py", line 204, in run_one_epoch
+    for batch in data_loader:
+  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\utils\data\dataloader.py", line 725, in __next__
+    data = self._next_data()
+           ^^^^^^^^^^^^^^^^^
+  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\utils\data\dataloader.py", line 785, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\utils\data\_utils\fetch.py", line 57, in fetch
+    return self.collate_fn(data)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\preprocess\data_collator.py", line 41, in __call__
+    batch = self.tokenizer.pad(
+            ^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\preprocess\event_tokenizer.py", line 333, in pad
+    batch_output = self._pad(
+                   ^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\preprocess\event_tokenizer.py", line 416, in _pad
+    batch_output[self.model_input_names[4]] = self.make_attn_mask_for_pad_sequence(
+                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\external\state_space_point_process\easy_tpp\preprocess\event_tokenizer.py", line 518, in make_attn_mask_for_pad_sequence
+    seq_num, seq_len = pad_seqs.shape
+                       ^^^^^^^^^^^^^^
+AttributeError: 'list' object has no attribute 'shape'

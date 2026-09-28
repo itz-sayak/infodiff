@@ -1,0 +1,12 @@
+diff --git a/easy_tpp/preprocess/event_tokenizer.py b/easy_tpp/preprocess/event_tokenizer.py
+index 91f3585..ed463df 100644
+--- a/easy_tpp/preprocess/event_tokenizer.py
++++ b/easy_tpp/preprocess/event_tokenizer.py
+@@ -515,6 +515,7 @@ class EventTokenizer:
+ 
+         """
+ 
++        pad_seqs = np.asarray(pad_seqs)  # equal-length batches arrive as lists (infodiff patch)
+         seq_num, seq_len = pad_seqs.shape
+ 
+         # [batch_size, seq_len]

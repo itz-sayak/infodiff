@@ -23,6 +23,13 @@ Consequences
     int g2 (1 - e^{-k s}) = g2 (dt - (1 - e^{-k dt}) / k));
   * next-event time and mark predictions are Bayes-optimal functionals of the exact
     density, evaluated by 1-D quadrature.
+
+Hawkes backbone (residual structure).  Alongside the neural state, an explicit
+multivariate phase-type Hawkes state x_h (fixed log-grid rates, one Erlang chain per
+source mark and rate) receives the *linear* jump beta_k for the mark of each event and
+is read out by a nonnegative matrix C_h.  With the neural read-outs at zero the model is
+exactly MSX-Hawkes, so the network only has to learn departures from linear Hawkes; the
+compensator remains exact.
 """
 from __future__ import annotations
 
@@ -48,6 +55,9 @@ class EPTConfig:
     mark_emb: int = 32
     gompertz: bool = True
     mark_mixing: bool = True  # C_mp(h) = c_p softmax_m(W_p h): history-dependent marks
+    hawkes_backbone: bool = True  # explicit linear multivariate phase-type Hawkes state
+    hb_rates: int = 10
+    hb_phases: int = 2
 
 
 class EPTTPP(nn.Module):
@@ -77,6 +87,13 @@ class EPTTPP(nn.Module):
             self.c_tot = nn.Parameter(torch.full((self.P,), -2.0))
             self.mix = nn.Linear(cfg.hidden, self.P * cfg.n_marks)
             nn.init.zeros_(self.mix.weight)
+        if cfg.hawkes_backbone:
+            taus_h = torch.logspace(math.log10(cfg.tau_min), math.log10(cfg.tau_max), cfg.hb_rates)
+            self.register_buffer("hb_betas", 1.0 / taus_h)
+            self.Ph = cfg.n_marks * cfg.hb_rates * cfg.hb_phases
+            self.Ch_raw = nn.Parameter(torch.full((cfg.n_marks, self.Ph), -5.0))
+        else:
+            self.Ph = 0
         nn.init.constant_(self.gate.bias, 2.0)  # start close to additive (Hawkes-like) updates
         nn.init.constant_(self.jump.bias, -1.0)
         nn.init.constant_(self.mu.bias, -2.0)
@@ -90,16 +107,21 @@ class EPTTPP(nn.Module):
         return x.view(*x.shape[:-1], -1, self.R)
 
     def evolve(self, x, dt):
+        return self._evolve_with(x, dt, self._betas(), self.R)
+
+    def _evolve_hb(self, x, dt):
+        return self._evolve_with(x, dt, self.hb_betas.repeat(self.cfg.n_marks), self.cfg.hb_phases)
+
+    @staticmethod
+    def _evolve_with(x, dt, b, R):
         """Exact Erlang-chain evolution and integral.
 
         Per rate block s' = beta (N - I) s (N = down-shift), hence
           s_r(dt)       = sum_{j<r} w_j s_{r-j}(0),     w_j = e^{-y} y^j / j!,  y = beta dt
           int_0^dt s_r  = sum_{j<r} s_{r-j}(0) P(j+1, y) / beta
         with P the regularised lower incomplete gamma, P(j+1, y) = 1 - sum_{i<=j} w_i."""
-        b = self._betas()
-        xs = self._split(x)  # (..., B, R)
+        xs = x.view(*x.shape[:-1], -1, R)  # (..., B, R)
         y = b * dt.unsqueeze(-1)  # (..., B)
-        R = self.R
         logy = torch.log(y.clamp_min(1e-30))
         j = torch.arange(R, device=x.device, dtype=x.dtype)
         logw = -y.unsqueeze(-1) + j * logy.unsqueeze(-1) - torch.lgamma(j + 1)
@@ -166,6 +188,9 @@ class EPTTPP(nn.Module):
         dev = dts.device
         h = torch.zeros(B, self.cfg.hidden, device=dev, dtype=dts.dtype)
         x = torch.zeros(B, self.P, device=dev, dtype=dts.dtype)
+        hb = self.cfg.hawkes_backbone
+        xh = torch.zeros(B, self.Ph, device=dev, dtype=dts.dtype) if hb else None
+        Chb = F.softplus(self.Ch_raw) if hb else None
         mixing = self.cfg.mark_mixing
         Cm = None if mixing else self.C()
         Csum = None if mixing else Cm.sum(0)
@@ -180,11 +205,16 @@ class EPTTPP(nn.Module):
                     gv, gi = self._gomp_terms(g, w, dt)
                     lam_all = lam_all + gv
                     c_n = c_n + gi.sum(-1)
+                if hb:
+                    xh_left, integ_h = self._evolve_hb(xh, dt)
+                    lam_all = lam_all + xh_left @ Chb.T
+                    c_n = c_n + integ_h @ Chb.sum(0)
                 m = marks[:, n].clamp(max=self.cfg.n_marks - 1)
                 log_lam.append(torch.log(lam_all.gather(1, m[:, None])[:, 0] + 1e-12))
                 comp.append(c_n)
             else:
                 x_left = x
+                xh_left = xh
             gap = dts[:, n] if n > 0 else torch.zeros(B, device=dev, dtype=dts.dtype)
             inp = torch.cat([self.emb(marks[:, n].clamp(max=self.cfg.n_marks)),
                              torch.log1p(gap / self.t_scale)[:, None], torch.log(gap / self.t_scale + 1e-3)[:, None]], -1)
@@ -193,12 +223,18 @@ class EPTTPP(nn.Module):
             h = torch.where(valid, h_new, h)
             x_new = torch.sigmoid(self.gate(h)) * x_left + F.softplus(self.jump(h))
             x = torch.where(valid, x_new, x)
+            if hb:  # linear Hawkes jump: phase 0 of every rate of the event's mark gets beta_k
+                Kh, Rh = self.cfg.hb_rates, self.cfg.hb_phases
+                onehot = F.one_hot(marks[:, n].clamp(max=self.cfg.n_marks - 1), self.cfg.n_marks).to(dts.dtype)
+                jmp = torch.zeros(B, self.cfg.n_marks, Kh, Rh, device=dev, dtype=dts.dtype)
+                jmp[..., 0] = onehot[:, :, None] * self.hb_betas[None, None, :]
+                xh = torch.where(valid, xh_left + jmp.flatten(1), xh)
             mu = F.softplus(self.mu(h)) + 1e-6
             g, w = self._gomp(h)
             if mixing:
                 Cm = self.C(h)
             hs.append(h)
-            states.append(x)
+            states.append(torch.cat([x, xh], -1) if hb else x)
             mus.append(mu if g is None else torch.cat([mu, g, w], -1))
         self._last_h = torch.stack(hs, 1)  # post-event GRU states, used by prediction
         return torch.stack(log_lam, 1), torch.stack(comp, 1), torch.stack(states, 1), torch.stack(mus, 1)
@@ -211,32 +247,39 @@ class EPTTPP(nn.Module):
         return ll, m.sum()
 
     # ------------------------------------------------------------ prediction
-    @torch.no_grad()
-    def predict_next(self, x, mu, s_max: torch.Tensor, n_grid: int = 400, h=None):
-        """Bayes-optimal next gap E[dt] and marginal mark argmax from post-event state.
-
-        x (N, P), mu (N, M), s_max (N,) horizon where survival is negligible."""
+    def _curve(self, xpack, pk, grid, h=None):
+        """Marked intensities lambda (N, G, M) and compensators Lam (N, G) on a lag grid (N, G)
+        from post-event packed states xpack (N, P + Ph) and head parameters pk."""
+        M = self.cfg.n_marks
+        x, xh = xpack[:, : self.P], xpack[:, self.P:]
         Cm = self.C(h) if self.cfg.mark_mixing else self.C()
         Csum = F.softplus(self.c_tot) if self.cfg.mark_mixing else Cm.sum(0)
-        N = x.shape[0]
-        M = self.cfg.n_marks
-        g = w = None
+        mu, g, w = pk[:, :M], None, None
         if self.cfg.gompertz:
-            mu, g, w = mu[:, :M], mu[:, M:3 * M], mu[:, 3 * M:3 * M + 2]
-        u = torch.linspace(0, 1, n_grid, device=x.device)
-        grid = s_max[:, None] * (torch.expm1(6 * u) / math.expm1(6))[None, :]  # dense near 0
-        xs = x[:, None, :].expand(N, n_grid, -1)
-        x_t, integ = self.evolve(xs, grid)
+            g, w = pk[:, M:3 * M], pk[:, 3 * M:3 * M + 2]
+        N, G = grid.shape
+        x_t, integ = self.evolve(x[:, None, :].expand(N, G, -1), grid)
         Lam = mu.sum(-1, keepdim=True) * grid + integ @ Csum
-        lam = mu[:, None, :] + self._readout(Cm, x_t)  # (N, G, M)
+        lam = mu[:, None, :] + self._readout(Cm, x_t)
         if g is not None:
-            gv, gi = self._gomp_terms(g[:, None, :], w[:, None, :].expand(-1, grid.shape[1], -1), grid)
+            gv, gi = self._gomp_terms(g[:, None, :], w[:, None, :].expand(-1, G, -1), grid)
             lam = lam + gv
             Lam = Lam + gi.sum(-1)
+        if self.cfg.hawkes_backbone:
+            Chb = F.softplus(self.Ch_raw)
+            xh_t, ih = self._evolve_hb(xh[:, None, :].expand(N, G, -1), grid)
+            lam = lam + xh_t @ Chb.T
+            Lam = Lam + ih @ Chb.sum(0)
+        return lam, Lam
+
+    @torch.no_grad()
+    def predict_next(self, x, mu, s_max: torch.Tensor, n_grid: int = 400, h=None):
+        """Bayes-optimal next gap E[dt] and marginal mark argmax from post-event state."""
+        u = torch.linspace(0, 1, n_grid, device=x.device, dtype=x.dtype)
+        grid = s_max[:, None] * (torch.expm1(6 * u) / math.expm1(6))[None, :]  # dense near 0
+        lam, Lam = self._curve(x, mu, grid, h)
         S = torch.exp(-Lam)
         dens_m = lam * S[..., None]
-        w = torch.diff(grid, dim=1)
-        trap = lambda f: (0.5 * (f[:, 1:] + f[:, :-1]) * (w if f.dim() == 2 else w[..., None])).sum(1)
-        e_dt = trap(S)  # E[dt] = int S
-        p_mark = trap(dens_m)
-        return e_dt, p_mark.argmax(-1), S[:, -1]
+        wg = torch.diff(grid, dim=1)
+        trap = lambda f: (0.5 * (f[:, 1:] + f[:, :-1]) * (wg if f.dim() == 2 else wg[..., None])).sum(1)
+        return trap(S), trap(dens_m).argmax(-1), S[:, -1]

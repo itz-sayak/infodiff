@@ -11,12 +11,12 @@ NHP_train:
     loss_integral_num_sample_per_step: 10
     use_mc_samples: true
   trainer_config:
-    batch_size: 64
-    gpu: -1
+    batch_size: 256
+    gpu: 0
     learning_rate: 0.01
     lr_decay_style: cosine
     lr_scheduler: true
-    max_epoch: 30
+    max_epoch: 100
     metrics: []
     optimizer: adam
     seed: 2019
