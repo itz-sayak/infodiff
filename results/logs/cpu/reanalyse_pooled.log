@@ -1,0 +1,7 @@
+
+=== Mon Sep 28 05:49:59 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2022,2023,2024,2025,2026 pooled
+pooled: windows=732 events=8388096
+loaded results\models\msx_pooled.pkl max gap 0.005447769159218296
+  responses done in 108s
+  goodness of fit done in 236s
+rho 0.8739572599374958 relaxation_s 742.0218439380798 total 237s
