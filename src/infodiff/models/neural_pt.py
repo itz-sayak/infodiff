@@ -257,7 +257,10 @@ class EPTTPP(nn.Module):
         logQ = -y + torch.logsumexp(terms, -1)
         if R.max() > 16:  # sharp atoms (CV = R^-1/2 <= 1/4): regularised upper incomplete gamma
             big = R > 16
-            qb = torch.special.gammaincc(R.double().expand_as(y), y.double()).clamp_min(1e-300)
+            # evaluate only where used, at y > 0: the gradient of gammaincc at y = 0 is 0 * log 0 = NaN
+            a = torch.where(big, R, torch.full_like(R, 17.0)).double().expand_as(y)
+            yb = torch.where(big, y, torch.ones_like(y)).double().clamp_min(1e-30)
+            qb = torch.special.gammaincc(a, yb).clamp_min(1e-300)
             logQ = torch.where(big, torch.log(qb).to(dt.dtype), logQ)
         return logf, logQ
 

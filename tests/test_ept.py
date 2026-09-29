@@ -141,3 +141,19 @@ def test_deep_encoder_one_layer_matches_default():
                                 layer_norm=True, dropout=0.1)).double().eval()
         ll, n = deep.loglik(dts, marks, mask)
     assert torch.isfinite(ll)
+
+
+def test_eptx_sharp_atoms_finite_gradients_with_zero_gaps():
+    torch.manual_seed(0)
+    cfg = EPTConfig(n_marks=3, hidden=16, n_rates=3, n_channels=2, renewal=True, rn_shift=True, rn_scales=6,
+                    rn_orders=(1, 4, 16, 64, 256, 1024), rn_lo=0.01, rn_hi=4.0, input_v2=True)
+    m = EPTTPP(cfg)
+    dts = torch.rand(4, 6) * 0.8
+    dts[:, 0] = 0
+    dts[0, 3] = 0.0  # a zero gap
+    marks = torch.randint(0, 3, (4, 6))
+    mask = torch.ones(4, 6, dtype=torch.bool)
+    mask[1, 4:] = False
+    ll, _ = m.loglik(dts, marks, mask)
+    ll.backward()
+    assert all(torch.isfinite(p.grad).all() for p in m.parameters() if p.grad is not None)

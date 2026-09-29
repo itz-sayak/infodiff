@@ -3,3 +3,5 @@ eptx_lob_intc_s2 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_seed.py 
 eptx_amazon_s1 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_seed.py amazon 1 eptx "auto:{\"epochs\":300,\"renewal\":true}"
 eptx_stackoverflow_s1 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_seed.py stackoverflow 1 eptx "auto:{\"epochs\":300,\"renewal\":true}"
 eptx_taxi_s4 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_seed.py taxi 4 eptx "auto:{\"epochs\":300,\"renewal\":true}"
+sel_amazon_sharpdeep | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_ablation.py amazon 0 sel_sharpdeep "{\"n_rates\": 8, \"phases\": 4, \"epochs\": 100, \"patience\": 20, \"renewal\": true, \"hidden\": 128, \"n_layers\": 3, \"layer_norm\": true, \"dropout\": 0.1, \"rn_shift\": true, \"rn_orders\": [1, 4, 16, 64, 256, 1024]}"
+sel_taobao_sharpdeep | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_ablation.py taobao 0 sel_sharpdeep "{\"n_rates\": 8, \"phases\": 4, \"epochs\": 100, \"patience\": 20, \"renewal\": true, \"hidden\": 128, \"n_layers\": 3, \"layer_norm\": true, \"dropout\": 0.1, \"rn_shift\": true, \"rn_orders\": [1, 4, 16, 64, 256, 1024]}"

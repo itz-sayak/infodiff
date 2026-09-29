@@ -3,3 +3,5 @@ eptx_lob_msft_s1 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_seed.py 
 eptx_amazon_s2 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_seed.py amazon 2 eptx "auto:{\"epochs\":300,\"renewal\":true}"
 eptx_stackoverflow_s2 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_seed.py stackoverflow 2 eptx "auto:{\"epochs\":300,\"renewal\":true}"
 ept_stackoverflow_s0 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_seed.py stackoverflow 0 ept "auto:{\"epochs\":300}"
+sel_amazon_deep | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_ablation.py amazon 0 sel_deep "{\"n_rates\": 8, \"phases\": 4, \"epochs\": 100, \"patience\": 20, \"renewal\": true, \"hidden\": 128, \"n_layers\": 3, \"layer_norm\": true, \"dropout\": 0.1}"
+sel_stackoverflow_sharp | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_ablation.py stackoverflow 0 sel_sharp "{\"n_rates\": 8, \"phases\": 4, \"epochs\": 100, \"patience\": 20, \"renewal\": true, \"hidden\": 64, \"rn_shift\": true, \"rn_orders\": [1, 4, 16, 64, 256, 1024]}"
