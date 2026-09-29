@@ -30,10 +30,10 @@ def test_exact_compensator_matches_quadrature():
             assert torch.allclose(ref, log_lam[:, n - 1], atol=1e-6)
 
 
-def _eptx(renewal=True, **kw):
+def _eptx(renewal=True, rn_shift=True, **kw):
     torch.manual_seed(1)
     cfg = EPTConfig(n_marks=3, hidden=16, n_rates=3, n_channels=2, phases=2, tau_min=0.05, tau_max=20.0,
-                    renewal=renewal, rn_scales=6, rn_orders=(1, 4), rn_lo=1e-3, rn_hi=10.0,
+                    renewal=renewal, rn_shift=rn_shift and renewal, rn_scales=6, rn_orders=(1, 4), rn_lo=1e-3, rn_hi=10.0,
                     input_v2=True, gap_eps=1e-6, gap_mu=-1.0, gap_sd=2.0, tie_thr=1e-3, **kw)
     m = EPTTPP(cfg).double()
     with torch.no_grad():
@@ -73,7 +73,7 @@ def test_eptx_renewal_channel_is_a_defective_density():
     cfg, m = _eptx()
     h = torch.randn(4, cfg.hidden, dtype=torch.float64)
     with torch.no_grad():
-        logw, logq = m._rn_heads(h)
+        logw, logq, _ = m._rn_heads(h)
         u = torch.linspace(-12, 4, 400001, dtype=torch.float64)
         grid = torch.pow(10.0, u)[None, :].expand(4, -1)
         lr, cr = m._rn_log_lam(logw[:, None, :], logq[:, None], grid)

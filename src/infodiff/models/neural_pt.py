@@ -60,6 +60,8 @@ class EPTConfig:
     hb_phases: int = 2
     # EPT-X: history-conditioned defective hyper-Erlang renewal channel (competing risks)
     renewal: bool = False
+    ept_channel: bool = True  # False: renewal channel only (ablation)
+    rn_shift: bool = False  # history-dependent log-rate shift of each scale within its grid cell
     rn_scales: int = 24  # log-grid of mean gaps [rn_lo, rn_hi]
     rn_orders: tuple = field(default_factory=lambda: (1, 4, 16))  # Erlang orders per scale
     rn_lo: float = 1e-10
@@ -119,6 +121,11 @@ class EPTTPP(nn.Module):
             self.rn_qb = nn.Parameter(torch.zeros(S, cfg.n_marks))
             nn.init.zeros_(self.rn_q.weight)
             nn.init.zeros_(self.rn_q.bias)
+            if cfg.rn_shift:  # c_s(h) in (-delta, delta): atoms slide continuously within their cell
+                self.rn_c = nn.Linear(cfg.hidden, S)
+                nn.init.zeros_(self.rn_c.weight)
+                nn.init.zeros_(self.rn_c.bias)
+                self.rn_delta = 0.5 * math.log(cfg.rn_hi / cfg.rn_lo) / max(S - 1, 1)
         nn.init.constant_(self.gate.bias, 2.0)  # start close to additive (Hawkes-like) updates
         nn.init.constant_(self.jump.bias, -1.0)
         nn.init.constant_(self.mu.bias, -2.0)
@@ -204,19 +211,24 @@ class EPTTPP(nn.Module):
 
     # ------------------------------------------------------------ EPT-X renewal channel
     def _rn_heads(self, h):
-        """log atom weights (B, J+1; last = defect) and log mark law per scale (B, S, M)."""
+        """log atom weights (B, J+1; last = defect), log mark law per scale (B, S, M) and the
+        log-rate shift of every atom (B, J) or None."""
         S, M = self.cfg.rn_scales, self.cfg.n_marks
         logw = torch.log_softmax(self.rn_w(h), -1)
         logq = torch.log_softmax(self.rn_q(h).view(-1, S, M) + self.rn_qb[None], -1)
-        return logw, logq
+        logb = None
+        if self.cfg.rn_shift:
+            logb = (self.rn_delta * torch.tanh(self.rn_c(h))).repeat_interleave(len(self.cfg.rn_orders), -1)
+        return logw, logq, logb
 
-    def _rn_logf_logQ(self, dt):
+    def _rn_logf_logQ(self, dt, logb=None):
         """Erlang log-density and log-survival of every atom at lag dt (...,) -> (..., J).
         Integer order R:  Q(R, y) = e^{-y} sum_{i<R} y^i / i!  (exact, stable in log space)."""
-        y = self.rn_beta * dt.unsqueeze(-1)
+        log_beta = torch.log(self.rn_beta) if logb is None else torch.log(self.rn_beta) + logb
+        y = torch.exp(log_beta) * dt.unsqueeze(-1)
         logy = torch.log(y.clamp_min(1e-30))
         R = self.rn_R
-        logf = torch.log(self.rn_beta) + (R - 1) * logy - y - torch.lgamma(R)
+        logf = log_beta + (R - 1) * logy - y - torch.lgamma(R)
         i = torch.arange(int(R.max()), device=dt.device, dtype=dt.dtype)
         terms = i * logy.unsqueeze(-1) - torch.lgamma(i + 1)
         terms = torch.where(i < R.unsqueeze(-1), terms, torch.full_like(terms, -math.inf))
@@ -228,11 +240,11 @@ class EPTTPP(nn.Module):
         body = logw[..., :-1] + logQ
         return torch.logsumexp(torch.cat([body, logw[..., -1:].expand(*body.shape[:-1], 1)], -1), -1)
 
-    def _rn_log_lam(self, logw, logq, dt, marks=None):
+    def _rn_log_lam(self, logw, logq, dt, marks=None, logb=None):
         """log renewal intensity of each mark (..., M), or of the given marks (...,), and the
         compensator -log S(dt)."""
         O = len(self.cfg.rn_orders)
-        logf, logQ = self._rn_logf_logQ(dt)
+        logf, logQ = self._rn_logf_logQ(dt, logb)
         logS = self._rn_logS(logw, logQ)
         base = logw[..., :-1] + logf  # (..., J)
         if marks is not None:
@@ -285,9 +297,11 @@ class EPTTPP(nn.Module):
                 m = marks[:, n].clamp(max=self.cfg.n_marks - 1)
                 ll_n = torch.log(lam_all.gather(1, m[:, None])[:, 0] + 1e-12)
                 if rn:
-                    lr, cr = self._rn_log_lam(rn_w, rn_q, dt, m)
-                    ll_n = torch.logaddexp(ll_n, lr)
-                    c_n = c_n + cr
+                    lr, cr = self._rn_log_lam(rn_w, rn_q, dt, m, rn_b)
+                    if self.cfg.ept_channel:
+                        ll_n, c_n = torch.logaddexp(ll_n, lr), c_n + cr
+                    else:
+                        ll_n, c_n = lr, cr
                 log_lam.append(ll_n)
                 comp.append(c_n)
             else:
@@ -311,7 +325,7 @@ class EPTTPP(nn.Module):
             if mixing:
                 Cm = self.C(h)
             if rn:
-                rn_w, rn_q = self._rn_heads(h)
+                rn_w, rn_q, rn_b = self._rn_heads(h)
             hs.append(h)
             states.append(torch.cat([x, xh], -1) if hb else x)
             mus.append(mu if g is None else torch.cat([mu, g, w], -1))
@@ -350,10 +364,13 @@ class EPTTPP(nn.Module):
             lam = lam + xh_t @ Chb.T
             Lam = Lam + ih @ Chb.sum(0)
         if self.cfg.renewal:
-            logw, logq = self._rn_heads(h)
-            lr, cr = self._rn_log_lam(logw[:, None, :], logq[:, None, :, :], grid)
-            lam = lam + torch.exp(lr)
-            Lam = Lam + cr
+            logw, logq, logb = self._rn_heads(h)
+            lr, cr = self._rn_log_lam(logw[:, None, :], logq[:, None, :, :], grid,
+                                      logb=None if logb is None else logb[:, None, :])
+            if self.cfg.ept_channel:
+                lam, Lam = lam + torch.exp(lr), Lam + cr
+            else:
+                lam, Lam = torch.exp(lr), cr
         return lam, Lam
 
     @torch.no_grad()

@@ -75,6 +75,8 @@ def evaluate(model: EPTTPP, seqs, n_marks, device, predict: bool = False, s_max:
                 tgt_mk = mk[:, 1:].reshape(-1)[sel]
                 # chunk so that the (chunk, grid, state) tensors stay ~<= 0.4 GB on an 8 GB GPU
                 width = st.shape[-1] + n_marks * (1 + (model.J if model.cfg.renewal else 0))
+                if model.cfg.renewal:
+                    width += model.J * int(max(model.cfg.rn_orders))
                 ch = int(max(16, min(4096, 1e8 / (400 * width))))
                 for a in range(0, st.shape[0], ch):
                     e_dt, p_mk, _ = model.predict_next(st[a:a + ch], mu[a:a + ch],
@@ -91,7 +93,7 @@ def evaluate(model: EPTTPP, seqs, n_marks, device, predict: bool = False, s_max:
 
 def train_one(name: str, seed: int, hidden=64, n_rates=8, n_channels=4, phases=2, lr=1e-2, epochs=300, patience=40,
               bs=64, device=None, verbose=False, weight_decay=0.0, dropout=0.0, gompertz=True, warmup=0.01,
-              renewal=False, rn_scales=24, rn_orders=(1, 4, 16), input_v2=None) -> dict:
+              renewal=False, rn_scales=24, rn_orders=(1, 4, 16), input_v2=None, ept_channel=True, rn_shift=False) -> dict:
     device = device or ("cuda" if torch.cuda.is_available() else "cpu")
     torch.manual_seed(seed)
     rng = np.random.default_rng(seed)
@@ -109,7 +111,8 @@ def train_one(name: str, seed: int, hidden=64, n_rates=8, n_channels=4, phases=2
                     tau_max=tau_max, dropout=dropout, phases=phases, gompertz=gompertz,
                     renewal=renewal, rn_scales=rn_scales, rn_orders=tuple(rn_orders),
                     rn_lo=0.5 * q001, rn_hi=5 * q999, input_v2=input_v2, gap_eps=eps,
-                    gap_mu=float(lg.mean()), gap_sd=float(lg.std() + 1e-6), tie_thr=10 * q01)
+                    gap_mu=float(lg.mean()), gap_sd=float(lg.std() + 1e-6), tie_thr=10 * q01,
+                    ept_channel=ept_channel, rn_shift=rn_shift)
     model = EPTTPP(cfg).to(device)
     if renewal:  # renewal mark law starts at the empirical mark frequencies
         freq = np.bincount(np.concatenate([k[1:] for _, k in tr]), minlength=M) + 1.0
@@ -147,7 +150,8 @@ def train_one(name: str, seed: int, hidden=64, n_rates=8, n_channels=4, phases=2
     res = evaluate(model, te, M, device, predict=True, s_max=s_max)
     res.update(dataset=name, seed=seed, val_ll=best, epochs=ep + 1, seconds=time.time() - t0,
                hidden=hidden, n_rates=n_rates, n_channels=n_channels, phases=phases, lr=lr, gompertz=gompertz,
-               model="EPT-X" if renewal else "EPT", renewal=renewal, input_v2=input_v2,
+               model=("EPT-X" if ept_channel else "EPT-X-renewal-only") if renewal else "EPT",
+               renewal=renewal, input_v2=input_v2, ept_channel=ept_channel, rn_shift=rn_shift,
                rn_scales=rn_scales if renewal else None, rn_orders=list(rn_orders) if renewal else None,
                n_params=int(sum(p.numel() for p in model.parameters())))
     return res
