@@ -1,0 +1,38 @@
+{
+ "ll_per_event": -0.49639649096881955,
+ "n_events": 82197.0,
+ "rmse": 0.3313606381416321,
+ "acc": 0.3579570949077606,
+ "dataset": "amazon",
+ "seed": 0,
+ "val_ll": -0.48705164121849087,
+ "epochs": 72,
+ "seconds": 12734.081581354141,
+ "hidden": 64,
+ "n_rates": 8,
+ "n_channels": 4,
+ "phases": 4,
+ "lr": 0.01,
+ "gompertz": true,
+ "model": "EPT-X",
+ "renewal": true,
+ "input_v2": true,
+ "ept_channel": true,
+ "rn_shift": false,
+ "rn_scales": 24,
+ "rn_orders": [
+  1,
+  4,
+  16
+ ],
+ "n_params": 210363,
+ "batch_size": 64,
+ "config": {
+  "hidden": 64,
+  "n_rates": 8,
+  "phases": 4,
+  "epochs": 300,
+  "renewal": true
+ },
+ "tag": "eptx"
+}

@@ -656,5 +656,19 @@
   "seconds": 998.0516226291656,
   "max_epoch": 1500,
   "batch_size": 64
+ },
+ {
+  "model": "S2P2",
+  "dataset": "taxi",
+  "seed": 2019,
+  "ll_per_event": 0.5237072059747746,
+  "mark_ll": -0.21124689152435852,
+  "time_ll": 0.7349540805684379,
+  "val_ll": 0.4848069228575271,
+  "best_epoch": 71,
+  "n_params": 35092,
+  "seconds": 2313.2947268486023,
+  "max_epoch": 300,
+  "batch_size": 256
  }
 ]

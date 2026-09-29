@@ -1,0 +1,38 @@
+{
+ "ll_per_event": 1.3108755980593811,
+ "n_events": 27955.0,
+ "rmse": 0.12508368492126465,
+ "acc": 0.6133428812026978,
+ "dataset": "taobao",
+ "seed": 0,
+ "val_ll": 1.2029003525051012,
+ "epochs": 72,
+ "seconds": 2036.8296210765839,
+ "hidden": 64,
+ "n_rates": 8,
+ "n_channels": 4,
+ "phases": 4,
+ "lr": 0.01,
+ "gompertz": true,
+ "model": "EPT-X",
+ "renewal": true,
+ "input_v2": true,
+ "ept_channel": true,
+ "rn_shift": false,
+ "rn_scales": 24,
+ "rn_orders": [
+  1,
+  4,
+  16
+ ],
+ "n_params": 221282,
+ "batch_size": 64,
+ "config": {
+  "hidden": 64,
+  "n_rates": 8,
+  "phases": 4,
+  "epochs": 300,
+  "renewal": true
+ },
+ "tag": "eptx"
+}

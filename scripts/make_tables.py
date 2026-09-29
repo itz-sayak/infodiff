@@ -83,10 +83,14 @@ def table_b():
     # superseded provenance) and MSX + classical Hawkes from track_b_classical_<ds>.json
     ours = {}  # name -> ds -> list of test LL/event
     for ds in DS_B:
+        groups = {}  # (name, config tag) -> [(val, test)]; one config per model is kept, chosen on validation
         for r in load_ept(ds):
             if "model" in r:
                 nm = "EPT-X (ours)" if r["model"] == "EPT-X" else "EPT-TPP (ours)"
-                ours.setdefault(nm, {}).setdefault(ds, []).append(r["ll_per_event"])
+                groups.setdefault((nm, r.get("tag", "default")), []).append((r["val_ll"], r["ll_per_event"]))
+        for nm in {k[0] for k in groups}:
+            tag = max((k for k in groups if k[0] == nm), key=lambda k: np.mean([v for v, _ in groups[k]]))
+            ours.setdefault(nm, {})[ds] = [t for _, t in groups[tag]]
         for r in load(f"track_b_classical_{ds}.json") or []:
             if "ll_per_event" in r:
                 ours.setdefault(r["method"], {}).setdefault(ds, []).append(r["ll_per_event"])

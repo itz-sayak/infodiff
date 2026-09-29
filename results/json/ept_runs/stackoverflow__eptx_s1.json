@@ -1,0 +1,38 @@
+{
+ "ll_per_event": -2.1644492063359113,
+ "n_events": 26117.0,
+ "rmse": 1.015076756477356,
+ "acc": 0.45468467473983765,
+ "dataset": "stackoverflow",
+ "seed": 1,
+ "val_ll": -2.157069186570916,
+ "epochs": 164,
+ "seconds": 8515.537903308868,
+ "hidden": 64,
+ "n_rates": 8,
+ "n_channels": 4,
+ "phases": 4,
+ "lr": 0.01,
+ "gompertz": true,
+ "model": "EPT-X",
+ "renewal": true,
+ "input_v2": true,
+ "ept_channel": true,
+ "rn_shift": false,
+ "rn_scales": 24,
+ "rn_orders": [
+  1,
+  4,
+  16
+ ],
+ "n_params": 276477,
+ "batch_size": 64,
+ "config": {
+  "hidden": 64,
+  "n_rates": 8,
+  "phases": 4,
+  "epochs": 300,
+  "renewal": true
+ },
+ "tag": "eptx"
+}
