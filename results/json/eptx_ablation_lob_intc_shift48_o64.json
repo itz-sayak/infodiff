@@ -1,0 +1,45 @@
+{
+ "ll_per_event": 6.165865209675495,
+ "n_events": 104775.0,
+ "rmse": 0.167062908411026,
+ "acc": 0.5437651872634888,
+ "dataset": "lob_intc",
+ "seed": 0,
+ "val_ll": 5.508371969539992,
+ "epochs": 70,
+ "seconds": 12543.758398294449,
+ "hidden": 64,
+ "n_rates": 8,
+ "n_channels": 4,
+ "phases": 2,
+ "lr": 0.01,
+ "gompertz": true,
+ "model": "EPT-X",
+ "renewal": true,
+ "input_v2": true,
+ "ept_channel": true,
+ "rn_shift": true,
+ "rn_scales": 48,
+ "rn_orders": [
+  1,
+  4,
+  16,
+  64
+ ],
+ "n_params": 90069,
+ "batch_size": 64,
+ "config": {
+  "epochs": 300,
+  "phases": 2,
+  "renewal": true,
+  "rn_shift": true,
+  "rn_scales": 48,
+  "rn_orders": [
+   1,
+   4,
+   16,
+   64
+  ]
+ },
+ "tag": "shift48_o64"
+}

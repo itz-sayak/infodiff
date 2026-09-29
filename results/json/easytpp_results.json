@@ -586,5 +586,33 @@
   "seconds": 1857.5816099643707,
   "max_epoch": 1500,
   "batch_size": 64
+ },
+ {
+  "model": "IntensityFree (min dt 1e-12)",
+  "dataset": "lob_msft",
+  "seed": 2019,
+  "ll_per_event": 6.376585510930436,
+  "mark_ll": -1.1151689796843371,
+  "time_ll": 7.4917544165938414,
+  "val_ll": 6.41852205981278,
+  "best_epoch": 131,
+  "n_params": 7184,
+  "seconds": 6107.708137989044,
+  "max_epoch": 1500,
+  "batch_size": 64
+ },
+ {
+  "model": "IntensityFree (min dt 1e-12)",
+  "dataset": "lob_intc",
+  "seed": 2019,
+  "ll_per_event": 5.712536462061561,
+  "mark_ll": -1.211845854584228,
+  "time_ll": 6.924382158196135,
+  "val_ll": 5.081651066488811,
+  "best_epoch": 127,
+  "n_params": 7184,
+  "seconds": 6398.467525720596,
+  "max_epoch": 1500,
+  "batch_size": 64
  }
 ]

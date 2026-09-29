@@ -11,6 +11,7 @@ classical_stackoverflow | D:\Quant\.venv\Scripts\python.exe -u scripts/run_track
 classical_amazon | D:\Quant\.venv\Scripts\python.exe -u scripts/run_track_b_classical.py amazon
 classical_retweet | D:\Quant\.venv\Scripts\python.exe -u scripts/run_track_b_classical.py retweet
 wait_hpo | D:\Quant\.venv\Scripts\python.exe -u scripts/wait_for_job.py gpu ept_hpo_v2
+eptx_lob_msft_s2 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_seed.py lob_msft 2 eptx "{\"epochs\":300,\"phases\":2,\"renewal\":true}"
 eptx_taobao_s0 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_seed.py taobao 0 eptx "auto:{\"epochs\":300,\"renewal\":true}"
 eptx_taobao_s1 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_seed.py taobao 1 eptx "auto:{\"epochs\":300,\"renewal\":true}"
 eptx_taobao_s2 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_seed.py taobao 2 eptx "auto:{\"epochs\":300,\"renewal\":true}"

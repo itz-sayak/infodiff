@@ -1,0 +1,49 @@
+[
+ {
+  "dataset": "stackoverflow",
+  "method": "MSX-auto (ours)",
+  "key": "MSX-auto",
+  "ll_per_event": -2.292480121576371,
+  "val_ll": -2.291650795415206,
+  "seconds": 1374.1793417930603,
+  "gap": 5.7555567764211446e-05,
+  "R": 4,
+  "l1": 0.0
+ },
+ {
+  "dataset": "stackoverflow",
+  "method": "MSX (ours, R=2)",
+  "key": "MSX",
+  "ll_per_event": -2.2919839370302433,
+  "val_ll": -2.291948583951565,
+  "seconds": 84.34162616729736,
+  "gap": 0.00011889846064150333
+ },
+ {
+  "dataset": "stackoverflow",
+  "key": "ExpKern",
+  "error": "TypeError('cannot unpack non-iterable NoneType object')"
+ },
+ {
+  "dataset": "stackoverflow",
+  "key": "SumExp",
+  "error": "RuntimeError('The sum of the influence on someone cannot be negative. Maybe did you forget to add a positive constraint to your proximal operator\\n')"
+ },
+ {
+  "dataset": "stackoverflow",
+  "method": "tick-EM(nonparam)",
+  "key": "EM",
+  "ll_per_event": -2.370445175212174,
+  "val_ll": -2.3958107318456006,
+  "seconds": 53.108912229537964
+ },
+ {
+  "dataset": "stackoverflow",
+  "method": "tick-ADM4",
+  "key": "ADM4",
+  "ll_per_event": -2.4726894946313362,
+  "val_ll": -2.4614473324190076,
+  "seconds": 162.54673719406128,
+  "decay": 0.06926808889676785
+ }
+]

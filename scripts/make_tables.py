@@ -125,6 +125,19 @@ def _budget_select(runs):
     return [t for _, t in by[b]], b
 
 
+CLAMPED_IF = r"IntensityFree$^\ast$ (as shipped)"
+
+
+def _lob_name(model):
+    """EasyTPP's IntensityFree clamps gaps at 1e-5 s before scoring (not a likelihood of the
+    observed gaps); the unclamped re-run is the IntensityFree entry, the shipped one is marked."""
+    if model == "IntensityFree":
+        return CLAMPED_IF
+    if model.startswith("IntensityFree (min dt"):
+        return "IntensityFree"
+    return model
+
+
 def track_c_results():
     """method -> tk -> list of test LL/event.  Neural models (EPT and EasyTPP) are reported at the
     epoch budget with the best validation likelihood, never averaged across budgets."""
@@ -138,7 +151,7 @@ def track_c_results():
             raw.setdefault((nm, tk), []).append((r.get("config", {}).get("epochs", r["epochs"]), r["val_ll"], r["ll_per_event"]))
     for r in load("easytpp_results.json") or []:
         if r["dataset"].startswith("lob_") and r.get("ll_per_event") is not None:
-            raw.setdefault((r["model"], r["dataset"][4:]), []).append(
+            raw.setdefault((_lob_name(r["model"]), r["dataset"][4:]), []).append(
                 (r.get("max_epoch") or 100, r.get("val_ll", -np.inf), r["ll_per_event"]))
     for (m, tk), runs in raw.items():
         res.setdefault(m, {})[tk] = _budget_select(runs)[0]
@@ -149,7 +162,8 @@ def table_c():
     res = track_c_results()
     if not res:
         return
-    best = {tk: max((np.mean(v[tk]) for v in res.values() if tk in v), default=np.nan) for tk in TK}
+    best = {tk: max((np.mean(v[tk]) for m, v in res.items() if tk in v and m != CLAMPED_IF), default=np.nan)
+            for tk in TK}
     lines = ["\\begin{tabular}{l" + "c" * len(TK) + "}", "\\toprule",
              "Model & " + " & ".join(t.upper() for t in TK) + " \\\\", "\\midrule"]
     for m, v in res.items():
@@ -279,7 +293,7 @@ def numbers():
         mean = {m: float(np.mean(v[tk])) for m, v in tc.items() if tk in v}
         ours = [x for m, x in mean.items() if "ours" in m]
         nb = [x for m, x in mean.items() if m in neural]
-        others = [x for m, x in mean.items() if "ours" not in m]
+        others = [x for m, x in mean.items() if "ours" not in m and m != CLAMPED_IF]
         if ours and len(nb) == len(neural):
             n_done += 1
             wins += max(ours) > max(others)

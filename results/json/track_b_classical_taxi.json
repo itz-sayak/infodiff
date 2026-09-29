@@ -1,0 +1,57 @@
+[
+ {
+  "dataset": "taxi",
+  "method": "MSX-auto (ours)",
+  "key": "MSX-auto",
+  "ll_per_event": -0.1928521263365343,
+  "val_ll": -0.2319740909216556,
+  "seconds": 617.1661732196808,
+  "gap": 0.00012700560307621345,
+  "R": 4,
+  "l1": 0.01
+ },
+ {
+  "dataset": "taxi",
+  "method": "MSX (ours, R=2)",
+  "key": "MSX",
+  "ll_per_event": -0.21426153712449966,
+  "val_ll": -0.2512193132245065,
+  "seconds": 32.251216411590576,
+  "gap": 3.117097230642685e-05
+ },
+ {
+  "dataset": "taxi",
+  "key": "ExpKern",
+  "error": "TypeError('cannot unpack non-iterable NoneType object')"
+ },
+ {
+  "dataset": "taxi",
+  "key": "SumExp",
+  "error": "RuntimeError('The sum of the influence on someone cannot be negative. Maybe did you forget to add a positive constraint to your proximal operator\\n')"
+ },
+ {
+  "dataset": "taxi",
+  "method": "tick-EM(nonparam)",
+  "key": "EM",
+  "ll_per_event": -0.3079130793942536,
+  "val_ll": -0.31291741635613196,
+  "seconds": 18.203635215759277
+ },
+ {
+  "dataset": "taxi",
+  "method": "tick-ADM4",
+  "key": "ADM4",
+  "ll_per_event": -0.3146910905538113,
+  "val_ll": -0.34705126332400604,
+  "seconds": 30.863130569458008,
+  "decay": 3.923644558742825
+ },
+ {
+  "dataset": "taxi",
+  "method": "tick-ConditionalLaw",
+  "key": "CondLaw",
+  "ll_per_event": -2.9218022278141556,
+  "val_ll": -2.971639509719684,
+  "seconds": 233.19479417800903
+ }
+]

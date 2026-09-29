@@ -1,0 +1,57 @@
+[
+ {
+  "dataset": "taobao",
+  "method": "MSX-auto (ours)",
+  "key": "MSX-auto",
+  "ll_per_event": 1.305079960506783,
+  "val_ll": 1.1817842971821182,
+  "seconds": 1054.6078085899353,
+  "gap": 0.00015518198779318482,
+  "R": 3,
+  "l1": 0.01
+ },
+ {
+  "dataset": "taobao",
+  "method": "MSX (ours, R=2)",
+  "key": "MSX",
+  "ll_per_event": 1.2987854268695425,
+  "val_ll": 1.174801665513904,
+  "seconds": 34.87650465965271,
+  "gap": 0.00016949646669672802
+ },
+ {
+  "dataset": "taobao",
+  "key": "ExpKern",
+  "error": "TypeError('cannot unpack non-iterable NoneType object')"
+ },
+ {
+  "dataset": "taobao",
+  "key": "SumExp",
+  "error": "RuntimeError('The sum of the influence on someone cannot be negative. Maybe did you forget to add a positive constraint to your proximal operator\\n')"
+ },
+ {
+  "dataset": "taobao",
+  "method": "tick-EM(nonparam)",
+  "key": "EM",
+  "ll_per_event": 1.268674641326995,
+  "val_ll": 1.1492716467757127,
+  "seconds": 35.78350234031677
+ },
+ {
+  "dataset": "taobao",
+  "method": "tick-ADM4",
+  "key": "ADM4",
+  "ll_per_event": 1.1844258959228777,
+  "val_ll": 1.056142191299851,
+  "seconds": 50.69348859786987,
+  "decay": 25.39811888222909
+ },
+ {
+  "dataset": "taobao",
+  "method": "tick-ConditionalLaw",
+  "key": "CondLaw",
+  "ll_per_event": -63.91880118427077,
+  "val_ll": -65.59077650156001,
+  "seconds": 670.4099366664886
+ }
+]
