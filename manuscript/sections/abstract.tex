@@ -13,7 +13,10 @@ about a second, but echoes stretch half of the response to \tEchoLo--\tEchoHi{}\
 ninety percent to \tNinetyLo--\tNinetyHi{} minutes; the branching ratio is
 $\rho(G)=\rhoPooled$ and declines from 2022 to 2026. On synthetic benchmarks the certified
 estimator recovers multiscale and network kernels with 7--10$\times$ smaller likelihood
-deficits than six classical estimators. We also introduce EPT-TPP, a neural point process
-with an exact compensator and a linear Hawkes backbone; on LOBSTER limit-order-book data
-our models achieve the best test likelihood on three of five stocks against six classical
-estimators and seven neural baselines, and IntensityFree is best on the other two.
+deficits than six classical estimators. We also introduce EPT-X, a neural point process
+with an exact compensator that superposes a history-conditioned hyper-Erlang renewal
+channel on a linear Hawkes backbone; on LOBSTER limit-order-book data it achieves the best
+test likelihood on all five stocks against six classical estimators and seven neural
+baselines, by \trackCmarginLo--\trackCmarginHi{} nats per event over the best neural model.
+Along the way we find that a widely used IntensityFree implementation clamps inter-event
+times before scoring, which overstates its likelihood on streams with many short gaps.

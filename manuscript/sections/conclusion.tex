@@ -6,9 +6,9 @@ property of the news kernel: echoes lengthen absorption by one to two orders of
 magnitude, and the correction is available in closed form. Second, falsification
 matters: our first two specifications produced plausible-looking news effects that the
 placebo test exposed as artefacts of long kernels, ties and boundary bias. Third, a
-linear Hawkes backbone makes a neural point process both exact and competitive on
-order-book data, although a log-normal-mixture model (IntensityFree) is better on the two
-largest streams. Limitations: expectations for payrolls, claims, PPI and retail sales
+linear Hawkes backbone and a hyper-Erlang renewal channel make a neural point process
+exact and the most accurate model on all five order-book streams; benchmark comparisons
+must, however, check that every model scores the same observed gaps. Limitations: expectations for payrolls, claims, PPI and retail sales
 are statistical rather than survey-based; the FX feed has a gap in the first half of
 2023; neural baselines were trained with reduced batch sizes on an 8\,GB GPU; and on the
 public EasyTPP benchmarks EPT does not reach the state of the art (Section~\ref{sec:results}).

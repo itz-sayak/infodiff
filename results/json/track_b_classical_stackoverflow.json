@@ -45,5 +45,13 @@
   "val_ll": -2.4614473324190076,
   "seconds": 162.54673719406128,
   "decay": 0.06926808889676785
+ },
+ {
+  "dataset": "stackoverflow",
+  "method": "tick-ConditionalLaw",
+  "key": "CondLaw",
+  "ll_per_event": -16.140043217000184,
+  "val_ll": -16.33682729508008,
+  "seconds": 2180.5709488391876
  }
 ]

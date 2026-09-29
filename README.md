@@ -22,6 +22,10 @@ press conference, ECB decision and press conference, BoJ), 2022-01 to 2026-08.
   news-kernel penalty is chosen by held-out likelihood.
 - **EPT-TPP.** A neural temporal point process with an exact compensator (Erlang-chain
   latent state), bounded hazard heads, and a residual linear Hawkes backbone.
+- **EPT-X.** EPT plus a history-conditioned, defective hyper-Erlang renewal channel
+  (competing risks): a universal conditional gap law with an exact intensity and
+  compensator. It models within-cascade timing; the Hawkes channel models cross-cascade
+  excitation.
 
 ## Headline results
 
@@ -37,8 +41,10 @@ Benchmarks:
 - **LOBSTER order books** (test log-likelihood per event). MSX-auto beats every
   classical Hawkes estimator on AMZN, GOOG, INTC and MSFT. On AAPL, tick-EM is slightly
   ahead (3.370 vs 3.361), and EPT-TPP with the Hawkes backbone is best overall (3.380).
-  Against seven neural baselines, our models are best on AAPL, AMZN and GOOG;
-  IntensityFree is best on INTC (6.79 vs our 6.02) and MSFT (7.07 vs 6.53).
+  **EPT-X is best on all five stocks** (AAPL 3.456, AMZN 2.333, GOOG 2.964, INTC 6.117,
+  MSFT 6.646), ahead of every classical and neural baseline. EasyTPP's IntensityFree
+  clamps gaps at 1e-5 s before scoring; as shipped it reports 6.79 / 7.07 on INTC / MSFT,
+  but scored on the real gaps it gets 5.71 / 6.38 (patch: `docker/easytpp_intensityfree_min_dt.patch`).
 - **Synthetic kernel recovery.** MSX-auto is within 10⁻³ nats/event of the true model in
   all five scenarios. It has the lowest deficit on hump-shaped, multiscale and network
   kernels. tick is better on a pure exponential kernel (ExpKern 0.05 vs 0.24 ×10⁻³) and

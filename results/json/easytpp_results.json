@@ -614,5 +614,47 @@
   "seconds": 6398.467525720596,
   "max_epoch": 1500,
   "batch_size": 64
+ },
+ {
+  "model": "IntensityFree (min dt 1e-12)",
+  "dataset": "lob_aapl",
+  "seed": 2019,
+  "ll_per_event": 3.108290393213304,
+  "mark_ll": -1.3973393931181288,
+  "time_ll": 4.505629851619373,
+  "val_ll": 2.169100378666155,
+  "best_epoch": 261,
+  "n_params": 7184,
+  "seconds": 1985.4923326969147,
+  "max_epoch": 1500,
+  "batch_size": 64
+ },
+ {
+  "model": "IntensityFree (min dt 1e-12)",
+  "dataset": "lob_amzn",
+  "seed": 2019,
+  "ll_per_event": 2.102723205035226,
+  "mark_ll": -1.4464992413057742,
+  "time_ll": 3.5492225812439564,
+  "val_ll": 1.7380981578810217,
+  "best_epoch": 244,
+  "n_params": 7184,
+  "seconds": 1120.9863262176514,
+  "max_epoch": 1500,
+  "batch_size": 64
+ },
+ {
+  "model": "IntensityFree (min dt 1e-12)",
+  "dataset": "lob_goog",
+  "seed": 2019,
+  "ll_per_event": 2.7260722403915985,
+  "mark_ll": -1.3444750496903906,
+  "time_ll": 4.070547215426955,
+  "val_ll": 2.2586251031877063,
+  "best_epoch": 183,
+  "n_params": 7184,
+  "seconds": 998.0516226291656,
+  "max_epoch": 1500,
+  "batch_size": 64
  }
 ]
