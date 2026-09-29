@@ -103,3 +103,15 @@ def test_eptx_log_survival_is_stable_for_huge_lags():
         logf, logQ = m._rn_logf_logQ(torch.tensor([1e-12, 1.0, 1e6], dtype=torch.float64))
     assert torch.isfinite(logf).all() and torch.isfinite(logQ).all()
     assert (logQ <= 1e-12).all()
+
+
+def test_eptx_sharp_atoms_survival_matches_quadrature():
+    """Large Erlang orders use the incomplete-gamma path; check S = 1 - int f on a grid."""
+    cfg = EPTConfig(n_marks=2, hidden=8, n_rates=2, n_channels=1, renewal=True, rn_scales=3,
+                    rn_orders=(4, 64, 256), rn_lo=0.1, rn_hi=10.0)
+    m = EPTTPP(cfg).double()
+    t = torch.linspace(1e-9, 60.0, 600001, dtype=torch.float64)
+    with torch.no_grad():
+        logf, logQ = m._rn_logf_logQ(t)
+    F = torch.cumulative_trapezoid(torch.exp(logf), t, dim=0)
+    assert torch.allclose(torch.exp(logQ[1:]), 1 - F, atol=2e-4)

@@ -229,10 +229,15 @@ class EPTTPP(nn.Module):
         logy = torch.log(y.clamp_min(1e-30))
         R = self.rn_R
         logf = log_beta + (R - 1) * logy - y - torch.lgamma(R)
-        i = torch.arange(int(R.max()), device=dt.device, dtype=dt.dtype)
+        n_exact = int(min(R.max().item(), 16))
+        i = torch.arange(n_exact, device=dt.device, dtype=dt.dtype)
         terms = i * logy.unsqueeze(-1) - torch.lgamma(i + 1)
         terms = torch.where(i < R.unsqueeze(-1), terms, torch.full_like(terms, -math.inf))
         logQ = -y + torch.logsumexp(terms, -1)
+        if R.max() > 16:  # sharp atoms (CV = R^-1/2 <= 1/4): regularised upper incomplete gamma
+            big = R > 16
+            qb = torch.special.gammaincc(R.double().expand_as(y), y.double()).clamp_min(1e-300)
+            logQ = torch.where(big, torch.log(qb).to(dt.dtype), logQ)
         return logf, logQ
 
     def _rn_logS(self, logw, logQ):
