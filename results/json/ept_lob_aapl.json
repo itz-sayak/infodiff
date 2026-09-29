@@ -130,5 +130,104 @@
    "epochs": 300,
    "phases": 2
   }
+ },
+ {
+  "ll_per_event": 3.4590751397452086,
+  "n_events": 33655.0,
+  "rmse": 0.431732714176178,
+  "acc": 0.4703907370567322,
+  "dataset": "lob_aapl",
+  "seed": 0,
+  "val_ll": 2.5028898629392407,
+  "epochs": 84,
+  "seconds": 1376.712818145752,
+  "hidden": 64,
+  "n_rates": 8,
+  "n_channels": 4,
+  "phases": 2,
+  "lr": 0.01,
+  "gompertz": true,
+  "model": "EPT-X",
+  "renewal": true,
+  "input_v2": true,
+  "rn_scales": 24,
+  "rn_orders": [
+   1,
+   4,
+   16
+  ],
+  "n_params": 69645,
+  "batch_size": 64,
+  "config": {
+   "epochs": 300,
+   "phases": 2,
+   "renewal": true
+  }
+ },
+ {
+  "ll_per_event": 3.4490487039328293,
+  "n_events": 33655.0,
+  "rmse": 0.43083739280700684,
+  "acc": 0.4708958566188812,
+  "dataset": "lob_aapl",
+  "seed": 1,
+  "val_ll": 2.497189556645904,
+  "epochs": 90,
+  "seconds": 3083.0885515213013,
+  "hidden": 64,
+  "n_rates": 8,
+  "n_channels": 4,
+  "phases": 2,
+  "lr": 0.01,
+  "gompertz": true,
+  "model": "EPT-X",
+  "renewal": true,
+  "input_v2": true,
+  "rn_scales": 24,
+  "rn_orders": [
+   1,
+   4,
+   16
+  ],
+  "n_params": 69645,
+  "batch_size": 64,
+  "config": {
+   "epochs": 300,
+   "phases": 2,
+   "renewal": true
+  }
+ },
+ {
+  "ll_per_event": 3.4613364093141805,
+  "n_events": 33655.0,
+  "rmse": 0.43175676465034485,
+  "acc": 0.4701233208179474,
+  "dataset": "lob_aapl",
+  "seed": 2,
+  "val_ll": 2.5182697180926077,
+  "epochs": 89,
+  "seconds": 1358.078996181488,
+  "hidden": 64,
+  "n_rates": 8,
+  "n_channels": 4,
+  "phases": 2,
+  "lr": 0.01,
+  "gompertz": true,
+  "model": "EPT-X",
+  "renewal": true,
+  "input_v2": true,
+  "rn_scales": 24,
+  "rn_orders": [
+   1,
+   4,
+   16
+  ],
+  "n_params": 69645,
+  "batch_size": 64,
+  "config": {
+   "epochs": 300,
+   "phases": 2,
+   "renewal": true
+  }
  }
 ]

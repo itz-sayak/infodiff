@@ -67,6 +67,9 @@ def run_model(model: str, dataset: str, n_types: int, seed: int = 2019, max_epoc
     t = time.time()
     log = runner.run()
     test = log["best_metrics"].get("test", {})
+    import os
+    if model == "IntensityFree" and "IFTPP_MIN_DT" in os.environ:
+        model = f"IntensityFree (min dt {os.environ['IFTPP_MIN_DT']})"
     return dict(model=model, dataset=dataset, seed=seed, ll_per_event=test.get("loglike"),
                 mark_ll=test.get("mark_ll"), time_ll=test.get("time_ll"),
                 val_ll=log["best_valid_ll"], best_epoch=log["best_valid_epoch"],

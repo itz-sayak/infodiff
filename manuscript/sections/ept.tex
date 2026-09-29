@@ -43,10 +43,9 @@ quadrature.
 
 \subsection{EPT-X: a renewal channel for within-cascade timing}\label{sec:eptx}
 Order-book streams contain cascades: a single marketable order produces several messages
-within nanoseconds, so more than half of all inter-event gaps lie six to nine orders of
-magnitude below the typical gap. A linear Hawkes intensity can place that much
-conditional mass on sub-microsecond gaps only by inflating its branching ratio, and a
-finer kernel dictionary does not help (Section~\ref{sec:results}). EPT-X adds, by
+with the same timestamp, and inter-event gaps span ten orders of magnitude, from
+nanoseconds to seconds. A linear Hawkes intensity describes excitation \emph{between}
+cascades well but has no direct handle on the gap distribution \emph{within} them. EPT-X adds, by
 superposition, a second channel that models the \emph{next gap} directly while keeping the
 compensator exact.
 

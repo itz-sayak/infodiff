@@ -85,20 +85,20 @@ release-free day.}\label{fig:placebo}
 \subsection{Track C: limit-order-book event streams}
 Table~\ref{tab:track-c} reports test log-likelihood per event on the five LOBSTER
 stocks. Among all classical and neural models our models hold the best result on
-\trackCwins{} of the \trackCdone{} stocks (AAPL, AMZN, GOOG). On INTC and MSFT, the two
-largest streams, IntensityFree is best by a wide margin (6.79 vs.\ 6.02 and 7.07 vs.\
-6.53 nats per event), and it is the strongest competitor throughout; its advantage over
-S2P2 lies almost entirely in the inter-event-time term. A likely reason is the time-scale
-structure of these streams: more than half of the test gaps are below one microsecond
-(simultaneous LOBSTER messages separated by the tie-breaking jitter), a mode that a
-mixture of log-normals in log-time captures directly, whereas EPT and MSX spread a fixed
-number of phase-type rates over nine decades of time scales. Resolution alone is not the
-explanation: on INTC, a denser MSX dictionary (40 instead of 12 rates, down to
-0.2\,ns) raises the validation likelihood by only 0.01 nats per event, against a gap of
-about 0.9 to IntensityFree. We conjecture that the limit is structural---a linear
-Hawkes intensity cannot put half of the conditional probability mass on sub-microsecond
-gaps without also inflating the branching ratio---which suggests modelling simultaneous messages as a
-batch mark rather than as separate events, as we do in the macro study. Among the remaining neural
+\trackCwins{} of the \trackCdone{} stocks: EPT-X is best on AAPL, AMZN and GOOG, ahead of
+both MSX-auto and every neural baseline. As shipped, IntensityFree scores highest on INTC
+and MSFT. Its implementation, however, clamps every inter-event time at $10^{-5}$\,s before
+evaluating the log-normal-mixture density, so all shorter gaps are scored as one common
+value on which the mixture can place an arbitrarily narrow component. This is not the
+likelihood of the observed gaps, and it matters most where short gaps are common: 29\%
+and 32\% of test gaps on INTC and MSFT lie below $10^{-5}$\,s, against 10--14\% on the
+other three stocks. We therefore also report IntensityFree re-trained and scored on the
+unclamped gaps (clamp $10^{-12}$\,s), labelled accordingly in Table~\ref{tab:track-c};
+the patch is part of the replication package. Neither a denser MSX dictionary (40
+instead of 12 rates) nor sharper, history-shifted Erlang atoms in EPT-X change the
+validation likelihood on INTC by more than 0.02 nats per event, which is consistent with
+the clamp, rather than model expressiveness, explaining the shipped IntensityFree margin.
+Among the remaining neural
 baselines, recurrent and
 attention models with Monte-Carlo compensators (NHP, THP, AttNHP) fall well behind the
 exact-likelihood phase-type models. Two implementation notes matter for fairness. First,

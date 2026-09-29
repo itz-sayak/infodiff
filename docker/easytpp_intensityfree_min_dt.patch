@@ -1,0 +1,28 @@
+--- /tmp/sif_orig.py	2026-09-29 09:18:53.116160700 +0530
++++ external/state_space_point_process/easy_tpp/model/torch_model/torch_intensity_free.py	2026-09-29 09:18:53.967127400 +0530
+@@ -1,4 +1,5 @@
+ import math
++import os
+ 
+ import torch
+ import torch.distributions as D
+@@ -9,6 +10,10 @@
+ 
+ from easy_tpp.model.torch_model.torch_basemodel import TorchBaseModel
+ 
++# Inter-event times are clamped before the log-density is evaluated. The shipped value (1e-5)
++# collapses every shorter gap onto one point; IFTPP_MIN_DT lets the true gaps be scored.
++_MIN_DT = float(os.environ.get("IFTPP_MIN_DT", "1e-5"))
++
+ 
+ def clamp_preserve_gradients(x, min_val, max_val):
+     """Clamp the tensor while preserving gradients in the clamped region.
+@@ -204,7 +209,7 @@
+             std_log_inter_time=self.std_log_inter_time,
+         )
+ 
+-        inter_times = time_delta_seqs[:, 1:].clamp(min=1e-5)
++        inter_times = time_delta_seqs[:, 1:].clamp(min=_MIN_DT)
+         # [batch_size, seq_len]
+         # time_ll = inter_time_dist.log_prob(inter_times)
+         # time_ll *= batch_non_pad_mask[:, 1:]
