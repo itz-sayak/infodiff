@@ -115,3 +115,29 @@ def test_eptx_sharp_atoms_survival_matches_quadrature():
         logf, logQ = m._rn_logf_logQ(t)
     F = torch.cumulative_trapezoid(torch.exp(logf), t, dim=0)
     assert torch.allclose(torch.exp(logQ[1:]), 1 - F, atol=2e-4)
+
+
+def test_time_plus_mark_equals_total_loglik():
+    cfg, m = _eptx()
+    dts, marks, mask = _toy()
+    with torch.no_grad():
+        log_lam, comp, _, _ = m.forward(dts, marks, mask)
+        tot = (log_lam - comp).sum()
+        time_ll = (m._last_log_tot - comp).sum()
+        mark_ll = (log_lam - m._last_log_tot).sum()
+    assert torch.allclose(time_ll + mark_ll, tot)
+    assert (log_lam <= m._last_log_tot + 1e-9).all()  # mark log-probabilities are <= 0
+
+
+def test_deep_encoder_one_layer_matches_default():
+    torch.manual_seed(3)
+    a = EPTTPP(EPTConfig(n_marks=3, hidden=16, n_rates=3, n_channels=2)).double()
+    torch.manual_seed(3)
+    b = EPTTPP(EPTConfig(n_marks=3, hidden=16, n_rates=3, n_channels=2, n_layers=1)).double()
+    dts, marks, mask = _toy()
+    with torch.no_grad():
+        assert torch.allclose(a.loglik(dts, marks, mask)[0], b.loglik(dts, marks, mask)[0])
+        deep = EPTTPP(EPTConfig(n_marks=3, hidden=16, n_rates=3, n_channels=2, n_layers=3,
+                                layer_norm=True, dropout=0.1)).double().eval()
+        ll, n = deep.loglik(dts, marks, mask)
+    assert torch.isfinite(ll)

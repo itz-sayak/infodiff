@@ -72,6 +72,10 @@ class EPTConfig:
     gap_mu: float = 0.0
     gap_sd: float = 1.0
     tie_thr: float = 0.0
+    # deep event encoder: stacked residual GRU layers (dropout, LayerNorm); only h_n changes,
+    # so the between-event intensity and compensator stay closed form
+    n_layers: int = 1
+    layer_norm: bool = False
 
 
 class EPTTPP(nn.Module):
@@ -130,6 +134,23 @@ class EPTTPP(nn.Module):
         nn.init.constant_(self.jump.bias, -1.0)
         nn.init.constant_(self.mu.bias, -2.0)
         self.t_scale = float(math.sqrt(cfg.tau_min * cfg.tau_max))  # input normalisation
+        if cfg.n_layers > 1:  # created last so that the default model's initialisation is unchanged
+            self.gru_up = nn.ModuleList([nn.GRUCell(cfg.hidden, cfg.hidden) for _ in range(cfg.n_layers - 1)])
+        if cfg.layer_norm:
+            self.lns = nn.ModuleList([nn.LayerNorm(cfg.hidden) for _ in range(cfg.n_layers)])
+
+    def _encode(self, inp, hs):
+        """One event step of the (possibly deep) encoder. hs: list of per-layer states.
+        Returns the new per-layer states and the top output h_n used by every head."""
+        new = [self.gru(self.drop(inp), hs[0])]
+        x = self.lns[0](new[0]) if self.cfg.layer_norm else new[0]
+        for l in range(1, self.cfg.n_layers):
+            hl = self.gru_up[l - 1](x, hs[l])
+            new.append(hl)
+            x = x + self.drop(hl)
+            if self.cfg.layer_norm:
+                x = self.lns[l](x)
+        return new, x
 
     # ------------------------------------------------------------ phase-type algebra
     def _betas(self):
@@ -245,9 +266,9 @@ class EPTTPP(nn.Module):
         body = logw[..., :-1] + logQ
         return torch.logsumexp(torch.cat([body, logw[..., -1:].expand(*body.shape[:-1], 1)], -1), -1)
 
-    def _rn_log_lam(self, logw, logq, dt, marks=None, logb=None):
+    def _rn_log_lam(self, logw, logq, dt, marks=None, logb=None, want_total=False):
         """log renewal intensity of each mark (..., M), or of the given marks (...,), and the
-        compensator -log S(dt)."""
+        compensator -log S(dt); with want_total also the log total renewal intensity."""
         O = len(self.cfg.rn_orders)
         logf, logQ = self._rn_logf_logQ(dt, logb)
         logS = self._rn_logS(logw, logQ)
@@ -255,6 +276,8 @@ class EPTTPP(nn.Module):
         if marks is not None:
             lq = logq.gather(-1, marks[:, None, None].expand(-1, logq.shape[1], 1))[..., 0]  # (B, S)
             lp = torch.logsumexp(base + lq.repeat_interleave(O, -1), -1)
+            if want_total:
+                return lp - logS, -logS, torch.logsumexp(base, -1) - logS
             return lp - logS, -logS
         lq = logq.repeat_interleave(O, -2)  # (..., J, M)
         lp = torch.logsumexp(base.unsqueeze(-1) + lq, -2)
@@ -284,7 +307,8 @@ class EPTTPP(nn.Module):
         rn = self.cfg.renewal
         Cm = None if mixing else self.C()
         Csum = None if mixing else Cm.sum(0)
-        log_lam, comp, states, mus, hs = [], [], [], [], []
+        log_lam, comp, states, mus, hs, log_tot = [], [], [], [], [], []
+        H = [h] * self.cfg.n_layers  # per-layer encoder states
         for n in range(L):
             if n > 0:
                 dt = dts[:, n]
@@ -301,21 +325,24 @@ class EPTTPP(nn.Module):
                     c_n = c_n + integ_h @ Chb.sum(0)
                 m = marks[:, n].clamp(max=self.cfg.n_marks - 1)
                 ll_n = torch.log(lam_all.gather(1, m[:, None])[:, 0] + 1e-12)
+                lt_n = torch.log(lam_all.sum(-1) + 1e-12 * self.cfg.n_marks)  # total (time term)
                 if rn:
-                    lr, cr = self._rn_log_lam(rn_w, rn_q, dt, m, rn_b)
+                    lr, cr, lrt = self._rn_log_lam(rn_w, rn_q, dt, m, rn_b, want_total=True)
                     if self.cfg.ept_channel:
-                        ll_n, c_n = torch.logaddexp(ll_n, lr), c_n + cr
+                        ll_n, c_n, lt_n = torch.logaddexp(ll_n, lr), c_n + cr, torch.logaddexp(lt_n, lrt)
                     else:
-                        ll_n, c_n = lr, cr
+                        ll_n, c_n, lt_n = lr, cr, lrt
                 log_lam.append(ll_n)
+                log_tot.append(lt_n)
                 comp.append(c_n)
             else:
                 x_left = x
                 xh_left = xh
             gap = dts[:, n] if n > 0 else torch.zeros(B, device=dev, dtype=dts.dtype)
             inp = torch.cat([self.emb(marks[:, n].clamp(max=self.cfg.n_marks))] + self._gap_features(gap), -1)
-            h_new = self.gru(self.drop(inp), h)
             valid = mask[:, n].unsqueeze(-1)
+            H_new, h_new = self._encode(inp, H)
+            H = [torch.where(valid, a, b) for a, b in zip(H_new, H)]
             h = torch.where(valid, h_new, h)
             x_new = torch.sigmoid(self.gate(h)) * x_left + F.softplus(self.jump(h))
             x = torch.where(valid, x_new, x)
@@ -334,7 +361,8 @@ class EPTTPP(nn.Module):
             hs.append(h)
             states.append(torch.cat([x, xh], -1) if hb else x)
             mus.append(mu if g is None else torch.cat([mu, g, w], -1))
-        self._last_h = torch.stack(hs, 1)  # post-event GRU states, used by prediction
+        self._last_h = torch.stack(hs, 1)
+        self._last_log_tot = torch.stack(log_tot, 1) if log_tot else None  # log total intensity at events  # post-event GRU states, used by prediction
         return torch.stack(log_lam, 1), torch.stack(comp, 1), torch.stack(states, 1), torch.stack(mus, 1)
 
     def loglik(self, dts, marks, mask):

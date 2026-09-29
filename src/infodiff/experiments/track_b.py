@@ -55,7 +55,7 @@ def batches(seqs, n_marks: int, bs: int, shuffle: bool, device, rng=None):
 
 def evaluate(model: EPTTPP, seqs, n_marks, device, predict: bool = False, s_max: float = None):
     model.eval()
-    tot_ll = tot_n = 0.0
+    tot_ll = tot_n = tot_time = 0.0
     se = []
     acc = []
     with torch.no_grad():
@@ -63,6 +63,7 @@ def evaluate(model: EPTTPP, seqs, n_marks, device, predict: bool = False, s_max:
             log_lam, comp, states, mus = model.forward(dts, mk, msk)
             m = msk[:, 1:].float()
             tot_ll += float(((log_lam - comp) * m).sum())
+            tot_time += float(((model._last_log_tot - comp) * m).sum())
             tot_n += float(m.sum())
             if predict:
                 # predict event n from state after event n-1
@@ -84,7 +85,8 @@ def evaluate(model: EPTTPP, seqs, n_marks, device, predict: bool = False, s_max:
                                                        h=hh[a:a + ch])
                     se.append(((e_dt - tgt_dt[a:a + ch]) ** 2).cpu().numpy())
                     acc.append((p_mk == tgt_mk[a:a + ch]).float().cpu().numpy())
-    out = dict(ll_per_event=tot_ll / tot_n, n_events=tot_n)
+    out = dict(ll_per_event=tot_ll / tot_n, n_events=tot_n, time_ll=tot_time / tot_n,
+               mark_ll=(tot_ll - tot_time) / tot_n)
     if predict:
         out["rmse"] = float(np.sqrt(np.concatenate(se).mean()))
         out["acc"] = float(np.concatenate(acc).mean())
@@ -93,7 +95,8 @@ def evaluate(model: EPTTPP, seqs, n_marks, device, predict: bool = False, s_max:
 
 def train_one(name: str, seed: int, hidden=64, n_rates=8, n_channels=4, phases=2, lr=1e-2, epochs=300, patience=40,
               bs=64, device=None, verbose=False, weight_decay=0.0, dropout=0.0, gompertz=True, warmup=0.01,
-              renewal=False, rn_scales=24, rn_orders=(1, 4, 16), input_v2=None, ept_channel=True, rn_shift=False) -> dict:
+              renewal=False, rn_scales=24, rn_orders=(1, 4, 16), input_v2=None, ept_channel=True, rn_shift=False,
+              n_layers=1, layer_norm=False) -> dict:
     device = device or ("cuda" if torch.cuda.is_available() else "cpu")
     torch.manual_seed(seed)
     rng = np.random.default_rng(seed)
@@ -112,7 +115,7 @@ def train_one(name: str, seed: int, hidden=64, n_rates=8, n_channels=4, phases=2
                     renewal=renewal, rn_scales=rn_scales, rn_orders=tuple(rn_orders),
                     rn_lo=0.5 * q001, rn_hi=5 * q999, input_v2=input_v2, gap_eps=eps,
                     gap_mu=float(lg.mean()), gap_sd=float(lg.std() + 1e-6), tie_thr=10 * q01,
-                    ept_channel=ept_channel, rn_shift=rn_shift)
+                    ept_channel=ept_channel, rn_shift=rn_shift, n_layers=n_layers, layer_norm=layer_norm)
     model = EPTTPP(cfg).to(device)
     if renewal:  # renewal mark law starts at the empirical mark frequencies
         freq = np.bincount(np.concatenate([k[1:] for _, k in tr]), minlength=M) + 1.0
@@ -153,6 +156,7 @@ def train_one(name: str, seed: int, hidden=64, n_rates=8, n_channels=4, phases=2
                model=("EPT-X" if ept_channel else "EPT-X-renewal-only") if renewal else "EPT",
                renewal=renewal, input_v2=input_v2, ept_channel=ept_channel, rn_shift=rn_shift,
                rn_scales=rn_scales if renewal else None, rn_orders=list(rn_orders) if renewal else None,
+               n_layers=n_layers, layer_norm=layer_norm, dropout=dropout, weight_decay=weight_decay,
                n_params=int(sum(p.numel() for p in model.parameters())))
     return res
 
