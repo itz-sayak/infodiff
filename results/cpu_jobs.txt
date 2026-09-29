@@ -5,3 +5,17 @@ reanalyse_2025 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2025
 reanalyse_2026 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2026
 reanalyse_pooled | D:\Quant\.venv\Scripts\python.exe -u scripts/run_main.py 2022,2023,2024,2025,2026 pooled
 trackd_eval | D:\Quant\.venv\Scripts\python.exe -u scripts/run_track_d.py train_2022_2024
+classical_taxi | D:\Quant\.venv\Scripts\python.exe -u scripts/run_track_b_classical.py taxi
+classical_taobao | D:\Quant\.venv\Scripts\python.exe -u scripts/run_track_b_classical.py taobao
+classical_stackoverflow | D:\Quant\.venv\Scripts\python.exe -u scripts/run_track_b_classical.py stackoverflow
+classical_amazon | D:\Quant\.venv\Scripts\python.exe -u scripts/run_track_b_classical.py amazon
+classical_retweet | D:\Quant\.venv\Scripts\python.exe -u scripts/run_track_b_classical.py retweet
+wait_hpo | D:\Quant\.venv\Scripts\python.exe -u scripts/wait_for_job.py gpu ept_hpo_v2
+eptx_taobao_s0 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_seed.py taobao 0 eptx "auto:{\"epochs\":300,\"renewal\":true}"
+eptx_taobao_s1 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_seed.py taobao 1 eptx "auto:{\"epochs\":300,\"renewal\":true}"
+eptx_taobao_s2 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_seed.py taobao 2 eptx "auto:{\"epochs\":300,\"renewal\":true}"
+eptx_taxi_s0 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_seed.py taxi 0 eptx "auto:{\"epochs\":300,\"renewal\":true}"
+eptx_taxi_s1 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_seed.py taxi 1 eptx "auto:{\"epochs\":300,\"renewal\":true}"
+eptx_taxi_s2 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_seed.py taxi 2 eptx "auto:{\"epochs\":300,\"renewal\":true}"
+ept_taxi_s0 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_seed.py taxi 0 ept "auto:{\"epochs\":300}"
+ept_taobao_s0 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_seed.py taobao 0 ept "auto:{\"epochs\":300}"

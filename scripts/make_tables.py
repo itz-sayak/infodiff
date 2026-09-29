@@ -20,6 +20,14 @@ def load(name):
     return json.loads(f.read_text()) if f.exists() else None
 
 
+def load_ept(ds):
+    """All EPT/EPT-X runs of a dataset: the per-dataset file plus one-file-per-run results."""
+    rows = list(load(f"ept_{ds}.json") or [])
+    for f in sorted((J / "ept_runs").glob(f"{ds}__*.json")):
+        rows.append(json.loads(f.read_text()))
+    return rows
+
+
 def fmt(mu, sd=None, d=3, bold=False):
     if mu is None or (isinstance(mu, float) and not np.isfinite(mu)):
         return "--"
@@ -71,27 +79,36 @@ DS_B = ["amazon", "retweet", "taxi", "taobao", "stackoverflow"]
 
 
 def table_b():
-    ours = {}
+    # our models: EPT-X / EPT (current architecture: rows carry a "model" key; older rows are
+    # superseded provenance) and MSX + classical Hawkes from track_b_classical_<ds>.json
+    ours = {}  # name -> ds -> list of test LL/event
     for ds in DS_B:
-        rows = load(f"ept_{ds}.json")
-        if rows:
-            v = np.array([r["ll_per_event"] for r in rows if r.get("epochs", 0) >= 100])
-            if len(v):
-                ours[ds] = (v.mean(), v.std(ddof=1) if len(v) > 1 else np.nan, len(v))
-    best = {ds: max([PUBLISHED_S2P2[m][ds] for m in PUBLISHED_S2P2] + ([ours[ds][0]] if ds in ours else []))
+        for r in load_ept(ds):
+            if "model" in r:
+                nm = "EPT-X (ours)" if r["model"] == "EPT-X" else "EPT-TPP (ours)"
+                ours.setdefault(nm, {}).setdefault(ds, []).append(r["ll_per_event"])
+        for r in load(f"track_b_classical_{ds}.json") or []:
+            if "ll_per_event" in r:
+                ours.setdefault(r["method"], {}).setdefault(ds, []).append(r["ll_per_event"])
+    means = {m: {d: float(np.mean(v)) for d, v in dv.items()} for m, dv in ours.items()}
+    best = {ds: max([PUBLISHED_S2P2[m][ds] for m in PUBLISHED_S2P2] + [v[ds] for v in means.values() if ds in v])
             for ds in DS_B}
     lines = ["\\begin{tabular}{l" + "c" * len(DS_B) + "}", "\\toprule",
              "Model & " + " & ".join(d.capitalize() for d in DS_B) + " \\\\", "\\midrule"]
     for m, v in PUBLISHED_S2P2.items():
         lines.append(m + "$^\\dagger$ & " + " & ".join(fmt(v[d], bold=np.isclose(v[d], best[d])) for d in DS_B) + " \\\\")
-    cells = []
-    for d in DS_B:
-        if d in ours:
-            mu, sd, n = ours[d]
-            cells.append(fmt(mu, sd, bold=np.isclose(mu, best[d])) + f"$_{{({n})}}$")
-        else:
-            cells.append("pending")
-    lines += ["\\midrule", "EPT-TPP (ours, exact LL) & " + " & ".join(cells) + " \\\\", "\\bottomrule", "\\end{tabular}"]
+    lines.append("\\midrule")
+    for m in sorted(ours, key=lambda k: ("ours" not in k, k)):
+        cells = []
+        for d in DS_B:
+            if d in ours[m]:
+                a_ = np.array(ours[m][d])
+                cells.append(fmt(a_.mean(), a_.std(ddof=1) if len(a_) > 1 else None, bold=np.isclose(a_.mean(), best[d]))
+                             + f"$_{{({len(a_)})}}$")
+            else:
+                cells.append("--")
+        lines.append(m + " & " + " & ".join(cells) + " \\\\")
+    lines += ["\\bottomrule", "\\end{tabular}"]
     (OUT / "track_b.tex").write_text("\n".join(lines))
 
 
@@ -116,7 +133,7 @@ def track_c_results():
         for r in load(f"track_c_classical_lob_{tk}.json") or []:
             if "error" not in r:
                 res.setdefault(r["method"], {}).setdefault(tk, []).append(r["ll_per_event"])
-        for r in load(f"ept_lob_{tk}.json") or []:
+        for r in load_ept(f"lob_{tk}"):
             nm = "EPT-X (ours)" if r.get("model") == "EPT-X" else "EPT-TPP (ours)"
             raw.setdefault((nm, tk), []).append((r.get("config", {}).get("epochs", r["epochs"]), r["val_ll"], r["ll_per_event"]))
     for r in load("easytpp_results.json") or []:

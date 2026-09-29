@@ -1,0 +1,4 @@
+wait_hpo | D:\Quant\.venv\Scripts\python.exe -u scripts/wait_for_job.py gpu ept_hpo_v2
+eptx_amazon_s1 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_seed.py amazon 1 eptx "auto:{\"epochs\":300,\"renewal\":true}"
+eptx_stackoverflow_s1 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_seed.py stackoverflow 1 eptx "auto:{\"epochs\":300,\"renewal\":true}"
+eptx_taxi_s4 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_seed.py taxi 4 eptx "auto:{\"epochs\":300,\"renewal\":true}"
