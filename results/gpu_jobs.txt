@@ -60,4 +60,6 @@ easy_IntensityFree_lob_amzn_1500ep_mindt1e-12 | set IFTPP_MIN_DT=1e-12&& D:\Quan
 easy_IntensityFree_lob_goog_1500ep_mindt1e-12 | set IFTPP_MIN_DT=1e-12&& D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner IntensityFree lob_goog 6 2019 1500 64
 easy_S2P2_taxi_repro | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner S2P2 taxi 10 2019
 eptx_retweet_s0 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_seed.py retweet 0 eptx "auto:{\"epochs\":300,\"renewal\":true}"
+eptx_retweet_s0_bs16 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_seed.py retweet 0 eptx "auto:{\"epochs\":150,\"patience\":20,\"renewal\":true,\"bs\":16,\"verbose\":true}"
+eptx_retweet_s0_bs32 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_seed.py retweet 0 eptx "auto:{\"epochs\":25,\"patience\":5,\"renewal\":true,\"bs\":32,\"verbose\":true}"
 easy_S2P2_amazon_repro | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner S2P2 amazon 16 2019 - 128

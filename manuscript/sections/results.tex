@@ -85,8 +85,11 @@ release-free day.}\label{fig:placebo}
 \subsection{Track B: public marked-TPP benchmarks}
 Table~\ref{tab:track-b} compares our models with the published numbers of
 \citet{chang2025deep} under the same protocol; our re-run of S2P2 on Taxi (0.524 against
-the published 0.522) validates the harness. EPT-X is statistically tied with the best
-published model on Taobao and StackOverflow, and close on Taxi. There our time term equals
+the published 0.522) validates the harness. On Retweet, the largest dataset (2.2 million training
+events), EPT-X improves on the best published model by more than 0.6 nats per event, with
+a 25-epoch budget imposed by compute and the validation likelihood still rising. It is
+statistically tied with the best published model on Taobao and StackOverflow, and close on
+Taxi. There our time term equals
 S2P2's (0.733 vs.\ 0.735 nats per event on the re-run) and the whole difference lies in the
 mark term. On Amazon, whose inter-event times concentrate in a narrow band (median
 0.73, 99th percentile 0.80), the Erlang orders used elsewhere (coefficient of variation
