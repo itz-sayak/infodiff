@@ -82,6 +82,31 @@ release-free day.}\label{fig:placebo}
 \resizebox{\linewidth}{!}{\input{tables/main_absorption}}
 \end{table}
 
+\subsection{Track B: public marked-TPP benchmarks}
+Table~\ref{tab:track-b} compares our models with the published numbers of
+\citet{chang2025deep} under the same protocol; our re-run of S2P2 on Taxi (0.524 against
+the published 0.522) validates the harness. EPT-X is statistically tied with the best
+published model on Taobao and StackOverflow, and close on Taxi. There our time term equals
+S2P2's (0.733 vs.\ 0.735 nats per event on the re-run) and the whole difference lies in the
+mark term. On Amazon, whose inter-event times concentrate in a narrow band (median
+0.73, 99th percentile 0.80), the Erlang orders used elsewhere (coefficient of variation
+$\ge 1/4$) cannot represent the mode; adding atoms of order up to 1024 (coefficient of
+variation $1/32$), evaluated through the regularised incomplete gamma function, raises
+EPT-X by 1.1 nats per event on both validation and test, into second place behind S2P2.
+Neither a deeper (three residual layers) nor a wider (128 units) encoder improved the
+validation likelihood on any dataset. The renewal channel adds 0.07 nats per event over
+EPT on Taxi and 0.02 on StackOverflow. The linear MSX model is close to the neural models
+on Taobao (1.305) and Retweet, and far behind on Amazon and Taxi, where the dynamics are
+not self-exciting.
+
+\begin{table}[t]\centering\scriptsize
+\caption{Track B: test log-likelihood per event on the EasyTPP benchmarks. $^\dagger$Published
+numbers of \citet{chang2025deep} (five seeds); our rows give mean $\pm$ s.d.\ with the number
+of seeds as subscript; the EPT-X configuration is selected per dataset on validation.}
+\label{tab:track-b}
+\resizebox{\linewidth}{!}{\input{tables/track_b}}
+\end{table}
+
 \subsection{Track C: limit-order-book event streams}
 Table~\ref{tab:track-c} reports test log-likelihood per event on the five LOBSTER
 stocks. EPT-X is the best model on every stock, ahead of MSX-auto, EPT and all seven
