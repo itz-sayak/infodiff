@@ -1,0 +1,93 @@
+\section{Application: how fast do markets absorb macroeconomic news?}\label{sec:application}
+
+\paragraph{Data.} The calendar covers January 2022--August 2026: 670 scheduled releases of
+CPI, nonfarm payrolls, PPI, retail sales, the GDP advance estimate and initial jobless
+claims (dated by their initial ALFRED vintage), FOMC statements and press conferences, ECB
+decisions and press conferences, and Bank of Japan decisions. Surprises are standardised,
+sign-split differences between the first print and a real-time expectation: the Cleveland
+Fed inflation nowcast (CPI), Atlanta Fed GDPNow (GDP) and real-time statistical expectations
+from earlier first prints otherwise. Prices are millisecond quotes for EUR/USD, USD/JPY,
+gold and an S\&P~500 CFD, and Binance futures trades for bitcoin and ether, converted to up
+and down $\delta$-crossing events ($\delta=0.25$--$3$ basis points per asset, chosen so that
+the median rate is about 0.2 events per second). Windows span 30 minutes before to 60 minutes
+after each release cluster, with 30 minutes of burn-in. Each window is matched with a placebo
+window at the same clock times on the same weekday one to six weeks away, with no modelled
+release and none of sixteen second-tier releases within three hours; placebo windows carry
+their own per-type pseudo-releases, so the test is part of the likelihood. The pooled model
+has \nWindows{} windows (\nNewsWindows{} release, \nPlaceboWindows{} placebo),
+\nEventsScored{} million scored events and twelve dimensions, and is certified optimal to
+within \gapMaxPooled{} nats per dimension.
+
+\paragraph{Endogeneity.} The spectral radius of the branching matrix is
+$\rho(G)=\rhoPooled$: roughly seven in every eight price events are echoes of earlier ones.
+Fitted year by year, $\rho(G)$ declines from 2022 to 2026 (\rhoByYear), and the slowest echo
+mode relaxes in about \relaxPooled{} minutes.
+
+\paragraph{Falsification.} Nonnegative news kernels have a positive expected mass even under
+the null (boundary bias), so a release-free placebo is essential. With an exposure-weighted
+$\ell_1$ level chosen by held-out likelihood, \nPassPlacebo{} of the \nKinds{} release types
+exceed their placebo by at least 50\% (Figure~\ref{fig:placebo}): CPI (\placeboCpi$\times$),
+payrolls (\placeboNfp$\times$), PPI (\placeboPpi$\times$), the FOMC statement
+(\placeboFomc$\times$) and retail sales (\placeboRetail$\times$). Jobless claims, ECB and BoJ
+decisions and the press conferences have no detectable direct effect beyond their placebos.
+Two earlier specifications failed this test and are reported in Appendix~\ref{app:history}.
+
+\begin{figure}[!htbp]\centering
+\includegraphics[width=0.72\linewidth]{figures/placebo_pooled.pdf}
+\caption{Placebo test: direct news-kernel mass (expected extra events per release, all
+assets) for each release type and for its matched placebo on release-free days.}\label{fig:placebo}
+\end{figure}
+
+\paragraph{Echo-corrected absorption.} For the releases that pass, the direct news kernel is
+absorbed almost instantly (median $t_{50}$ of \tDirMed{}\,s), but echoes stretch the response:
+half of the extra activity arrives within \tEchoLo--\tEchoHi{}\,s and ninety percent within
+\tNinetyLo--\tNinetyHi{} minutes (Figure~\ref{fig:absorption}, Table~\ref{tab:absorption}).
+The ``news half-life'' $\ln2/\beta$ therefore understates absorption time by one to two orders
+of magnitude. Because signed surprises enter the news kernel separately by sign, the model also
+gives price-discovery curves (Figure~\ref{fig:drift}, Table~\ref{tab:drift}); hotter inflation
+lowers bitcoin and ether, cooler inflation lifts them.
+
+\begin{figure}[!htbp]\centering
+\includegraphics[width=\linewidth]{figures/absorption_CPI_pooled.pdf}
+\caption{Echo-corrected response to a CPI release (blue) versus the direct news kernel
+(orange), per asset; dotted lines mark $t_{50}$.}\label{fig:absorption}
+\end{figure}
+
+\begin{table}[!htbp]\centering\small
+\caption{Echo-corrected absorption by release and asset: $t_{50}$ in seconds / $t_{90}$ in
+minutes. $^\ast$Release types that do not exceed their placebo by 50\%.}\label{tab:absorption}
+\setlength{\tabcolsep}{4pt}
+\input{tables/main_absorption}
+\end{table}
+
+\begin{figure}[!htbp]\centering
+\includegraphics[width=\linewidth]{figures/drift_CPI_pooled.pdf}
+\caption{Expected price-discovery curves after a $\pm1$ standard-deviation CPI surprise.}\label{fig:drift}
+\end{figure}
+
+\begin{table}[!htbp]\centering\small
+\caption{Expected price drift (basis points, end of window) after a $+1$ standard-deviation
+surprise. $^\ast$As in Table~\ref{tab:absorption}.}\label{tab:drift}
+\setlength{\tabcolsep}{4pt}
+\input{tables/main_drift}
+\end{table}
+
+\paragraph{Goodness of fit.} Time-rescaled residuals \citep{brown2002time} have
+Kolmogorov--Smirnov statistics of at most \ksMax{} against Exp(1); the per-window
+excess-dispersion test rejects in \edLo--\edHi\% of windows, compared with 42\% (power-law
+kernel) and 93\% (double exponential) reported for FX data by \citet{rambaldi2015modeling}.
+
+\paragraph{Forecasting the post-release burst.} On the \nTestReleases{} releases of 2025--2026,
+an MSX model fitted on 2022--2024 forecasts the number of $\delta$-crossings in the first 1, 5
+and 15 minutes in closed form (Table~\ref{tab:track-d}). It improves on same-type climatology
+at every horizon but is beaten by the \bestActivityModel{} and HAR regressions, which are fitted
+directly to this target; we report this negative result as is. For the direction of the move
+the structural model is informative: the correlation between its forecast and the realised
+one-minute drift is \driftCorrOursOne{}, against \driftCorrBaseOne{} for the best baseline.
+
+\begin{table}[!htbp]\centering\small
+\caption{Post-release activity forecasts on the \nTestReleases{} test releases (mean over
+assets; lower is better). Bold: best; underlined: second best; shaded: our model.}\label{tab:track-d}
+\setlength{\tabcolsep}{5pt}
+\input{tables/track_d}
+\end{table}

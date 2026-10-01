@@ -1,0 +1,35 @@
+\section{Phase-type state spaces}\label{sec:phasetype}
+
+\paragraph{Dictionary.} Fix rates $\beta_1,\dots,\beta_K$ on a logarithmic grid and Erlang
+orders $r=0,\dots,R-1$. The normalised basis densities
+\begin{equation}
+g_{kr}(t)=\beta_k\frac{(\beta_k t)^r}{r!}e^{-\beta_k t},\qquad \int_0^\infty g_{kr}=1,
+\end{equation}
+generate kernels $\phi(t)=\sum_{k,r}a_{kr}g_{kr}(t)$ with $a_{kr}\ge0$ and mass (branching
+ratio) $\sum_{k,r}a_{kr}$. Exponential mixtures ($R=1$) approximate every completely monotone
+kernel, including power laws (Bernstein's theorem); higher orders add delayed humps
+($\phi(0)=0$); and phase-type densities are dense in the densities on $\R_+$.
+
+\paragraph{Exact recursion.} All states used in this paper---Hawkes excitation, news
+response, the neural latent state of EPT and the renewal channel of EPT-X---are Erlang
+chains, for which evolution and integrals between events are closed form.
+
+\begin{lemma}[Erlang-chain recursion]\label{lem:recursion}
+Let $s_r(t)=\sum_{t_n<t}g_{kr}(t-t_n)$ for one source and one rate $\beta$. Between events,
+$\bm s=(s_0,\dots,s_{R-1})$ solves $\dot{\bm s}=\beta(N-I)\bm s$ with $N$ the down-shift,
+and at an event $s_0\mathrel{+}=\beta$. Hence, with $y=\beta\Delta$ and $w_j=e^{-y}y^j/j!$,
+\[
+s_r(t+\Delta)=\sum_{j\le r}w_j\,s_{r-j}(t),\qquad
+\int_t^{t+\Delta}s_r=\frac1\beta\sum_{j\le r}P(j+1,y)\,s_{r-j}(t),
+\]
+where $P$ is the regularised lower incomplete gamma function.
+\end{lemma}
+\begin{proof}
+$\frac{\dd}{\dd t}g_{kr}=\beta(g_{k,r-1}-g_{kr})$ for $r\ge1$ and
+$\frac{\dd}{\dd t}g_{k0}=-\beta g_{k0}$, with $g_{kr}(0)=\beta\mathbb 1[r=0]$. The matrix
+exponential of $\beta(N-I)\Delta$ is $e^{-y}\sum_{j<R}\frac{y^j}{j!}N^j$ because $N$ is
+nilpotent and commutes with $I$; integrating term by term gives $P(j+1,y)/\beta$.
+\end{proof}
+
+The cost of evaluating a likelihood is therefore $O(NdKR^2)$ for $N$ events in $d$
+dimensions, with no Monte-Carlo or quadrature error.

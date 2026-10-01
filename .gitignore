@@ -21,3 +21,8 @@ results/ckpt/
 results/models/
 results/easytpp/checkpoints/
 *.pt
+manuscript_tmlr/*.aux
+manuscript_tmlr/*.log
+manuscript_tmlr/*.out
+manuscript_tmlr/*.bbl
+manuscript_tmlr/*.blg

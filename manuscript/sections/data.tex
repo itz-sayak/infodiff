@@ -32,9 +32,10 @@ are excluded (per window, documented in the data card).
 \paragraph{Events and windows.}
 Prices are converted to $\delta$-crossing events with $\delta$ calibrated per asset so
 that the median intraday rate is about 0.2 events per second:
-$\delta=0.35$ (EUR/USD), $0.25$ (USD/JPY), $0.7$ (XAU/USD), $0.7$ (S\&P~500 CFD) and
-$3.0$ (BTC, ETH) basis points. Releases closer than 60 minutes are merged into one
-window $[\text{first}-30\,\text{min},\ \text{last}+60\,\text{min})$ with 30 minutes of
-burn-in history. Each window is matched with a placebo window at the same UTC clock
-times on the same weekday one to three weeks away and with no scheduled release within
-three hours; its pseudo-releases carry the PLACEBO type.
+$\delta=0.25$ (EUR/USD, USD/JPY), $0.7$ (XAU/USD, S\&P~500 CFD), $2.0$ (BTC) and $3.0$ (ETH)
+basis points; simultaneous crossings collapse into one event with a size mark. Releases
+closer than 60 minutes are merged into one window
+$[\text{first}-30\,\text{min},\ \text{last}+60\,\text{min})$ with 30 minutes of burn-in
+history. Each window is matched with a placebo window at the same clock times on the same
+weekday one to six weeks away, with no modelled release and none of sixteen second-tier US
+releases within three hours; its pseudo-releases carry a per-type PLACEBO type.

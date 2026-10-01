@@ -1,0 +1,68 @@
+\documentclass[10pt]{article}
+\PassOptionsToPackage{table}{xcolor}
+\usepackage{tmlr}
+% Camera-ready: \usepackage[accepted]{tmlr}.  De-anonymised preprint: \usepackage[preprint]{tmlr}.
+
+\input{math_commands.tex}
+
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{amsmath,amssymb,amsthm,mathtools,bm}
+\usepackage{xcolor}
+\usepackage{booktabs,multirow,graphicx}
+\usepackage[font=small,skip=6pt]{caption}
+\usepackage[section]{placeins}
+
+\definecolor{oursbg}{RGB}{232,240,251}  % light band for our models in result tables
+\renewcommand{\arraystretch}{1.12}
+\renewcommand{\topfraction}{0.9}\renewcommand{\bottomfraction}{0.8}
+\renewcommand{\textfraction}{0.07}\renewcommand{\floatpagefraction}{0.7}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\dd}{\,\mathrm{d}}
+
+\title{Exact Phase-Type Point Processes:\\
+Certified Measurement of News Absorption and\\
+State-of-the-Art Prediction of Market Event Streams}
+
+% Anonymous for review: authors are hidden unless the [accepted] or [preprint] option is used.
+\author{\name Sayak Dutta \email sayakdutta1002@gmail.com}
+
+\def\month{MM}
+\def\year{YYYY}
+\def\openreview{\url{https://openreview.net/forum?id=XXXX}}
+
+\input{numbers}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\input{sections/abstract}
+\end{abstract}
+
+\input{sections/intro}
+\input{sections/related}
+\input{sections/phasetype}
+\input{sections/msx}
+\input{sections/eptx}
+\input{sections/experiments}
+\input{sections/application}
+\input{sections/discussion}
+
+\subsubsection*{Broader Impact Statement}
+\input{sections/impact}
+
+\bibliography{refs}
+\bibliographystyle{tmlr}
+
+\appendix
+\input{sections/appendix}
+
+\end{document}

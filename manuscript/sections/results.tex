@@ -27,8 +27,9 @@ underlined: second best; shaded: our estimators.}
 
 \FloatBarrier
 \subsection{Main study: how fast do markets absorb scheduled macro news?}
-The pooled 2022--2026 model (732 windows, 8.4 million $\delta$-crossing events, twelve
-dimensions) is certified optimal to within \gapMaxPooled{} nats per dimension. The
+The pooled 2022--2026 model (\nWindows{} windows---\nNewsWindows{} release and
+\nPlaceboWindows{} placebo---with \nEventsScored{} million scored $\delta$-crossing events,
+\nEventsAll{} million including burn-in history, in twelve dimensions) is certified optimal to within \gapMaxPooled{} nats per dimension. The
 spectral radius of the branching matrix is $\rho(G)=\rhoPooled$: roughly seven in every
 eight price events are endogenous echoes. Fitted year by year, $\rho(G)$ declines from 2022
 to 2026 (\rhoByYear), and the slowest echo mode relaxes in about \relaxPooled{} minutes.

@@ -1,0 +1,53 @@
+\section{Introduction}\label{sec:intro}
+
+Event streams in markets---price changes, order-book messages, trades---are modelled with
+temporal point processes for two different purposes. Econometricians use Hawkes processes
+\citep{hawkes1971spectra} to \emph{measure} mechanisms: the branching structure separates
+exogenous, news-driven events from endogenous ones triggered by earlier events, and the
+fitted kernels quantify how fast information is absorbed
+\citep{hardiman2013critical,filimonov2012quantifying,rambaldi2015modeling}. Machine-learning
+work uses neural temporal point processes to \emph{predict} the next event and is judged by
+held-out likelihood on shared benchmarks
+\citep{du2016recurrent,mei2017neural,zuo2020transformer,shchur2020intensity,xue2024easytpp,chang2025deep}.
+The two communities rarely meet, and each inherits a weakness. Measurement relies on
+non-convex fits whose optimality is unknown and on summaries---such as the ``half-life''
+$\ln2/\beta$ of a news kernel---that ignore the echoes the news triggers. Prediction relies on
+neural intensities whose compensator $\int\lambda$ is estimated by Monte Carlo, so that
+reported likelihoods carry sampling error and, as we show, are sensitive to implementation
+details.
+
+We argue that one algebraic object serves both purposes exactly: the \emph{phase-type
+state space}, in which every kernel is a nonnegative combination of Erlang densities on a
+logarithmic grid of time scales. Between events such a state evolves by an explicit matrix
+exponential, so intensities and compensators are available in closed form, and the class is
+dense in the densities on $\R_+$.
+
+\paragraph{Contributions.}
+\begin{enumerate}
+\item \textbf{Certified measurement (MSX).} A multiscale phase-type Hawkes process with
+exogenous, marked news kernels in which all parameters enter linearly. The log-likelihood is
+concave; we compute the global maximum with accelerated EM and a barrier-Newton polish and
+return a Fenchel duality gap that certifies optimality (Proposition~\ref{prop:gap}).
+\item \textbf{Echo-corrected responses in closed form.} A Markov embedding turns the mean
+response to a shock into $C e^{\mathcal At}\bm z_0$; it is stable if and only if
+$\rho(G)<1$ for the branching matrix $G$ (Theorem~\ref{thm:stab}), and yields absorption
+quantiles, echo amplification and price-discovery curves without simulation.
+\item \textbf{Exact neural prediction (EPT-X).} A neural point process whose latent state is
+phase-type, with a linear Hawkes backbone and a history-conditioned \emph{defective
+hyper-Erlang renewal channel} superposed as a competing risk. The compensator stays exact,
+the model nests the Hawkes backbone, and the renewal channel is universal for the conditional
+gap law (Proposition~\ref{prop:eptx}).
+\item \textbf{Benchmarks and a benchmark correction.} EPT-X is best on all five LOBSTER
+order-book streams and on Retweet, and statistically tied with the best published model on
+Taobao and StackOverflow. We find that a widely used IntensityFree implementation clamps
+inter-event times at $10^{-5}$\,s before scoring; re-scored on the observed gaps, its lead on
+two order-book streams disappears.
+\item \textbf{Application.} On six markets around 670 scheduled releases (2022--2026), with a
+placebo test built into the likelihood, we find that the direct reaction to CPI, payrolls,
+PPI and the FOMC is absorbed in about a second while echoes stretch half of the response to
+\tEchoLo--\tEchoHi{}\,s and ninety percent to \tNinetyLo--\tNinetyHi{} minutes.
+\end{enumerate}
+Linear-in-parameters kernel dictionaries \citep{bacry2015hawkes}, EM for Hawkes processes
+\citep{lewis2011nonparametric,zhou2013learning} and Erlang-chain embeddings are known
+individually; our contribution is their combination into certified, closed-form measurement
+and into an exact-likelihood neural model, together with the evidence that both work.

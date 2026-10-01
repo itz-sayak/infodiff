@@ -1,0 +1,15 @@
+\begin{tabular}{lrrrrr}
+\toprule
+& Taxi & Taobao & StackOverflow & Amazon & INTC \\
+\midrule
+\multicolumn{6}{l}{\textit{Validation log-likelihood per event}} \\[1pt]
+\quad EPT (no renewal channel) & 0.392 & \underline{1.200} & $-$2.186 & -- & \underline{5.360}{\scriptsize\,$\pm$0.007} \\
+\quad EPT-X & \textbf{0.466}{\scriptsize\,$\pm$0.004} & \textbf{1.205}{\scriptsize\,$\pm$0.002} & \textbf{$-$2.161}{\scriptsize\,$\pm$0.003} & $-$0.487{\scriptsize\,$\pm$0.000} & \textbf{5.463}{\scriptsize\,$\pm$0.003} \\
+\quad \quad + sharp atoms (orders to 1024) & \underline{0.457} & 1.194 & \underline{$-$2.173} & \underline{0.604} & -- \\
+\quad \quad + sharp atoms, 48 scales & -- & -- & -- & \textbf{0.643} & -- \\
+\quad \quad + deep encoder (3 layers) & 0.396 & 1.142 & $-$2.264 & $-$0.507 & -- \\
+\quad \quad + sharp atoms + deep encoder & 0.398 & 1.152 & $-$2.248 & 0.579 & -- \\
+\quad \quad + wide encoder (128 units) & 0.431 & 1.188 & -- & -- & -- \\
+\quad \quad batch 256 (S2P2 setting) & 0.440 & 1.189 & -- & -- & -- \\
+\bottomrule
+\end{tabular}

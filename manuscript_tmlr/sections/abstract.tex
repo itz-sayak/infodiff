@@ -1,0 +1,20 @@
+Temporal point processes are used both to \emph{measure} mechanisms---how fast does a market
+absorb news, and how much of the reaction is the market reacting to itself?---and to
+\emph{predict} the next event. We show that a single algebraic object, the phase-type
+(Erlang-chain) state space, serves both purposes with exact likelihoods. For measurement,
+we build a multiscale phase-type Hawkes process whose parameters all enter linearly; the
+log-likelihood is concave, the global maximum comes with a Fenchel duality-gap certificate,
+and a Markov embedding gives the echo-corrected response to an exogenous shock in closed
+form, stable if and only if the spectral radius of the branching matrix is below one. On
+six markets around 670 scheduled macroeconomic releases (2022--2026), with a built-in placebo
+test, the direct reaction to CPI, payrolls, PPI and the FOMC is absorbed in about a second,
+whereas echoes stretch half of the response to \tEchoLo--\tEchoHi{}\,s. For prediction, we
+introduce EPT-X, a neural point process that superposes a history-conditioned, defective
+hyper-Erlang renewal channel on a linear Hawkes backbone; its intensity and compensator remain
+in closed form, so it is trained and evaluated on the exact likelihood. EPT-X attains the best
+test likelihood on all five LOBSTER limit-order-book streams against six classical estimators
+and seven neural baselines, improves the best published result on Retweet by more than
+0.6~nats per event, and matches it on Taobao and StackOverflow. We also find that a widely
+used IntensityFree implementation clamps inter-event times before scoring, which overstates
+its likelihood on streams with many short gaps; scored on the observed gaps, its
+order-book ranking changes.

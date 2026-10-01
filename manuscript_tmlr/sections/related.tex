@@ -1,0 +1,34 @@
+\section{Related work}\label{sec:related}
+
+\paragraph{Hawkes estimation.} Exponential and sum-of-exponential kernels are fitted by
+maximum likelihood \citep{bacry2015hawkes}; nonparametric alternatives include EM on
+histogram kernels \citep{lewis2011nonparametric}, ADM4 with low-rank and sparse penalties
+\citep{zhou2013learning}, the conditional-law (Wiener--Hopf) method \citep{bacry2016estimation},
+cumulant matching \citep{achab2017uncovering} and INAR approximations
+\citep{kirchner2017estimation}. None of these returns a certificate of global optimality for
+multiscale kernels with humps, and seasonality mis-specification is known to bias branching
+ratios upward \citep{filimonov2015apparent,omi2017hawkes}.
+
+\paragraph{News in Hawkes models.} \citet{rambaldi2015modeling} add an exogenous kernel for
+macroeconomic announcements to an FX Hawkes model; \citet{andersen2003micro} document the
+price impact of announcement surprises. Absorption speed is typically read off the
+exogenous kernel alone. We give the echo-corrected response in closed form and test the news
+kernels against matched placebo windows inside the likelihood.
+
+\paragraph{Neural temporal point processes.} RMTPP \citep{du2016recurrent}, NHP
+\citep{mei2017neural}, SAHP \citep{zhang2020self}, THP \citep{zuo2020transformer}, AttNHP
+\citep{yang2022transformer} and the state-space S2P2 \citep{chang2025deep} parameterise the
+intensity with recurrent, attention or state-space encoders and estimate the compensator by
+Monte Carlo or quadrature; IntensityFree \citep{shchur2020intensity} instead models the
+next-gap density with a log-normal mixture. Recent work explores Mamba-style encoders
+\citep{gao2024mamba} and interpretable latent Hawkes dynamics \citep{boyd2025hyper}.
+EasyTPP \citep{xue2024easytpp} provides shared implementations, and
+\citet{bosser2023predictive} study the predictive accuracy of neural TPPs. EPT-X differs in
+that its intensity between events is a read-out of an explicitly solvable phase-type system
+with bounded closed-form hazard terms, plus a renewal channel whose survival function is a closed-form mixture of Erlang
+survivals---so the likelihood we train and report is exact---and in that its backbone is the
+linear Hawkes process itself.
+
+\paragraph{Phase-type distributions.} Mixtures of Erlang distributions are dense in the
+distributions on $(0,\infty)$ \citep{tijms1994stochastic,lee2010modeling}; we use this fact
+for the renewal channel and the Erlang-chain recursion for all states.

@@ -1,0 +1,23 @@
+\section{Discussion and limitations}\label{sec:discussion}
+
+Making every kernel a nonnegative combination of phase-type densities turns Hawkes
+estimation into a certified convex problem and turns responses to shocks into matrix
+exponentials; adding a neural history encoder and a defective hyper-Erlang renewal channel to
+the same state space gives a model whose likelihood stays exact and which is competitive with,
+and on order books and Retweet better than, the strongest neural temporal point processes.
+Three lessons stand out. First, absorption speed is not a property of the news kernel: echoes
+lengthen it by one to two orders of magnitude, and the correction is available in closed form.
+Second, falsification matters: two of our specifications produced plausible-looking news
+effects that the placebo test exposed as artefacts. Third, benchmark comparisons must check
+that every model scores the same observed data---a clamp inside one implementation was enough
+to reverse a ranking.
+
+\paragraph{Limitations.} Expectations for payrolls, claims, PPI and retail sales are
+statistical rather than survey-based, and the FX feed has a gap in the first half of 2023. The
+order-book evaluation uses the public LOBSTER samples (one trading day per stock). Neural
+baselines on order books were trained with reduced batch sizes on an 8\,GB GPU, and on the
+public benchmarks we compare against published numbers, validated by one re-run. On Retweet the
+EPT-X budget was 25 epochs with the validation likelihood still rising, so the reported margin
+is if anything conservative. EPT-X does not reach the best published likelihood on Taxi, where
+the gap lies in mark prediction, or on Amazon, where it lies in the timing density; and the
+MSX forecasts of post-release activity are beaten by regressions fitted to that target.

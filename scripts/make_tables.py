@@ -214,6 +214,39 @@ def table_b():
     (OUT / "track_b_seeds.json").write_text(json.dumps(seeds, indent=1))
 
 
+def table_ablation():
+    """EPT-X component ablation: validation LL per event (selection protocol; one seed unless
+    several final seeds exist). Rows are only filled where the run exists."""
+    dsets = [("taxi", "Taxi"), ("taobao", "Taobao"), ("stackoverflow", "StackOverflow"), ("amazon", "Amazon"),
+             ("lob_intc", "INTC")]
+    variants = [("EPT (no renewal channel)", ("runs", "ept")), ("EPT-X", ("runs", "eptx")),
+                ("\\quad + sharp atoms (orders to 1024)", ("abl", "sel_sharp")),
+                ("\\quad + sharp atoms, 48 scales", ("abl", "sel_sharp48")),
+                ("\\quad + deep encoder (3 layers)", ("abl", "sel_deep")),
+                ("\\quad + sharp atoms + deep encoder", ("abl", "sel_sharpdeep")),
+                ("\\quad + wide encoder (128 units)", ("abl", "sel_wide")),
+                ("\\quad batch 256 (S2P2 setting)", ("abl", "sel_bs256"))]
+    values = {}
+    for name, (kind, tag) in variants:
+        for ds, head in dsets:
+            if kind == "runs":
+                rows = [json.loads(f.read_text()) for f in sorted((J / "ept_runs").glob(f"{ds}__{tag}_s*.json"))]
+                rows = [r for r in rows if r.get("tag") == tag]  # exact config tag (eptx != eptx_sharp)
+                if ds.startswith("lob_"):  # LOBSTER EPT/EPT-X live in ept_lob_<tk>.json (+ per-run files)
+                    want = "EPT-X" if tag == "eptx" else "EPT"
+                    rows = [r for r in load_ept(ds) if r.get("model", "EPT") == want
+                            and r.get("config", {}).get("epochs", 100) <= 300]
+                vals = [r["val_ll"] for r in rows]
+            else:
+                f = J / f"eptx_ablation_{ds}_{tag}.json"
+                vals = [json.loads(f.read_text())["val_ll"]] if f.exists() else []
+            if vals:
+                values.setdefault(name, {})[head] = mean_sd(vals)
+    rows = [n for n, _ in variants if n in values]
+    tab = grouped_table([h for _, h in dsets], [("Validation log-likelihood per event", rows, False)], values)
+    (OUT / "ablation.tex").write_text(tab)
+
+
 # ------------------------------------------------------------------ Track C
 TK = ["aapl", "amzn", "goog", "intc", "msft"]
 
@@ -377,6 +410,14 @@ def numbers():
         ed = [x for x in r["ed_reject_rate_per_dim"] if x is not None]
         out.append(f"\\newcommand{{\\edLo}}{{{100 * min(ed):.0f}}}\\newcommand{{\\edHi}}{{{100 * max(ed):.0f}}}")
         out.append(f"\\newcommand{{\\gapMaxPooled}}{{{max(x['gap'] for x in r['fit_reports']):.4f}}}")
+        out.append(f"\\newcommand{{\\nWindows}}{{{r['n_windows']}}}")
+        out.append(f"\\newcommand{{\\nEventsScored}}{{{r['n_events'] / 1e6:.1f}}}")
+        dc = load("data_card.json")
+        if dc:
+            yrs = dc["years"].values()
+            out.append(f"\\newcommand{{\\nEventsAll}}{{{sum(v['events'] for v in yrs) / 1e6:.1f}}}")
+            out.append(f"\\newcommand{{\\nNewsWindows}}{{{sum(v['news'] for v in yrs)}}}"
+                       f"\\newcommand{{\\nPlaceboWindows}}{{{sum(v['placebo'] for v in yrs)}}}")
     # specification history (superseded runs are kept, never deleted)
     sup = J / "superseded"
     v1 = sup / "main_2024_v1_placebo_failed.json"
@@ -452,7 +493,7 @@ def numbers():
 
 
 if __name__ == "__main__":
-    for f in (table_a, table_b, table_c, table_d, table_main, numbers):
+    for f in (table_a, table_b, table_ablation, table_c, table_d, table_main, numbers):
         try:
             f()
             print("ok", f.__name__)

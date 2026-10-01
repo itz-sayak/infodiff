@@ -1,0 +1,25 @@
+\begin{tabular}{lrrrrr}
+\toprule
+& AAPL & AMZN & GOOG & INTC & MSFT \\
+\midrule
+\multicolumn{6}{l}{\textit{Classical Hawkes}} \\[1pt]
+\quad Exp.\ kernel MLE & 1.961 & -- & $-$0.311 & -- & -- \\
+\quad Hawkes EM (nonparam.) & 3.370 & 2.243 & 2.851 & 5.771 & 6.258 \\
+\quad ADM4 & 1.961 & 1.067 & 1.306 & 4.787 & 5.211 \\
+\quad Conditional law & $-$1.018 & $-$17.814 & $-$32.784 & 0.379 & $-$1.270 \\
+\addlinespace[3pt]\multicolumn{6}{l}{\textit{Neural TPPs (EasyTPP, our runs)}} \\[1pt]
+\quad RMTPP & 0.243 & $-$0.686 & $-$0.948 & 2.882 & 3.285 \\
+\quad THP & $-$0.081 & $-$0.948 & $-$1.075 & 1.714 & 1.855 \\
+\quad SAHP & 1.777 & 0.462 & $-$0.428 & 3.915 & 4.557 \\
+\quad NHP & 1.374 & 0.842 & 0.846 & 3.874 & 4.183 \\
+\quad AttNHP & 1.220 & $-$0.168 & 0.004 & 3.497 & 3.771 \\
+\quad S2P2 & 2.315 & 0.717 & 0.990 & 4.949 & 5.416 \\
+\quad IntensityFree & 3.108 & 2.103 & 2.726 & 5.713 & 6.377 \\
+\quad \textcolor{gray}{IntensityFree$^\ast$ (as shipped)} & \textcolor{gray}{3.260} & \textcolor{gray}{1.921} & \textcolor{gray}{2.679} & \textcolor{gray}{6.790} & \textcolor{gray}{7.070} \\
+\addlinespace[3pt]\multicolumn{6}{l}{\textit{Ours}} \\[1pt]
+\rowcolor{oursbg} \quad MSX ($R=2$) & 3.326 & 2.249 & 2.870 & 5.812 & 6.307 \\
+\rowcolor{oursbg} \quad MSX-auto & 3.361 & \underline{2.281} & \underline{2.883} & 5.814 & 6.310 \\
+\rowcolor{oursbg} \quad EPT & \underline{3.380}{\scriptsize\,$\pm$0.008} & 2.229{\scriptsize\,$\pm$0.003} & 2.806{\scriptsize\,$\pm$0.005} & \underline{6.024}{\scriptsize\,$\pm$0.007} & \underline{6.530}{\scriptsize\,$\pm$0.005} \\
+\rowcolor{oursbg} \quad EPT-X & \textbf{3.456}{\scriptsize\,$\pm$0.007} & \textbf{2.333}{\scriptsize\,$\pm$0.005} & \textbf{2.964}{\scriptsize\,$\pm$0.004} & \textbf{6.120}{\scriptsize\,$\pm$0.003} & \textbf{6.643}{\scriptsize\,$\pm$0.003} \\
+\bottomrule
+\end{tabular}
