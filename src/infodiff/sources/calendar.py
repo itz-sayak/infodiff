@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 """Scheduled macro-release calendar with exact UTC timestamps and first-print values.
 
 * US data releases (CPI, NFP, PPI, Retail Sales, GDP advance, Jobless Claims): dates and

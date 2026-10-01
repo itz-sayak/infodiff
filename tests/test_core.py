@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 import numpy as np
 import pytest
 from scipy.optimize import minimize

@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 """Design-matrix construction for linear-in-parameters Hawkes intensities.
 
 For a target dimension i the intensity at time t is

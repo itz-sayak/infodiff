@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 """Download reference papers into paper/ and print arXiv titles so IDs can be verified."""
 from __future__ import annotations
 

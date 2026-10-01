@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 import time, warnings
 from pathlib import Path
 warnings.filterwarnings("ignore")

@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 """Fit + analyse the main-study MSX model on one or more yearly panels.
     python scripts/run_main.py 2022            -> results/json/main_2022.json
     python scripts/run_main.py 2022,2023,2024,2025,2026 pooled

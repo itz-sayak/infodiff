@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 import json, sys, warnings
 warnings.filterwarnings("ignore")
 from infodiff.experiments.track_b import train_one

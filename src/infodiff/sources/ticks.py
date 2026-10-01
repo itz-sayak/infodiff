@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 """Tick-data downloaders -> parquet.
 
 HistData.com (FX / metals / index CFDs)

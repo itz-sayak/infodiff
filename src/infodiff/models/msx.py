@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 """MSX-Hawkes: multiscale, state-space, exogenous-marked Hawkes estimator.
 
 Per target dimension i the problem is

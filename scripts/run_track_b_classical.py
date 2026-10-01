@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 """MSX (ours) and classical Hawkes baselines on the public EasyTPP datasets (CPU).
     python scripts/run_track_b_classical.py taxi,taobao,...  -> results/json/track_b_classical_<ds>.json"""
 import sys, warnings

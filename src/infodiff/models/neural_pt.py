@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 """EPT-TPP: an Exact-likelihood neural Phase-Type Temporal Point Process.
 
 State.  A nonnegative latent vector x(t) in R^P_{>=0} made of phase-type channels:

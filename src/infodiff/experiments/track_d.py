@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 """Track D — post-release forecasting on the news panel (chronological split).
 
 Targets for each test release (time tau) and asset a, horizons h in {60, 300, 900} s:

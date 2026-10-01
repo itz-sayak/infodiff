@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 """Pre-release expectations and standardised surprises for scheduled releases.
 
 Sources (all free, reachable, and dated so that no post-release information leaks):

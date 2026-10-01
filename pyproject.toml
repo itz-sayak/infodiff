@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=77"]  # PEP 639 license expression
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -7,6 +7,9 @@ name = "infodiff"
 version = "0.1.0"
 description = "Echo-corrected information diffusion: multiscale phase-type Hawkes models of macro-news absorption"
 requires-python = ">=3.11"
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
+authors = [{ name = "Sayak Dutta", email = "sayakdutta1002@gmail.com" }]
 dependencies = ["numpy", "scipy", "numba", "pandas", "polars", "pyarrow", "torch", "requests", "python-dotenv", "statsmodels", "matplotlib"]
 
 [project.optional-dependencies]

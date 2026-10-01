@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 """Generate LaTeX result tables for the manuscript from results/json/*.json.
 
 Every number in the paper's result tables comes from this script; missing inputs produce
@@ -35,8 +37,109 @@ def fmt(mu, sd=None, d=3, bold=False):
     return f"\\textbf{{{s}}}" if bold else s
 
 
+# ------------------------------------------------------------------ table style
+# booktabs tables: italic group headers, our models on a light band (\rowcolor{oursbg},
+# defined in main.tex), best per column bold, second best underlined, s.d. as a small "±".
+NICE = {
+    "tick-ExpKern(MLE, best decay)": "Exp.\\ kernel MLE", "tick-SumExpKern(MLE, AGD)": "Sum-of-exp.\\ MLE",
+    "tick-EM(nonparam)": "Hawkes EM (nonparam.)", "tick-ADM4": "ADM4", "tick-ConditionalLaw": "Conditional law",
+    "NPHC(cumulants)": "NPHC (cumulants)", "MSX (ours)": "MSX ($R=2$)", "MSX (ours, R=2)": "MSX ($R=2$)",
+    "MSX-auto (ours)": "MSX-auto", "MSX-R4 (ours, fixed Erlang-4)": "MSX ($R=4$)",
+    "MSX-exp (ablation: no Erlang)": "MSX, exponential only", "EPT-TPP (ours)": "EPT", "EPT-X (ours)": "EPT-X",
+    "MSX closed form (ours)": "MSX closed form", "event-study OLS": "Event-study OLS", "climatology": "Climatology",
+}
+OURS_ORDER = ["MSX ($R=2$)", "MSX ($R=4$)", "MSX, exponential only", "MSX-auto", "MSX closed form", "EPT", "EPT-X"]
+
+
+def nice(m):
+    return NICE.get(m, m)
+
+
+def is_ours(m):
+    return "ours" in m or "ablation" in m
+
+
+def ranks(vals, higher=True):
+    """Indices of the best and second-best finite values."""
+    ok = [(v, i) for i, v in enumerate(vals) if v is not None and np.isfinite(v)]
+    ok.sort(reverse=higher)
+    return (ok[0][1] if ok else None), (ok[1][1] if len(ok) > 1 else None)
+
+
+def cell(mu, sd=None, d=3, rank=0):
+    """rank: 1 best (bold), 2 second (underline)."""
+    if mu is None or not np.isfinite(mu):
+        return "--"
+    s = f"{mu:.{d}f}".replace("-", "$-$")
+    s = "\\textbf{" + s + "}" if rank == 1 else ("\\underline{" + s + "}" if rank == 2 else s)
+    if sd is not None and np.isfinite(sd):
+        s += "{\\scriptsize\\,$\\pm$" + f"{sd:.{d}f}" + "}"
+    return s
+
+
+def group_row(title, ncol):
+    return f"\\addlinespace[3pt]\\multicolumn{{{ncol}}}{{l}}{{\\textit{{{title}}}}} \\\\[1pt]"
+
+
+def grouped_table(cols, groups, values, higher=True, d=3, exclude_rank=()):
+    """cols: column headers; groups: [(title, [row names], shaded)]; values: row -> col -> (mu, sd)."""
+    allrows = [r for _, rows, _ in groups for r in rows if r not in exclude_rank]
+    rk = {}
+    for c in cols:
+        v = [values.get(r, {}).get(c, (np.nan, None))[0] for r in allrows]
+        b, s = ranks(v, higher)
+        rk[c] = (allrows[b] if b is not None else None, allrows[s] if s is not None else None)
+    n = len(cols) + 1
+    lines = ["\\begin{tabular}{l" + "r" * len(cols) + "}", "\\toprule", "& " + " & ".join(cols) + " \\\\", "\\midrule"]
+    first = True
+    for title, rows, shaded in groups:
+        if not rows:
+            continue
+        lines.append(group_row(title, n) if not first else group_row(title, n).replace("\\addlinespace[3pt]", ""))
+        first = False
+        for r in rows:
+            cells = []
+            for c in cols:
+                mu, sd = values.get(r, {}).get(c, (np.nan, None))
+                cells.append(cell(mu, sd, d, 1 if rk[c][0] == r else 2 if rk[c][1] == r else 0))
+            if r in exclude_rank:  # shown for reference only: greyed out
+                cells = ["\\textcolor{gray}{" + c + "}" for c in cells]
+                name = "\\textcolor{gray}{" + r + "}"
+            else:
+                name = r
+            lines.append(("\\rowcolor{oursbg} " if shaded else "") + "\\quad " + name + " & " + " & ".join(cells) + " \\\\")
+    lines += ["\\bottomrule", "\\end{tabular}"]
+    return "\n".join(lines)
+
+
+def mean_sd(xs):
+    a = np.asarray(xs, float)
+    return float(a.mean()), (float(a.std(ddof=1)) if len(a) > 1 else None)
+
+
 # ------------------------------------------------------------------ Track A
 def table_a():
+    """Compact Track A table: dLL (held-out deficit to the truth, 1e-3 nats/event) per scenario;
+    the full metric table goes to the appendix (track_a_full.tex)."""
+    rows = load("track_a.json")
+    if rows:
+        df = pd.DataFrame([r for r in rows if "error" not in r and "dLL" in r])
+        scen = list(dict.fromkeys(df["scenario"]))
+        heads = {s: s.split("-", 1)[0] + " " + s.split("-", 1)[1].replace("network10", "network").replace("powerlaw", "power law")
+                 for s in scen}
+        values = {}
+        for (s, m), g in df.groupby(["scenario", "method"]):
+            values.setdefault(nice(m), {})[heads[s]] = mean_sd(1e3 * g["dLL"].values)
+        meths = list(dict.fromkeys(nice(m) for m in df["method"]))
+        ours = [m for m in OURS_ORDER if m in meths]
+        others = [m for m in meths if m not in ours]
+        tab = grouped_table([heads[s] for s in scen], [("Classical estimators", others, False), ("Ours", ours, True)],
+                            values, higher=False, d=2)
+        (OUT / "track_a.tex").write_text(tab)
+    table_a_full()
+
+
+def table_a_full():
     rows = load("track_a.json")
     if not rows:
         return
@@ -61,7 +164,7 @@ def table_a():
         lines.append("\\midrule")
     lines[-1] = "\\bottomrule"
     lines.append("\\end{tabular}")
-    (OUT / "track_a.tex").write_text("\n".join(lines))
+    (OUT / "track_a_full.tex").write_text("\n".join(lines).replace("tick-", "").replace("(ours", "(ours"))
 
 
 # ------------------------------------------------------------------ Track B
@@ -94,27 +197,21 @@ def table_b():
         for r in load(f"track_b_classical_{ds}.json") or []:
             if "ll_per_event" in r:
                 ours.setdefault(r["method"], {}).setdefault(ds, []).append(r["ll_per_event"])
-    means = {m: {d: float(np.mean(v)) for d, v in dv.items()} for m, dv in ours.items()}
-    best = {ds: max([PUBLISHED_S2P2[m][ds] for m in PUBLISHED_S2P2] + [v[ds] for v in means.values() if ds in v])
-            for ds in DS_B}
-    lines = ["\\begin{tabular}{l" + "c" * len(DS_B) + "}", "\\toprule",
-             "Model & " + " & ".join("StackOverflow" if d == "stackoverflow" else d.capitalize() for d in DS_B)
-             + " \\\\", "\\midrule"]
+    head = {d: ("StackOverflow" if d == "stackoverflow" else d.capitalize()) for d in DS_B}
+    values = {}
     for m, v in PUBLISHED_S2P2.items():
-        lines.append(m.replace("IFTPP", "IntensityFree") + "$^\\dagger$ & " + " & ".join(fmt(v[d], bold=np.isclose(v[d], best[d])) for d in DS_B) + " \\\\")
-    lines.append("\\midrule")
-    for m in sorted(ours, key=lambda k: ("ours" not in k, k)):
-        cells = []
-        for d in DS_B:
-            if d in ours[m]:
-                a_ = np.array(ours[m][d])
-                cells.append(fmt(a_.mean(), a_.std(ddof=1) if len(a_) > 1 else None, bold=np.isclose(a_.mean(), best[d]))
-                             + f"$_{{({len(a_)})}}$")
-            else:
-                cells.append("--")
-        lines.append(m + " & " + " & ".join(cells) + " \\\\")
-    lines += ["\\bottomrule", "\\end{tabular}"]
-    (OUT / "track_b.tex").write_text("\n".join(lines))
+        values[m.replace("IFTPP", "IntensityFree")] = {head[d]: (v[d], None) for d in DS_B}
+    for m, dv in ours.items():
+        values[nice(m)] = {head[d]: mean_sd(x) for d, x in dv.items()}
+    pub = [m.replace("IFTPP", "IntensityFree") for m in PUBLISHED_S2P2]
+    mine = [m for m in OURS_ORDER if m in values]
+    classical = sorted(nice(m) for m in ours if not is_ours(m) and nice(m) not in mine)
+    tab = grouped_table([head[d] for d in DS_B],
+                        [("Neural TPPs, published (Chang et al., 2025)", pub, False),
+                         ("Classical Hawkes, our runs", classical, False), ("Ours", mine, True)], values)
+    (OUT / "track_b.tex").write_text(tab)
+    seeds = {nice(m): {head[d]: len(x) for d, x in dv.items()} for m, dv in ours.items()}
+    (OUT / "track_b_seeds.json").write_text(json.dumps(seeds, indent=1))
 
 
 # ------------------------------------------------------------------ Track C
@@ -167,21 +264,15 @@ def table_c():
     res = track_c_results()
     if not res:
         return
-    best = {tk: max((np.mean(v[tk]) for m, v in res.items() if tk in v and m != CLAMPED_IF), default=np.nan)
-            for tk in TK}
-    lines = ["\\begin{tabular}{l" + "c" * len(TK) + "}", "\\toprule",
-             "Model & " + " & ".join(t.upper() for t in TK) + " \\\\", "\\midrule"]
-    for m, v in res.items():
-        cells = []
-        for tk in TK:
-            if tk in v:
-                a = np.array(v[tk])
-                cells.append(fmt(a.mean(), a.std(ddof=1) if len(a) > 1 else None, bold=np.isclose(a.mean(), best[tk])))
-            else:
-                cells.append("--")
-        lines.append(m + " & " + " & ".join(cells) + " \\\\")
-    lines += ["\\bottomrule", "\\end{tabular}"]
-    (OUT / "track_c.tex").write_text("\n".join(lines))
+    values = {nice(m): {tk.upper(): mean_sd(v[tk]) for tk in v} for m, v in res.items()}
+    neural = ["RMTPP", "THP", "SAHP", "NHP", "AttNHP", "S2P2", "IntensityFree", CLAMPED_IF]
+    neural = [m for m in neural if m in values]
+    mine = [m for m in OURS_ORDER if m in values]
+    classical = [nice(m) for m in res if not is_ours(m) and nice(m) not in neural and nice(m) not in mine]
+    tab = grouped_table([t.upper() for t in TK],
+                        [("Classical Hawkes", classical, False), ("Neural TPPs (EasyTPP, our runs)", neural, False),
+                         ("Ours", mine, True)], values, exclude_rank=(CLAMPED_IF,))
+    (OUT / "track_c.tex").write_text(tab)
 
 
 # ------------------------------------------------------------------ Track D
@@ -190,17 +281,25 @@ def table_d():
     if not r:
         return
     H = r["horizons_s"]
-    lines = ["\\begin{tabular}{l" + "c" * (2 * len(H)) + "}", "\\toprule",
-             "& \\multicolumn{%d}{c}{RMSE $\\log(1+N)$} & \\multicolumn{%d}{c}{QLIKE (RV)} \\\\" % (len(H), len(H)),
-             "Method & " + " & ".join(f"{int(h / 60)}m" for h in H) * 1 + " & " + " & ".join(f"{int(h / 60)}m" for h in H) + " \\\\",
-             "\\midrule"]
+    n = len(H)
+    lines = ["\\begin{tabular}{l" + "r" * (2 * n) + "}", "\\toprule",
+             "& \\multicolumn{%d}{c}{RMSE of $\\log(1+N)$} & \\multicolumn{%d}{c}{QLIKE of realised variance} \\\\" % (n, n),
+             "\\cmidrule(lr){2-%d}\\cmidrule(lr){%d-%d}" % (n + 1, n + 2, 2 * n + 1),
+             "Method & " + " & ".join(f"{int(h / 60)} min" for h in H) + " & " + " & ".join(f"{int(h / 60)} min" for h in H)
+             + " \\\\", "\\midrule"]
     act = r["activity"]
-    rm = {k: np.mean(v["rmse_log"], axis=1) for k, v in act.items()}
-    ql = {k: np.mean(v["qlike"], axis=1) for k, v in act.items()}
-    for k in act:
-        c1 = [fmt(rm[k][h], bold=np.isclose(rm[k][h], min(x[h] for x in rm.values()))) for h in range(len(H))]
-        c2 = [fmt(ql[k][h], bold=np.isclose(ql[k][h], min(x[h] for x in ql.values()))) for h in range(len(H))]
-        lines.append(k + " & " + " & ".join(c1 + c2) + " \\\\")
+    keys = sorted(act, key=lambda k: "ours" in k)  # baselines first, ours last (shaded)
+    rm = {k: np.mean(act[k]["rmse_log"], axis=1) for k in keys}
+    ql = {k: np.mean(act[k]["qlike"], axis=1) for k in keys}
+    rk = {}
+    for name, tab in (("rm", rm), ("ql", ql)):
+        for h in range(n):
+            b, s = ranks([tab[k][h] for k in keys], higher=False)
+            rk[name, h] = (keys[b], keys[s])
+    for k in keys:
+        c = [cell(rm[k][h], rank=1 if rk["rm", h][0] == k else 2 if rk["rm", h][1] == k else 0) for h in range(n)]
+        c += [cell(ql[k][h], rank=1 if rk["ql", h][0] == k else 2 if rk["ql", h][1] == k else 0) for h in range(n)]
+        lines.append(("\\rowcolor{oursbg} " if "ours" in k else "") + nice(k) + " & " + " & ".join(c) + " \\\\")
     lines += ["\\bottomrule", "\\end{tabular}"]
     (OUT / "track_d.tex").write_text("\n".join(lines))
 
@@ -336,6 +435,12 @@ def numbers():
         best = min(rm, key=lambda k: rm[k][-1])
         out.append(f"\\newcommand{{\\bestActivityModel}}{{{best}}}")
         out.append(f"\\newcommand{{\\nTestReleases}}{{{d['n_test']}}}")
+    sf = OUT / "track_b_seeds.json"
+    if sf.exists():  # seed counts quoted in the Track B caption
+        s = json.loads(sf.read_text()).get("EPT-X", {})
+        words = {1: "one", 2: "two", 3: "three", 4: "four", 5: "five"}
+        txt = "; ".join(f"{d} {words.get(n, n)}" for d, n in s.items())
+        out.append(f"\\newcommand{{\\eptxSeeds}}{{{txt}}}")
     rhos = []
     for y in ("2022", "2023", "2024", "2025", "2026"):
         v = load(f"main_{y}.json")

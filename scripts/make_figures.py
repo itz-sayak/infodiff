@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 """Paper figures from results/json (static PDFs, light theme).
 
 Design rules (dataviz skill): small multiples instead of >3 categorical colours; validated

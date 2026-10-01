@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 """Track D driver: chronological post-release forecasting benchmark.
 
 Train: news + placebo windows of 2022-2024 (MSX fit with the main-study spec).

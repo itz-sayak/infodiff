@@ -1,0 +1,19 @@
+infodiff — Echo-Corrected Information Diffusion
+Copyright 2026 Sayak Dutta
+
+Code (src/, scripts/, tests/, notebooks/, dashboard/, docker/ and configuration files) is
+licensed under the Apache License, Version 2.0 (see LICENSE).
+
+The paper (manuscript/, including its text, figures and tables) is licensed under the
+Creative Commons Attribution 4.0 International License (see manuscript/LICENSE).
+
+Third-party software
+- docker/easytpp_equal_length_fix.patch and docker/easytpp_intensityfree_min_dt.patch modify
+  EasyTPP (https://github.com/ant-research/EasyTemporalPointProcess) and the S2P2 fork of it
+  (https://github.com/UCIDataLab/state_space_point_process), both Apache-2.0.
+- Classical baselines use tick (https://github.com/X-DataInitiative/tick), BSD-3-Clause.
+These projects are not redistributed here; see their repositories for their licenses.
+
+Data
+LOBSTER, HistData, Binance, FRED/ALFRED and EasyTPP data are subject to their providers'
+terms and are not redistributed.

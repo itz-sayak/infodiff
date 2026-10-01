@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 """Map between structured parameters (HawkesTruth-style arrays) and MSX theta vectors."""
 from __future__ import annotations
 

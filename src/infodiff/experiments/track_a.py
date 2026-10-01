@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 """Track A — synthetic recovery benchmark.
 
 Truths are simulated *outside* the MSX model class where possible (true power-law and

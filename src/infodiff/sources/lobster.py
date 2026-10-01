@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 """LOBSTER level-1 message files -> 6-type marked event sequences (EasyTPP schema).
 
 Types (following the standard 6-dimensional LOB Hawkes specification, e.g. Bacry,

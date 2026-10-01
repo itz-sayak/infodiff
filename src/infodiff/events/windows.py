@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 """Build windowed multi-asset event datasets around scheduled releases (+ placebo windows).
 
 Windows

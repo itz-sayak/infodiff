@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 """Run EasyTPP neural baselines (RMTPP, NHP, SAHP, THP, AttNHP, IntensityFree, MHP, S2P2)
 with the S2P2 authors' own per-model configuration (examples/configs/exp_config_taxi.yaml
 of github.com/UCIDataLab/state_space_point_process), changing only the dataset, seed,

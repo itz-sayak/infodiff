@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 """Train one EPT/EPT-X seed and write results/json/ept_runs/<dataset>__<tag>_s<seed>.json.
 One file per run, so seeds of the same dataset can run in parallel (GPU + CPU workers).
     python scripts/run_ept_seed.py <dataset> <seed> <tag> '<json config | auto[:overrides]>'"""

@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 """Windowed multivariate event data with exogenous (news) events.
 
 Data are a set of independent observation windows.  Window w has a likelihood

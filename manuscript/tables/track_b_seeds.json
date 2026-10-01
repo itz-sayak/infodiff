@@ -1,0 +1,48 @@
+{
+ "EPT-X": {
+  "Amazon": 3,
+  "Retweet": 1,
+  "Taxi": 5,
+  "Taobao": 3,
+  "StackOverflow": 3
+ },
+ "MSX-auto": {
+  "Amazon": 1,
+  "Retweet": 1,
+  "Taxi": 1,
+  "Taobao": 1,
+  "StackOverflow": 1
+ },
+ "MSX ($R=2$)": {
+  "Amazon": 1,
+  "Retweet": 1,
+  "Taxi": 1,
+  "Taobao": 1,
+  "StackOverflow": 1
+ },
+ "Hawkes EM (nonparam.)": {
+  "Amazon": 1,
+  "Retweet": 1,
+  "Taxi": 1,
+  "Taobao": 1,
+  "StackOverflow": 1
+ },
+ "ADM4": {
+  "Amazon": 1,
+  "Retweet": 1,
+  "Taxi": 1,
+  "Taobao": 1,
+  "StackOverflow": 1
+ },
+ "Conditional law": {
+  "Retweet": 1,
+  "Taxi": 1,
+  "Taobao": 1,
+  "StackOverflow": 1
+ },
+ "EPT": {
+  "Taxi": 1,
+  "Taobao": 1,
+  "StackOverflow": 1
+ }
+}

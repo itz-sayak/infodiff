@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 """EPT hyperparameter selection on validation log-likelihood (seed 0, 100 epochs).
 Appends to results/json/ept_hpo.json and writes configs/ept_best.json = config with the best
 mean validation-LL rank across the tuning datasets (used by run_ept.py "auto")."""

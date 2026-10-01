@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 """Classical Hawkes estimators behind one interface, scored with one likelihood engine.
 
 Every fitted model exposes: branching matrix G, baseline mu, kernel(i, j, t) and an

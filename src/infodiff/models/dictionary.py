@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 """Phase-type kernel dictionaries.
 
 Each dictionary element is a normalised phase-type density (integrates to 1):

@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 """Track D evaluation (CPU): load the 2022-2024 MSX fit, forecast 2025-2026 releases.
     python scripts/run_track_d.py [model_tag]
 """

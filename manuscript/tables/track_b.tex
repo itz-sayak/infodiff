@@ -1,22 +1,24 @@
-\begin{tabular}{lccccc}
+\begin{tabular}{lrrrrr}
 \toprule
-Model & Amazon & Retweet & Taxi & Taobao & StackOverflow \\
+& Amazon & Retweet & Taxi & Taobao & StackOverflow \\
 \midrule
-RMTPP$^\dagger$ & -2.136 & -7.098 & 0.346 & 1.003 & -2.480 \\
-SAHP$^\dagger$ & -2.074 & -6.708 & 0.298 & 1.168 & -2.341 \\
-THP$^\dagger$ & -2.096 & -6.659 & 0.372 & 0.790 & -2.338 \\
-IntensityFree$^\dagger$ & 0.496 & -10.344 & 0.453 & \textbf{1.318} & -2.233 \\
-MHP$^\dagger$ & -2.091 & -6.564 & 0.370 & 0.636 & -2.346 \\
-NHP$^\dagger$ & 0.129 & -6.348 & 0.514 & 1.157 & -2.241 \\
-AttNHP$^\dagger$ & 0.484 & -6.499 & 0.493 & 1.259 & -2.194 \\
-S2P2$^\dagger$ & \textbf{0.781} & -6.365 & \textbf{0.522} & 1.304 & \textbf{-2.163} \\
-\midrule
-EPT-TPP (ours) & -- & -- & 0.437$_{(1)}$ & 1.311$_{(1)}$ & -2.186$_{(1)}$ \\
-EPT-X (ours) & 0.594 $\pm$ 0.002$_{(3)}$ & \textbf{-5.719}$_{(1)}$ & 0.503 $\pm$ 0.004$_{(5)}$ & 1.316 $\pm$ 0.005$_{(3)}$ & -2.166 $\pm$ 0.001$_{(3)}$ \\
-MSX (ours, R=2) & -1.943$_{(1)}$ & -6.569$_{(1)}$ & -0.214$_{(1)}$ & 1.299$_{(1)}$ & -2.292$_{(1)}$ \\
-MSX-auto (ours) & -1.927$_{(1)}$ & -6.568$_{(1)}$ & -0.193$_{(1)}$ & 1.305$_{(1)}$ & -2.292$_{(1)}$ \\
-tick-ADM4 & -2.260$_{(1)}$ & -6.832$_{(1)}$ & -0.315$_{(1)}$ & 1.184$_{(1)}$ & -2.473$_{(1)}$ \\
-tick-ConditionalLaw & -- & -8.317$_{(1)}$ & -2.922$_{(1)}$ & -63.919$_{(1)}$ & -16.140$_{(1)}$ \\
-tick-EM(nonparam) & -1.002$_{(1)}$ & -6.655$_{(1)}$ & -0.308$_{(1)}$ & 1.269$_{(1)}$ & -2.370$_{(1)}$ \\
+\multicolumn{6}{l}{\textit{Neural TPPs, published (Chang et al., 2025)}} \\[1pt]
+\quad RMTPP & $-$2.136 & $-$7.098 & 0.346 & 1.003 & $-$2.480 \\
+\quad SAHP & $-$2.074 & $-$6.708 & 0.298 & 1.168 & $-$2.341 \\
+\quad THP & $-$2.096 & $-$6.659 & 0.372 & 0.790 & $-$2.338 \\
+\quad IntensityFree & 0.496 & $-$10.344 & 0.453 & \textbf{1.318} & $-$2.233 \\
+\quad MHP & $-$2.091 & $-$6.564 & 0.370 & 0.636 & $-$2.346 \\
+\quad NHP & 0.129 & \underline{$-$6.348} & \underline{0.514} & 1.157 & $-$2.241 \\
+\quad AttNHP & 0.484 & $-$6.499 & 0.493 & 1.259 & $-$2.194 \\
+\quad S2P2 & \textbf{0.781} & $-$6.365 & \textbf{0.522} & 1.304 & \textbf{$-$2.163} \\
+\addlinespace[3pt]\multicolumn{6}{l}{\textit{Classical Hawkes, our runs}} \\[1pt]
+\quad ADM4 & $-$2.260 & $-$6.832 & $-$0.315 & 1.184 & $-$2.473 \\
+\quad Conditional law & -- & $-$8.317 & $-$2.922 & $-$63.919 & $-$16.140 \\
+\quad Hawkes EM (nonparam.) & $-$1.002 & $-$6.655 & $-$0.308 & 1.269 & $-$2.370 \\
+\addlinespace[3pt]\multicolumn{6}{l}{\textit{Ours}} \\[1pt]
+\rowcolor{oursbg} \quad MSX ($R=2$) & $-$1.943 & $-$6.569 & $-$0.214 & 1.299 & $-$2.292 \\
+\rowcolor{oursbg} \quad MSX-auto & $-$1.927 & $-$6.568 & $-$0.193 & 1.305 & $-$2.292 \\
+\rowcolor{oursbg} \quad EPT & -- & -- & 0.437 & 1.311 & $-$2.186 \\
+\rowcolor{oursbg} \quad EPT-X & \underline{0.594}{\scriptsize\,$\pm$0.002} & \textbf{$-$5.719} & 0.503{\scriptsize\,$\pm$0.004} & \underline{1.316}{\scriptsize\,$\pm$0.005} & \underline{$-$2.166}{\scriptsize\,$\pm$0.001} \\
 \bottomrule
 \end{tabular}

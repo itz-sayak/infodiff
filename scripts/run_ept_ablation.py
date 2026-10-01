@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 """One EPT-X ablation run: python scripts/run_ept_ablation.py <dataset> <seed> <tag> '<json cfg>'
 Writes results/json/eptx_ablation_<dataset>_<tag>.json (one file per run: safe to run in parallel)."""
 import json, sys, warnings

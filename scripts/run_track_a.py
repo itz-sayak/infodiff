@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 """Track A synthetic benchmark (5 scenarios x 5 seeds x 9 methods)."""
 import warnings
 from pathlib import Path

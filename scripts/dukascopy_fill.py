@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 """Dukascopy tick downloader (run from a network where datafeed.dukascopy.com is reachable).
 
 Fills the HistData gap (Feb–Jul 2023 and scattered days) for EURUSD, USDJPY, XAUUSD and

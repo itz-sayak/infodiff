@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 """Cluster simulation for Hawkes processes with arbitrary (non phase-type) kernels.
 
 Used by the synthetic benchmark so that estimators are also tested *outside* their

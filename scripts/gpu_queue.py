@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 """Run GPU jobs strictly one at a time (the 8 GB laptop GPU cannot share).
 
 Jobs are lines in results/gpu_jobs.txt: "<name> | <command>".  Finished job names are

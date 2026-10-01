@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 """Train EPT-TPP on one dataset for several seeds; append results to results/json/ept_<dataset>.json.
     python scripts/run_ept.py <dataset> <seeds comma> '<json config>'
 """

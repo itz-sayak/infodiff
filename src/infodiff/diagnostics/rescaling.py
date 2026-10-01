@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 """Goodness-of-fit via the time-rescaling theorem.
 
 If lambda is the true conditional intensity, the compensator increments

@@ -1,7 +1,9 @@
 \section{Results}\label{sec:results}
 
 \subsection{Track A: synthetic recovery}
-Table~\ref{tab:track-a} reports means and standard deviations over five seeds.
+Table~\ref{tab:track-a} reports the held-out likelihood deficit (means and standard
+deviations over five seeds); branching-matrix, spectral-radius and kernel errors are in
+Table~\ref{tab:track-a-full} (Appendix).
 When the truth is a single exponential (S1) the correctly specified single-decay
 estimators (tick's exponential MLE and ADM4) are best, as they must be. Under a true
 power law (S2) the sum-of-exponentials estimators---tick's and MSX---are statistically
@@ -14,11 +16,13 @@ is roughly halved, and it recovers the causal graph perfectly (AUC $=1$). The
 exponential-only ablation isolates the contribution of Erlang phases, and the
 certificate of Proposition~\ref{prop:gap} was at most $3.3\times10^{-4}$ nats over all 100 MSX fits.
 
-\begin{table}[!htbp]\centering\scriptsize
-\caption{Track A. Five seeds; dLL is the held-out log-likelihood deficit to the true model
-($10^{-3}$ nats/event, lower is better); bold marks the best dLL per scenario.}
+\begin{table}[!htbp]\centering\small
+\caption{Track A, synthetic recovery: held-out log-likelihood deficit to the true model
+($10^{-3}$ nats per event, lower is better; mean $\pm$ s.d.\ over five seeds). Bold: best;
+underlined: second best; shaded: our estimators.}
 \label{tab:track-a}
-\resizebox{\linewidth}{!}{\input{tables/track_a}}
+\setlength{\tabcolsep}{5pt}
+\input{tables/track_a}
 \end{table}
 
 \FloatBarrier
@@ -116,12 +120,15 @@ EPT on Taxi and 0.02 on StackOverflow. The linear MSX model is close to the neur
 on Taobao (1.305) and Retweet, and far behind on Amazon and Taxi, where the dynamics are
 not self-exciting.
 
-\begin{table}[!htbp]\centering\scriptsize
-\caption{Track B: test log-likelihood per event on the EasyTPP benchmarks. $^\dagger$Published
-numbers of \citet{chang2025deep} (five seeds); our rows give mean $\pm$ s.d.\ with the number
-of seeds as subscript; the EPT-X configuration is selected per dataset on validation.}
+\begin{table}[!htbp]\centering\small
+\caption{Track B, public benchmarks: test log-likelihood per event (higher is better).
+Published numbers are from \citet{chang2025deep} (five seeds each); our rows give mean
+$\pm$ s.d.\ over seeds (EPT-X: \eptxSeeds; other rows one seed), with the EPT-X
+configuration selected per dataset on validation. Bold: best; underlined: second best;
+shaded: our models.}
 \label{tab:track-b}
-\resizebox{\linewidth}{!}{\input{tables/track_b}}
+\setlength{\tabcolsep}{5pt}
+\input{tables/track_b}
 \end{table}
 
 \FloatBarrier
@@ -157,12 +164,15 @@ Hawkes backbone is essential for EPT: without it EPT underperforms plain MSX (su
 run, Appendix). The renewal channel of EPT-X adds 0.08--0.16 nats per event over EPT on
 every stock.
 
-\begin{table}[!htbp]\centering\scriptsize
-\caption{Track C: test log-likelihood per event on LOBSTER (6 event types, 128-event
-sequences, chronological split). Bold: best per stock. $^\ast$As shipped by EasyTPP,
-IntensityFree clamps gaps at $10^{-5}$\,s before scoring, which is not the likelihood of the
-observed data; the IntensityFree row is re-trained and scored on the unclamped gaps.}\label{tab:track-c}
-\resizebox{\linewidth}{!}{\input{tables/track_c}}
+\begin{table}[!htbp]\centering\small
+\caption{Track C, LOBSTER order books: test log-likelihood per event (higher is better; six
+event types, 128-event sequences, chronological split; mean $\pm$ s.d.\ over seeds where
+several were run). Bold: best; underlined: second best; shaded: our models.
+$^\ast$As shipped by EasyTPP, IntensityFree clamps gaps at $10^{-5}$\,s before scoring, which
+is not the likelihood of the observed data; it is excluded from the ranking, and the
+IntensityFree row is re-trained and scored on the unclamped gaps.}\label{tab:track-c}
+\setlength{\tabcolsep}{5pt}
+\input{tables/track_c}
 \end{table}
 
 \FloatBarrier
@@ -176,7 +186,10 @@ move the structural model is informative: the correlation between the forecast a
 realised signed drift over the first minute is \driftCorrOursOne{}, against
 \driftCorrBaseOne{} for the best baseline (mean drift by release type and surprise sign).
 
-\begin{table}[!htbp]\centering\scriptsize
-\caption{Track D: post-release activity forecasts (mean over assets; lower is better).}\label{tab:track-d}
+\begin{table}[!htbp]\centering\small
+\caption{Track D, post-release activity forecasts on the \nTestReleases{} test releases of
+2025--2026 (mean over assets; lower is better). Bold: best; underlined: second best;
+shaded: our model.}\label{tab:track-d}
+\setlength{\tabcolsep}{5pt}
 \input{tables/track_d}
 \end{table}

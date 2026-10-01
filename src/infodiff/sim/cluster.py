@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 """Exact cluster (branching) simulation of phase-type Hawkes processes with news.
 
 Immigrants come from (i) the baseline mu_i(t) (thinning), (ii) news-triggered

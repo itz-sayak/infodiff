@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 """Select the exposure-weighted L1 level on news/anticipation kernels by held-out windows.
 
     python scripts/select_l1.py 2024 [l1 values comma-separated]

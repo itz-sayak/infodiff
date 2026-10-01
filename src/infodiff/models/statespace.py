@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 """Markov embedding of phase-type Hawkes processes and echo-corrected news responses.
 
 States: for each source j and dictionary element (k, r)

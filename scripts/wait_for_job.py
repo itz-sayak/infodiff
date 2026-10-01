@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 """Block until a named job appears in results/<queue>_jobs.done (queue dependency).
     python scripts/wait_for_job.py <queue> <job name>"""
 import sys, time

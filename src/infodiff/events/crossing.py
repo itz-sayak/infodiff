@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 """delta-crossing ("intrinsic time") price events.
 
 An up (down) event is emitted each time the log price moves +delta (-delta) away from

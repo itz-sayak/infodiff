@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 """Aggregate Track A results (mean ± std over seeds) into a markdown table."""
 import json
 import sys

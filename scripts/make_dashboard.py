@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 """Build dashboard/index.html (self-contained) from results/json. Re-run after new results."""
 import json
 from pathlib import Path

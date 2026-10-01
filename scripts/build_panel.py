@@ -1,3 +1,5 @@
+# Copyright 2026 Sayak Dutta
+# SPDX-License-Identifier: Apache-2.0
 """Build per-year windowed event panels (news + placebo windows, 6 assets)."""
 import json, time, warnings
 from pathlib import Path
