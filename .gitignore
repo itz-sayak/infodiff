@@ -18,3 +18,6 @@ manuscript/*.blg
 *.egg-info/
 .venv_cu126/
 results/ckpt/
+results/models/
+results/easytpp/checkpoints/
+*.pt
