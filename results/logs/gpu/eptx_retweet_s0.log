@@ -1,0 +1,25 @@
+
+=== Tue Sep 29 16:29:53 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_seed.py retweet 0 eptx "auto:{\"epochs\":300,\"renewal\":true}"
+Traceback (most recent call last):
+  File "D:\Quant\scripts\run_ept_seed.py", line 15, in <module>
+    r = train_one(ds, seed, **cfg)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\src\infodiff\experiments\track_b.py", line 187, in train_one_safe
+    def train_one_safe(name: str, seed: int, bs=64, min_bs=8, **kw) -> dict:
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\src\infodiff\experiments\track_b.py", line 134, in train_one
+    ll, n = model.loglik(dts, mk, msk)
+    ^^^^^^^^^^^^^^^
+  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\_tensor.py", line 623, in backward
+    torch.autograd.backward(
+  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\autograd\__init__.py", line 395, in backward
+    _engine_run_backward(
+  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\autograd\graph.py", line 979, in _engine_run_backward
+    return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+torch.AcceleratorError: CUDA error: out of memory
+Search for `cudaErrorMemoryAllocation' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+For more detailed error information, run with CUDA_LOG_FILE=stderr
+
+
+=== Wed Sep 30 12:15:32 2026 attempt 2: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_seed.py retweet 0 eptx "auto:{\"epochs\":300,\"renewal\":true}"

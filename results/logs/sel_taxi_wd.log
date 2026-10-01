@@ -1,0 +1,24 @@
+  taxi seed=0 ep=0 val_ll=-1.1979 best=-1.1979
+  taxi seed=0 ep=5 val_ll=0.0022 best=0.0022
+  taxi seed=0 ep=10 val_ll=0.2095 best=0.2095
+  taxi seed=0 ep=15 val_ll=0.2969 best=0.2969
+  taxi seed=0 ep=20 val_ll=0.3456 best=0.3456
+  taxi seed=0 ep=25 val_ll=0.3737 best=0.3737
+  taxi seed=0 ep=30 val_ll=0.3973 best=0.3973
+  taxi seed=0 ep=35 val_ll=0.4179 best=0.4179
+  taxi seed=0 ep=40 val_ll=0.4204 best=0.4206
+  taxi seed=0 ep=45 val_ll=0.4333 best=0.4341
+  taxi seed=0 ep=50 val_ll=0.4354 best=0.4363
+  taxi seed=0 ep=55 val_ll=0.4454 best=0.4454
+  taxi seed=0 ep=60 val_ll=0.4434 best=0.4488
+  taxi seed=0 ep=65 val_ll=0.4539 best=0.4539
+  taxi seed=0 ep=70 val_ll=0.4546 best=0.4558
+  taxi seed=0 ep=75 val_ll=0.4555 best=0.4583
+  taxi seed=0 ep=80 val_ll=0.4568 best=0.4583
+  taxi seed=0 ep=85 val_ll=0.4547 best=0.4583
+  taxi seed=0 ep=90 val_ll=0.4541 best=0.4583
+  taxi seed=0 ep=95 val_ll=0.4560 best=0.4583
+  taxi seed=0 ep=100 val_ll=0.4580 best=0.4583
+  taxi seed=0 ep=105 val_ll=0.4515 best=0.4583
+  taxi seed=0 ep=110 val_ll=0.4489 best=0.4583
+RESULT {"ll_per_event": 0.49762149128272365, "n_events": 14420.0, "time_ll": 0.7328309883191747, "mark_ll": -0.2352094970364511, "rmse": 0.2807556688785553, "acc": 0.917475700378418, "dataset": "taxi", "seed": 0, "val_ll": 0.45831417441699057, "epochs": 113, "seconds": 1350.0450685024261, "hidden": 64, "n_rates": 8, "n_channels": 4, "phases": 4, "lr": 0.01, "gompertz": true, "model": "EPT-X", "renewal": true, "input_v2": true, "ept_channel": true, "rn_shift": false, "rn_scales": 24, "rn_orders": [1, 4, 16], "n_layers": 1, "layer_norm": false, "dropout": 0.0, "weight_decay": 0.01, "n_params": 145689, "batch_size": 64, "config": {"n_rates": 8, "phases": 4, "epochs": 300, "patience": 40, "renewal": true, "weight_decay": 0.01}, "tag": "sel_wd"}

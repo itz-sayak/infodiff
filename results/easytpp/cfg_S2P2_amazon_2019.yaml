@@ -2,7 +2,7 @@ S2P2_train:
   base_config:
     backend: torch
     base_dir: D:\Quant\results\easytpp\checkpoints/
-    dataset_id: lob_aapl
+    dataset_id: amazon
     model_id: S2P2
     runner_id: std_tpp
     stage: train
@@ -22,7 +22,7 @@ S2P2_train:
     num_layers: 4
     use_mc_samples: true
   trainer_config:
-    batch_size: 32
+    batch_size: 128
     gpu: 0
     learning_rate: 0.01
     lr_decay_style: cosine
@@ -37,14 +37,14 @@ S2P2_train:
     warmup_pct: 0.01
     weight_decay: 0.0
 data:
-  lob_aapl:
+  amazon:
     data_format: json
     data_specs:
-      num_event_types: 6
-      pad_token_id: 6
+      num_event_types: 16
+      pad_token_id: 16
       padding_side: right
       truncation_side: right
-    test_dir: D:\Quant\data\processed\tpp\lob_aapl_test.json
-    train_dir: D:\Quant\data\processed\tpp\lob_aapl_train.json
-    valid_dir: D:\Quant\data\processed\tpp\lob_aapl_validation.json
+    test_dir: D:\Quant\data\raw\easytpp\amazon_test.json
+    train_dir: D:\Quant\data\raw\easytpp\amazon_train.json
+    valid_dir: D:\Quant\data\raw\easytpp\amazon_validation.json
 pipeline_config_id: runner_config

@@ -1,0 +1,8 @@
+  taxi seed=0 ep=0 val_ll=nan best=-inf
+  taxi seed=0 ep=5 val_ll=nan best=-inf
+  taxi seed=0 ep=10 val_ll=nan best=-inf
+  taxi seed=0 ep=15 val_ll=nan best=-inf
+  taxi seed=0 ep=20 val_ll=nan best=-inf
+  taxi seed=0 ep=25 val_ll=nan best=-inf
+  taxi seed=0 ep=30 val_ll=nan best=-inf
+  taxi seed=0 ep=35 val_ll=nan best=-inf

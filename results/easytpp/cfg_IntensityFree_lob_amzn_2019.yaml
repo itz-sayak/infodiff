@@ -2,7 +2,7 @@ IntensityFree_train:
   base_config:
     backend: torch
     base_dir: D:\Quant\results\easytpp\checkpoints/
-    dataset_id: lob_aapl
+    dataset_id: lob_amzn
     model_id: IntensityFree
     runner_id: std_tpp
     stage: train
@@ -32,14 +32,14 @@ IntensityFree_train:
     warmup_pct: 0.1
     weight_decay: 0.0
 data:
-  lob_aapl:
+  lob_amzn:
     data_format: json
     data_specs:
       num_event_types: 6
       pad_token_id: 6
       padding_side: right
       truncation_side: right
-    test_dir: D:\Quant\data\processed\tpp\lob_aapl_test.json
-    train_dir: D:\Quant\data\processed\tpp\lob_aapl_train.json
-    valid_dir: D:\Quant\data\processed\tpp\lob_aapl_validation.json
+    test_dir: D:\Quant\data\processed\tpp\lob_amzn_test.json
+    train_dir: D:\Quant\data\processed\tpp\lob_amzn_train.json
+    valid_dir: D:\Quant\data\processed\tpp\lob_amzn_validation.json
 pipeline_config_id: runner_config

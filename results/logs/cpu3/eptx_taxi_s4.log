@@ -1,0 +1,3 @@
+
+=== Tue Sep 29 22:32:18 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_seed.py taxi 4 eptx "auto:{\"epochs\":300,\"renewal\":true}"
+RESULT {"ll_per_event": 0.4969460919892077, "n_events": 14420.0, "rmse": 0.28136301040649414, "acc": 0.9158807396888733, "dataset": "taxi", "seed": 4, "val_ll": 0.4596517627468247, "epochs": 106, "seconds": 1417.9282050132751, "hidden": 64, "n_rates": 8, "n_channels": 4, "phases": 4, "lr": 0.01, "gompertz": true, "model": "EPT-X", "renewal": true, "input_v2": true, "ept_channel": true, "rn_shift": false, "rn_scales": 24, "rn_orders": [1, 4, 16], "n_params": 145689, "batch_size": 64, "config": {"hidden": 64, "n_rates": 8, "phases": 4, "epochs": 300, "renewal": true}, "tag": "eptx"}

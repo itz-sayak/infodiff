@@ -1,0 +1,23 @@
+
+=== Wed Sep 30 03:08:42 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_ablation.py taxi 0 sel_wide "{\"n_rates\": 8, \"phases\": 4, \"epochs\": 100, \"patience\": 20, \"renewal\": true, \"hidden\": 128, \"dropout\": 0.1}"
+  taxi seed=0 ep=0 val_ll=-0.5647 best=-0.5647
+  taxi seed=0 ep=5 val_ll=0.0632 best=0.0632
+  taxi seed=0 ep=10 val_ll=0.2275 best=0.2275
+  taxi seed=0 ep=15 val_ll=0.3019 best=0.3019
+  taxi seed=0 ep=20 val_ll=0.3458 best=0.3458
+  taxi seed=0 ep=25 val_ll=0.3666 best=0.3666
+  taxi seed=0 ep=30 val_ll=0.3806 best=0.3847
+  taxi seed=0 ep=35 val_ll=0.4006 best=0.4006
+  taxi seed=0 ep=40 val_ll=0.4054 best=0.4054
+  taxi seed=0 ep=45 val_ll=0.4102 best=0.4118
+  taxi seed=0 ep=50 val_ll=0.4170 best=0.4170
+  taxi seed=0 ep=55 val_ll=0.4203 best=0.4208
+  taxi seed=0 ep=60 val_ll=0.4235 best=0.4235
+  taxi seed=0 ep=65 val_ll=0.4258 best=0.4258
+  taxi seed=0 ep=70 val_ll=0.4272 best=0.4276
+  taxi seed=0 ep=75 val_ll=0.4272 best=0.4288
+  taxi seed=0 ep=80 val_ll=0.4290 best=0.4300
+  taxi seed=0 ep=85 val_ll=0.4300 best=0.4300
+  taxi seed=0 ep=90 val_ll=0.4305 best=0.4307
+  taxi seed=0 ep=95 val_ll=0.4305 best=0.4307
+RESULT {"ll_per_event": 0.47803306632498266, "n_events": 14420.0, "time_ll": 0.7157607841756242, "mark_ll": -0.23772771785064148, "rmse": 0.28101763129234314, "acc": 0.9160194396972656, "dataset": "taxi", "seed": 0, "val_ll": 0.43068426069718213, "epochs": 100, "seconds": 1931.8558037281036, "hidden": 128, "n_rates": 8, "n_channels": 4, "phases": 4, "lr": 0.01, "gompertz": true, "model": "EPT-X", "renewal": true, "input_v2": true, "ept_channel": true, "rn_shift": false, "rn_scales": 24, "rn_orders": [1, 4, 16], "n_layers": 1, "layer_norm": false, "dropout": 0.1, "weight_decay": 0.0, "n_params": 310041, "batch_size": 64, "config": {"n_rates": 8, "phases": 4, "epochs": 100, "patience": 20, "renewal": true, "hidden": 128, "dropout": 0.1}, "tag": "sel_wide"}

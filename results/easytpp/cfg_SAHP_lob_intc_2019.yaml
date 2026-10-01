@@ -1,19 +1,16 @@
-IntensityFree_train:
+SAHP_train:
   base_config:
     backend: torch
     base_dir: D:\Quant\results\easytpp\checkpoints/
-    dataset_id: lob_aapl
-    model_id: IntensityFree
+    dataset_id: lob_intc
+    model_id: SAHP
     runner_id: std_tpp
     stage: train
   model_config:
-    dropout: 0.0
-    hidden_size: 32
+    hidden_size: 16
     loss_integral_num_sample_per_step: 10
-    model_specs:
-      num_mix_components: 3
-    num_layers: 1
-    sharing_param_layer: false
+    num_heads: 4
+    num_layers: 2
     use_ln: false
     use_mc_samples: true
   trainer_config:
@@ -22,24 +19,24 @@ IntensityFree_train:
     learning_rate: 0.01
     lr_decay_style: cosine
     lr_scheduler: true
-    max_epoch: 1500
+    max_epoch: 100
     metrics: []
     optimizer: adam
     seed: 2019
     shuffle: true
     use_tfb: false
     valid_freq: 1
-    warmup_pct: 0.1
+    warmup_pct: 0.01
     weight_decay: 0.0
 data:
-  lob_aapl:
+  lob_intc:
     data_format: json
     data_specs:
       num_event_types: 6
       pad_token_id: 6
       padding_side: right
       truncation_side: right
-    test_dir: D:\Quant\data\processed\tpp\lob_aapl_test.json
-    train_dir: D:\Quant\data\processed\tpp\lob_aapl_train.json
-    valid_dir: D:\Quant\data\processed\tpp\lob_aapl_validation.json
+    test_dir: D:\Quant\data\processed\tpp\lob_intc_test.json
+    train_dir: D:\Quant\data\processed\tpp\lob_intc_train.json
+    valid_dir: D:\Quant\data\processed\tpp\lob_intc_validation.json
 pipeline_config_id: runner_config

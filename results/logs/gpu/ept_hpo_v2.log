@@ -1,0 +1,44 @@
+
+=== Mon Sep 28 21:42:00 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_hpo.py taxi,taobao,stackoverflow
+[W928 21:55:24.000000000 CUDACachingAllocator.cpp:3933] memory allocation failed with OOM on device 0 while trying to allocate 2229272576 bytes (free: 0, total: 8585216000).
+[W928 21:55:44.000000000 CUDACachingAllocator.cpp:3933] memory allocation failed with OOM on device 0 while trying to allocate 1115684864 bytes (free: 0, total: 8585216000).
+[W928 21:55:44.000000000 CUDACachingAllocator.cpp:3933] memory allocation failed with OOM on device 0 while trying to allocate 1115684864 bytes (free: 0, total: 8585216000).
+OOM on taobao: retrying with batch size 32
+[W928 22:12:36.000000000 CUDACachingAllocator.cpp:3933] memory allocation failed with OOM on device 0 while trying to allocate 2229272576 bytes (free: 0, total: 8585216000).
+[W928 22:12:58.000000000 CUDACachingAllocator.cpp:3933] memory allocation failed with OOM on device 0 while trying to allocate 2229272576 bytes (free: 0, total: 8585216000).
+OOM on taobao: retrying with batch size 16
+[W928 22:39:49.000000000 CUDACachingAllocator.cpp:3933] memory allocation failed with OOM on device 0 while trying to allocate 2229272576 bytes (free: 0, total: 8585216000).
+[W928 22:40:13.000000000 CUDACachingAllocator.cpp:3933] memory allocation failed with OOM on device 0 while trying to allocate 2229272576 bytes (free: 0, total: 8585216000).
+OOM on taobao: retrying with batch size 8
+Traceback (most recent call last):
+  File "D:\Quant\scripts\run_ept_hpo.py", line 20, in <module>
+    r = train_one(ds, 0, **g)
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\src\infodiff\experiments\track_b.py", line 166, in train_one_safe
+    r = r or train_one(ds, s, verbose=verbose, **best_cfg)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\src\infodiff\experiments\track_b.py", line 116, in train_one
+    n_warm = max(1, int(warmup * steps))
+            ^^^^^^^^^^^^^^^
+  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\_tensor.py", line 623, in backward
+    torch.autograd.backward(
+  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\autograd\__init__.py", line 395, in backward
+    _engine_run_backward(
+  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\autograd\graph.py", line 979, in _engine_run_backward
+    return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+torch.AcceleratorError: CUDA error: out of memory
+Search for `cudaErrorMemoryAllocation' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+For more detailed error information, run with CUDA_LOG_FILE=stderr
+
+
+=== Tue Sep 29 08:49:59 2026 attempt 2: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_hpo.py taxi,taobao,stackoverflow
+taobao {'hidden': 64, 'n_rates': 8, 'phases': 2, 'epochs': 100} val 1.1953 test 1.3102
+taobao {'hidden': 64, 'n_rates': 8, 'phases': 4, 'epochs': 100} val 1.2016 test 1.3168
+taobao {'hidden': 128, 'n_rates': 8, 'phases': 2, 'epochs': 100} val 1.1802 test 1.2924
+taobao {'hidden': 128, 'n_rates': 8, 'phases': 4, 'epochs': 100} val 1.1884 test 1.301
+stackoverflow {'hidden': 64, 'n_rates': 8, 'phases': 2, 'epochs': 100} val -2.212 test -2.2132
+stackoverflow {'hidden': 64, 'n_rates': 8, 'phases': 4, 'epochs': 100} val -2.2116 test -2.2123
+stackoverflow {'hidden': 128, 'n_rates': 8, 'phases': 2, 'epochs': 100} val -2.2257 test -2.2259
+stackoverflow {'hidden': 128, 'n_rates': 8, 'phases': 4, 'epochs': 100} val -2.2193 test -2.2167
+selected {'hidden': 64, 'n_rates': 8, 'phases': 4}

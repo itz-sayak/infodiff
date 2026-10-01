@@ -67,3 +67,7 @@ Tue Sep 29 14:21:41 2026 ept_hpo_v2 rc=0
 Tue Sep 29 14:55:01 2026 easy_IntensityFree_lob_aapl_1500ep_mindt1e-12 rc=0
 Tue Sep 29 15:14:04 2026 easy_IntensityFree_lob_amzn_1500ep_mindt1e-12 rc=0
 Tue Sep 29 15:31:11 2026 easy_IntensityFree_lob_goog_1500ep_mindt1e-12 rc=0
+Tue Sep 29 16:29:53 2026 easy_S2P2_taxi_repro rc=0
+Wed Sep 30 12:16:01 2026 eptx_retweet_s0 rc=1
+Wed Sep 30 13:11:14 2026 eptx_retweet_s0_bs16 rc=1
+Thu Oct  1 02:46:36 2026 eptx_retweet_s0_bs32 rc=0

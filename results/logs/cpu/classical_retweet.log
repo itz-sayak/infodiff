@@ -1,0 +1,9 @@
+
+=== Tue Sep 29 14:30:38 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_track_b_classical.py retweet
+{"dataset": "retweet", "method": "MSX-auto (ours)", "key": "MSX-auto", "ll_per_event": -6.567513985816923, "val_ll": -6.5914270593522115, "seconds": 5200.276139259338, "gap": 0.008248013444244862, "R": 4, "l1": 0.0}
+{"dataset": "retweet", "method": "MSX (ours, R=2)", "key": "MSX", "ll_per_event": -6.568923686597448, "val_ll": -6.592713966813568, "seconds": 181.99473333358765, "gap": 0.0029159048572182655}
+{"dataset": "retweet", "key": "ExpKern", "error": "TypeError('cannot unpack non-iterable NoneType object')"}
+{"dataset": "retweet", "key": "SumExp", "error": "RuntimeError('The sum of the influence on someone cannot be negative. Maybe did you forget to add a positive constraint to your proximal operator\\n')"}
+{"dataset": "retweet", "method": "tick-EM(nonparam)", "key": "EM", "ll_per_event": -6.655193070665339, "val_ll": -6.678327306145702, "seconds": 437.87098717689514}
+{"dataset": "retweet", "method": "tick-ADM4", "key": "ADM4", "ll_per_event": -6.8319641350986595, "val_ll": -6.856172563957618, "seconds": 65.32743334770203, "decay": 0.0029073621501664007}
+{"dataset": "retweet", "method": "tick-ConditionalLaw", "key": "CondLaw", "ll_per_event": -8.317054330816648, "val_ll": -8.347637557004461, "seconds": 34.08234763145447}

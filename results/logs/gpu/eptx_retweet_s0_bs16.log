@@ -1,0 +1,5 @@
+
+=== Wed Sep 30 12:16:01 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_seed.py retweet 0 eptx "auto:{\"epochs\":150,\"patience\":20,\"renewal\":true,\"bs\":16,\"verbose\":true}"
+  retweet seed=0 ep=0 val_ll=-6.2007 best=-6.2007
+
+=== Wed Sep 30 13:10:42 2026 attempt 2: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_seed.py retweet 0 eptx "auto:{\"epochs\":150,\"patience\":20,\"renewal\":true,\"bs\":16,\"verbose\":true}"

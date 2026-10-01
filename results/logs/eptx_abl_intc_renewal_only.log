@@ -1,0 +1,16 @@
+  lob_intc seed=0 ep=0 val_ll=4.7615 best=4.7615
+  lob_intc seed=0 ep=5 val_ll=5.3833 best=5.3833
+  lob_intc seed=0 ep=10 val_ll=5.4312 best=5.4312
+  lob_intc seed=0 ep=15 val_ll=5.4451 best=5.4451
+  lob_intc seed=0 ep=20 val_ll=5.4488 best=5.4549
+  lob_intc seed=0 ep=25 val_ll=5.4590 best=5.4590
+  lob_intc seed=0 ep=30 val_ll=5.4637 best=5.4637
+  lob_intc seed=0 ep=35 val_ll=5.4616 best=5.4642
+  lob_intc seed=0 ep=40 val_ll=5.4621 best=5.4642
+  lob_intc seed=0 ep=45 val_ll=5.4607 best=5.4642
+  lob_intc seed=0 ep=50 val_ll=5.4562 best=5.4642
+  lob_intc seed=0 ep=55 val_ll=5.4554 best=5.4642
+  lob_intc seed=0 ep=60 val_ll=5.4554 best=5.4642
+  lob_intc seed=0 ep=65 val_ll=5.4548 best=5.4642
+  lob_intc seed=0 ep=70 val_ll=5.4507 best=5.4642
+RESULT {"ll_per_event": 6.123914041994751, "n_events": 104775.0, "rmse": 0.17296184599399567, "acc": 0.543030321598053, "dataset": "lob_intc", "seed": 0, "val_ll": 5.464219688924575, "epochs": 73, "seconds": 2440.6950311660767, "hidden": 64, "n_rates": 8, "n_channels": 4, "phases": 2, "lr": 0.01, "gompertz": true, "model": "EPT-X-renewal-only", "renewal": true, "input_v2": true, "ept_channel": false, "rn_scales": 24, "rn_orders": [1, 4, 16], "n_params": 69645, "batch_size": 64, "config": {"epochs": 300, "phases": 2, "renewal": true, "ept_channel": false}, "tag": "renewal_only"}

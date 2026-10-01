@@ -1,0 +1,5 @@
+  retweet seed=1 ep=0 val_ll=-6.1695 best=-6.1695
+  retweet seed=1 ep=5 val_ll=-5.8575 best=-5.8575
+  retweet seed=1 ep=10 val_ll=-5.7990 best=-5.7990
+  retweet seed=1 ep=15 val_ll=-5.7618 best=-5.7618
+  retweet seed=1 ep=20 val_ll=-5.7455 best=-5.7455

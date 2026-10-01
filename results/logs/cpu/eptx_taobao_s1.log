@@ -1,0 +1,3 @@
+
+=== Tue Sep 29 18:12:55 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_seed.py taobao 1 eptx "auto:{\"epochs\":300,\"renewal\":true}"
+RESULT {"ll_per_event": 1.3216565266723306, "n_events": 27955.0, "rmse": 0.1249174103140831, "acc": 0.6132713556289673, "dataset": "taobao", "seed": 1, "val_ll": 1.2054186050057665, "epochs": 71, "seconds": 2046.4091582298279, "hidden": 64, "n_rates": 8, "n_channels": 4, "phases": 4, "lr": 0.01, "gompertz": true, "model": "EPT-X", "renewal": true, "input_v2": true, "ept_channel": true, "rn_shift": false, "rn_scales": 24, "rn_orders": [1, 4, 16], "n_params": 221282, "batch_size": 64, "config": {"hidden": 64, "n_rates": 8, "phases": 4, "epochs": 300, "renewal": true}, "tag": "eptx"}

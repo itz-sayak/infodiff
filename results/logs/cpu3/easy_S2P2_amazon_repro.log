@@ -1,0 +1,41 @@
+
+=== Wed Sep 30 09:55:31 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner S2P2 amazon 16 2019 - 128
+[31;1m2026-09-30 09:55:39,033 - config.py[pid:16680;line:33:build_from_yaml_file] - CRITICAL: Load pipeline config class RunnerConfig[0m
+[31;1m2026-09-30 09:55:39,078 - runner_config.py[pid:16680;line:205:update_config] - CRITICAL: train model S2P2 using CPU with torch backend[0m
+[38;20m2026-09-30 09:55:39,084 - runner_config.py[pid:16680;line:45:__init__] - INFO: Save the config to D:\Quant\results\easytpp\checkpoints/amazon/S2P2/train_2026_09_30_09_55_39\S2P2_train_output.yaml[0m
+[38;20m2026-09-30 09:55:39,085 - base_runner.py[pid:16680;line:193:save_log] - INFO: Save the log to D:\Quant\results\easytpp\checkpoints/amazon/S2P2/train_2026_09_30_09_55_39\log[0m
+Generating train split: 0 examples [00:00, ? examples/s]Generating train split: 6454 examples [00:00, 62787.41 examples/s]Generating train split: 6454 examples [00:00, 58831.03 examples/s]
+0.5208579959856416 0.33867220303819207
+min_dt: 0.0100000147
+max_dt: 0.7999971801
+[38;20m2026-09-30 09:55:51,579 - tpp_runner.py[pid:16680;line:62:_init_model] - INFO: Num of model parameters 36640[0m
+Generating validation split: 0 examples [00:00, ? examples/s]Generating validation split: 922 examples [00:00, 58904.64 examples/s]
+Generating test split: 0 examples [00:00, ? examples/s]Generating test split: 1851 examples [00:00, 81990.25 examples/s]
+[38;20m2026-09-30 09:55:52,511 - base_runner.py[pid:16680;line:103:train] - INFO: Data 'amazon' loaded...[0m
+[38;20m2026-09-30 09:55:52,511 - base_runner.py[pid:16680;line:108:train] - INFO: Start S2P2 training...[0m
+[38;20m2026-09-30 10:23:00,668 - tpp_runner.py[pid:16680;line:104:_train_model] - INFO: [ Epoch 0 (train) ]: train loglike is -3.5961301361957654, num_events is 281923, mark_ll is -2.4586191482525814, time_ll is -1.1375109695951617[0m
+[38;20m2026-09-30 10:23:14,960 - tpp_runner.py[pid:16680;line:116:_train_model] - INFO: [ Epoch 0 (valid) ]:  valid loglike is -1.338759269825732, num_events is 40073, mark_ll is -2.2368328557219015, time_ll is 0.8980735600034819[0m
+[38;20m2026-09-30 10:23:54,233 - tpp_runner.py[pid:16680;line:136:_train_model] - INFO: [ Epoch 0 (test) ]: test loglike is -1.33193691679745, num_events is 82197, mark_ll is -2.216062371022513, time_ll is 0.8841254987778979[0m
+[31;1m2026-09-30 10:23:54,234 - tpp_runner.py[pid:16680;line:140:_train_model] - CRITICAL: current best loglike on valid set is -1.3388 (updated at epoch-0), best updated at this epoch[0m
+[38;20m2026-09-30 10:47:24,491 - tpp_runner.py[pid:16680;line:104:_train_model] - INFO: [ Epoch 1 (train) ]: train loglike is -1.0851290136111522, num_events is 281923, mark_ll is -2.1971991018907424, time_ll is 1.1120700553722227[0m
+[38;20m2026-09-30 10:47:38,575 - tpp_runner.py[pid:16680;line:116:_train_model] - INFO: [ Epoch 1 (valid) ]:  valid loglike is -1.3829414547211105, num_events is 40073, mark_ll is -2.1751959473277673, time_ll is 0.7922543570508237[0m
+[38;20m2026-09-30 10:48:06,333 - tpp_runner.py[pid:16680;line:136:_train_model] - INFO: [ Epoch 1 (test) ]: test loglike is -1.378921994971874, num_events is 82197, mark_ll is -2.1550745239428597, time_ll is 0.7761525200604189[0m
+[31;1m2026-09-30 10:48:06,333 - tpp_runner.py[pid:16680;line:140:_train_model] - CRITICAL: current best loglike on valid set is -1.3388 (updated at epoch-0)[0m
+[38;20m2026-09-30 11:09:40,680 - tpp_runner.py[pid:16680;line:104:_train_model] - INFO: [ Epoch 2 (train) ]: train loglike is -1.0772266860238655, num_events is 281923, mark_ll is -2.2016603242507706, time_ll is 1.1244336338969882[0m
+[38;20m2026-09-30 11:09:58,944 - tpp_runner.py[pid:16680;line:116:_train_model] - INFO: [ Epoch 2 (valid) ]:  valid loglike is -0.3689677182038288, num_events is 40073, mark_ll is -2.192071728616759, time_ll is 1.8231040363056172[0m
+[38;20m2026-09-30 11:10:38,126 - tpp_runner.py[pid:16680;line:136:_train_model] - INFO: [ Epoch 2 (test) ]: test loglike is -0.3631593408202531, num_events is 82197, mark_ll is -2.1760784471110566, time_ll is 1.812919081786744[0m
+[31;1m2026-09-30 11:10:38,128 - tpp_runner.py[pid:16680;line:140:_train_model] - CRITICAL: current best loglike on valid set is -0.3690 (updated at epoch-2), best updated at this epoch[0m
+[38;20m2026-09-30 11:34:02,530 - tpp_runner.py[pid:16680;line:104:_train_model] - INFO: [ Epoch 3 (train) ]: train loglike is -2.1334030746676618, num_events is 281923, mark_ll is -2.3323731644755394, time_ll is 0.19897010210754731[0m
+[38;20m2026-09-30 11:34:18,612 - tpp_runner.py[pid:16680;line:116:_train_model] - INFO: [ Epoch 3 (valid) ]:  valid loglike is -1.8040938080970979, num_events is 40073, mark_ll is -2.3359841616686268, time_ll is 0.5318903246326431[0m
+[38;20m2026-09-30 11:34:50,810 - tpp_runner.py[pid:16680;line:136:_train_model] - INFO: [ Epoch 3 (test) ]: test loglike is -1.7943630161190494, num_events is 82197, mark_ll is -2.303830570772428, time_ll is 0.5094674937645041[0m
+[31;1m2026-09-30 11:34:50,810 - tpp_runner.py[pid:16680;line:140:_train_model] - CRITICAL: current best loglike on valid set is -0.3690 (updated at epoch-2)[0m
+[38;20m2026-09-30 11:53:58,805 - tpp_runner.py[pid:16680;line:104:_train_model] - INFO: [ Epoch 4 (train) ]: train loglike is -1.3765279185135435, num_events is 281923, mark_ll is -2.2142967498827253, time_ll is 0.8377688573486821[0m
+[38;20m2026-09-30 11:54:12,610 - tpp_runner.py[pid:16680;line:116:_train_model] - INFO: [ Epoch 4 (valid) ]:  valid loglike is -0.8798931908982903, num_events is 40073, mark_ll is -2.159156670424132, time_ll is 1.2792635434960105[0m
+[38;20m2026-09-30 11:54:39,642 - tpp_runner.py[pid:16680;line:136:_train_model] - INFO: [ Epoch 4 (test) ]: test loglike is -0.8713453309484379, num_events is 82197, mark_ll is -2.1327481181832972, time_ll is 1.2614027486224026[0m
+[31;1m2026-09-30 11:54:39,642 - tpp_runner.py[pid:16680;line:140:_train_model] - CRITICAL: current best loglike on valid set is -0.3690 (updated at epoch-2)[0m
+
+=== Wed Sep 30 12:11:31 2026 attempt 2: D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner S2P2 amazon 16 2019 - 128
+[31;1m2026-09-30 12:11:36,374 - config.py[pid:8452;line:33:build_from_yaml_file] - CRITICAL: Load pipeline config class RunnerConfig[0m
+[31;1m2026-09-30 12:11:36,391 - runner_config.py[pid:8452;line:205:update_config] - CRITICAL: train model S2P2 using CPU with torch backend[0m
+[38;20m2026-09-30 12:11:36,402 - runner_config.py[pid:8452;line:45:__init__] - INFO: Save the config to D:\Quant\results\easytpp\checkpoints/amazon/S2P2/train_2026_09_30_12_11_36\S2P2_train_output.yaml[0m
+[38;20m2026-09-30 12:11:36,403 - base_runner.py[pid:8452;line:193:save_log] - INFO: Save the log to D:\Quant\results\easytpp\checkpoints/amazon/S2P2/train_2026_09_30_12_11_36\log[0m

@@ -1,0 +1,9 @@
+
+=== Tue Sep 29 13:43:09 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_track_b_classical.py amazon
+{"dataset": "amazon", "method": "MSX-auto (ours)", "key": "MSX-auto", "ll_per_event": -1.9266210388910456, "val_ll": -1.9156356832574555, "seconds": 2008.593136548996, "gap": 0.0007166464347392321, "R": 4, "l1": 0.0}
+{"dataset": "amazon", "method": "MSX (ours, R=2)", "key": "MSX", "ll_per_event": -1.942991015482132, "val_ll": -1.9322224834822799, "seconds": 58.93409490585327, "gap": 0.0021975738782202825}
+{"dataset": "amazon", "key": "ExpKern", "error": "TypeError('cannot unpack non-iterable NoneType object')"}
+{"dataset": "amazon", "key": "SumExp", "error": "RuntimeError('The sum of the influence on someone cannot be negative. Maybe did you forget to add a positive constraint to your proximal operator\\n')"}
+{"dataset": "amazon", "method": "tick-EM(nonparam)", "key": "EM", "ll_per_event": -1.001650815225014, "val_ll": -0.9879599796674129, "seconds": 98.72997331619263}
+{"dataset": "amazon", "method": "tick-ADM4", "key": "ADM4", "ll_per_event": -2.2600398876976118, "val_ll": -2.2508147584629397, "seconds": 602.8685081005096, "decay": 32.824933793291876}
+{"dataset": "amazon", "key": "CondLaw", "error": "TypeError('cannot unpack non-iterable NoneType object')"}

@@ -1,0 +1,12 @@
+
+=== Wed Sep 30 01:12:04 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_ablation.py taobao 0 sel_sharp "{\"n_rates\": 8, \"phases\": 4, \"epochs\": 100, \"patience\": 20, \"renewal\": true, \"hidden\": 64, \"rn_shift\": true, \"rn_orders\": [1, 4, 16, 64, 256, 1024]}"
+  taobao seed=0 ep=0 val_ll=0.1041 best=0.1041
+  taobao seed=0 ep=5 val_ll=0.8829 best=0.8829
+  taobao seed=0 ep=10 val_ll=1.0913 best=1.0913
+  taobao seed=0 ep=15 val_ll=1.1654 best=1.1654
+  taobao seed=0 ep=20 val_ll=1.1905 best=1.1905
+  taobao seed=0 ep=25 val_ll=1.1926 best=1.1939
+  taobao seed=0 ep=30 val_ll=1.1854 best=1.1939
+  taobao seed=0 ep=35 val_ll=1.1789 best=1.1939
+  taobao seed=0 ep=40 val_ll=1.1586 best=1.1939
+RESULT {"ll_per_event": 1.3011396314948132, "n_events": 27955.0, "time_ll": 2.702616230325523, "mark_ll": -1.40147659883071, "rmse": 0.12499560415744781, "acc": 0.6139509677886963, "dataset": "taobao", "seed": 0, "val_ll": 1.193920603874645, "epochs": 45, "seconds": 2121.278829097748, "hidden": 64, "n_rates": 8, "n_channels": 4, "phases": 4, "lr": 0.01, "gompertz": true, "model": "EPT-X", "renewal": true, "input_v2": true, "ept_channel": true, "rn_shift": true, "rn_scales": 24, "rn_orders": [1, 4, 16, 64, 256, 1024], "n_layers": 1, "layer_norm": false, "dropout": 0.0, "weight_decay": 0.0, "n_params": 227522, "batch_size": 64, "config": {"n_rates": 8, "phases": 4, "epochs": 100, "patience": 20, "renewal": true, "hidden": 64, "rn_shift": true, "rn_orders": [1, 4, 16, 64, 256, 1024]}, "tag": "sel_sharp"}

@@ -1,0 +1,23 @@
+
+=== Tue Sep 29 23:55:31 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_ablation.py taxi 0 sel_sharp "{\"n_rates\": 8, \"phases\": 4, \"epochs\": 100, \"patience\": 20, \"renewal\": true, \"hidden\": 64, \"rn_shift\": true, \"rn_orders\": [1, 4, 16, 64, 256, 1024]}"
+  taxi seed=0 ep=0 val_ll=-0.6184 best=-0.6184
+  taxi seed=0 ep=5 val_ll=0.0911 best=0.0911
+  taxi seed=0 ep=10 val_ll=0.2532 best=0.2532
+  taxi seed=0 ep=15 val_ll=0.3272 best=0.3272
+  taxi seed=0 ep=20 val_ll=0.3701 best=0.3701
+  taxi seed=0 ep=25 val_ll=0.3971 best=0.3971
+  taxi seed=0 ep=30 val_ll=0.4121 best=0.4121
+  taxi seed=0 ep=35 val_ll=0.4286 best=0.4286
+  taxi seed=0 ep=40 val_ll=0.4324 best=0.4324
+  taxi seed=0 ep=45 val_ll=0.4374 best=0.4401
+  taxi seed=0 ep=50 val_ll=0.4432 best=0.4445
+  taxi seed=0 ep=55 val_ll=0.4489 best=0.4489
+  taxi seed=0 ep=60 val_ll=0.4512 best=0.4512
+  taxi seed=0 ep=65 val_ll=0.4538 best=0.4538
+  taxi seed=0 ep=70 val_ll=0.4546 best=0.4549
+  taxi seed=0 ep=75 val_ll=0.4538 best=0.4559
+  taxi seed=0 ep=80 val_ll=0.4560 best=0.4560
+  taxi seed=0 ep=85 val_ll=0.4562 best=0.4562
+  taxi seed=0 ep=90 val_ll=0.4566 best=0.4566
+  taxi seed=0 ep=95 val_ll=0.4565 best=0.4567
+RESULT {"ll_per_event": 0.5017177036830357, "n_events": 14420.0, "time_ll": 0.7328154798023578, "mark_ll": -0.2310977761193221, "rmse": 0.28027036786079407, "acc": 0.9169902801513672, "dataset": "taxi", "seed": 0, "val_ll": 0.45669059181531096, "epochs": 100, "seconds": 2031.2284388542175, "hidden": 64, "n_rates": 8, "n_channels": 4, "phases": 4, "lr": 0.01, "gompertz": true, "model": "EPT-X", "renewal": true, "input_v2": true, "ept_channel": true, "rn_shift": true, "rn_scales": 24, "rn_orders": [1, 4, 16, 64, 256, 1024], "n_layers": 1, "layer_norm": false, "dropout": 0.0, "weight_decay": 0.0, "n_params": 151929, "batch_size": 64, "config": {"n_rates": 8, "phases": 4, "epochs": 100, "patience": 20, "renewal": true, "hidden": 64, "rn_shift": true, "rn_orders": [1, 4, 16, 64, 256, 1024]}, "tag": "sel_sharp"}

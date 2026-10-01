@@ -1,0 +1,3 @@
+
+=== Tue Sep 29 10:06:53 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/wait_for_job.py gpu ept_hpo_v2
+ready: ept_hpo_v2

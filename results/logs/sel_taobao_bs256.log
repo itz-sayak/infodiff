@@ -1,0 +1,27 @@
+  taobao seed=0 ep=0 val_ll=-0.6034 best=-0.6034
+  taobao seed=0 ep=5 val_ll=0.3163 best=0.3163
+  taobao seed=0 ep=10 val_ll=0.6104 best=0.6104
+  taobao seed=0 ep=15 val_ll=0.7858 best=0.7858
+  taobao seed=0 ep=20 val_ll=0.8985 best=0.8985
+  taobao seed=0 ep=25 val_ll=0.9834 best=0.9834
+  taobao seed=0 ep=30 val_ll=1.0403 best=1.0403
+  taobao seed=0 ep=35 val_ll=1.0818 best=1.0818
+  taobao seed=0 ep=40 val_ll=1.1127 best=1.1127
+  taobao seed=0 ep=45 val_ll=1.1339 best=1.1339
+  taobao seed=0 ep=50 val_ll=1.1514 best=1.1514
+  taobao seed=0 ep=55 val_ll=1.1632 best=1.1632
+  taobao seed=0 ep=60 val_ll=1.1713 best=1.1721
+  taobao seed=0 ep=65 val_ll=1.1773 best=1.1782
+  taobao seed=0 ep=70 val_ll=1.1805 best=1.1824
+  taobao seed=0 ep=75 val_ll=1.1848 best=1.1850
+  taobao seed=0 ep=80 val_ll=1.1857 best=1.1858
+  taobao seed=0 ep=85 val_ll=1.1847 best=1.1884
+  taobao seed=0 ep=90 val_ll=1.1884 best=1.1890
+  taobao seed=0 ep=95 val_ll=1.1833 best=1.1890
+  taobao seed=0 ep=100 val_ll=1.1807 best=1.1890
+  taobao seed=0 ep=105 val_ll=1.1802 best=1.1890
+  taobao seed=0 ep=110 val_ll=1.1742 best=1.1890
+  taobao seed=0 ep=115 val_ll=1.1705 best=1.1890
+  taobao seed=0 ep=120 val_ll=1.1692 best=1.1890
+  taobao seed=0 ep=125 val_ll=1.1663 best=1.1890
+RESULT {"ll_per_event": 1.3012753825903238, "n_events": 27955.0, "time_ll": 2.705676114514398, "mark_ll": -1.4044007319240743, "rmse": 0.12514576315879822, "acc": 0.6131640076637268, "dataset": "taobao", "seed": 0, "val_ll": 1.1889962926665631, "epochs": 128, "seconds": 2015.9083437919617, "hidden": 64, "n_rates": 8, "n_channels": 4, "phases": 4, "lr": 0.01, "gompertz": true, "model": "EPT-X", "renewal": true, "input_v2": true, "ept_channel": true, "rn_shift": false, "rn_scales": 24, "rn_orders": [1, 4, 16], "n_layers": 1, "layer_norm": false, "dropout": 0.0, "weight_decay": 0.0, "n_params": 221282, "batch_size": 256, "config": {"n_rates": 8, "phases": 4, "epochs": 300, "patience": 40, "renewal": true, "bs": 256}, "tag": "sel_bs256"}

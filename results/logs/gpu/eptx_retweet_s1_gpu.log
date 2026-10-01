@@ -1,0 +1,4 @@
+
+=== Thu Oct  1 09:47:10 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_seed.py retweet 1 eptx "auto:{\"epochs\":25,\"patience\":5,\"renewal\":true,\"bs\":32,\"verbose\":true}"
+  retweet seed=1 ep=0 val_ll=-6.1706 best=-6.1706
+  retweet seed=1 ep=5 val_ll=-5.8576 best=-5.8576

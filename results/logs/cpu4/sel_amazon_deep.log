@@ -1,0 +1,14 @@
+
+=== Tue Sep 29 23:55:27 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_ablation.py amazon 0 sel_deep "{\"n_rates\": 8, \"phases\": 4, \"epochs\": 100, \"patience\": 20, \"renewal\": true, \"hidden\": 128, \"n_layers\": 3, \"layer_norm\": true, \"dropout\": 0.1}"
+  amazon seed=0 ep=0 val_ll=-1.6694 best=-1.6694
+  amazon seed=0 ep=5 val_ll=-0.6267 best=-0.6267
+  amazon seed=0 ep=10 val_ll=-0.5419 best=-0.5419
+  amazon seed=0 ep=15 val_ll=-0.5227 best=-0.5227
+  amazon seed=0 ep=20 val_ll=-0.5183 best=-0.5165
+  amazon seed=0 ep=25 val_ll=-0.5131 best=-0.5104
+  amazon seed=0 ep=30 val_ll=-0.5140 best=-0.5104
+  amazon seed=0 ep=35 val_ll=-0.5129 best=-0.5073
+  amazon seed=0 ep=40 val_ll=-0.5134 best=-0.5073
+  amazon seed=0 ep=45 val_ll=-0.5171 best=-0.5073
+  amazon seed=0 ep=50 val_ll=-0.5199 best=-0.5073
+RESULT {"ll_per_event": -0.518990755611982, "n_events": 82197.0, "time_ll": 1.3763269200537276, "mark_ll": -1.8953176756657097, "rmse": 0.32956838607788086, "acc": 0.3563755452632904, "dataset": "amazon", "seed": 0, "val_ll": -0.5072653288790437, "epochs": 54, "seconds": 15362.758846998215, "hidden": 128, "n_rates": 8, "n_channels": 4, "phases": 4, "lr": 0.01, "gompertz": true, "model": "EPT-X", "renewal": true, "input_v2": true, "ept_channel": true, "rn_shift": false, "rn_scales": 24, "rn_orders": [1, 4, 16], "n_layers": 3, "layer_norm": true, "dropout": 0.1, "weight_decay": 0.0, "n_params": 633147, "batch_size": 64, "config": {"n_rates": 8, "phases": 4, "epochs": 100, "patience": 20, "renewal": true, "hidden": 128, "n_layers": 3, "layer_norm": true, "dropout": 0.1}, "tag": "sel_deep"}

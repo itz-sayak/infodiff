@@ -1,0 +1,11 @@
+
+=== Wed Sep 30 04:12:35 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_ablation.py taobao 0 sel_deep "{\"n_rates\": 8, \"phases\": 4, \"epochs\": 100, \"patience\": 20, \"renewal\": true, \"hidden\": 128, \"n_layers\": 3, \"layer_norm\": true, \"dropout\": 0.1}"
+  taobao seed=0 ep=0 val_ll=0.1196 best=0.1196
+  taobao seed=0 ep=5 val_ll=0.8813 best=0.8813
+  taobao seed=0 ep=10 val_ll=1.0819 best=1.0819
+  taobao seed=0 ep=15 val_ll=1.1324 best=1.1360
+  taobao seed=0 ep=20 val_ll=1.1395 best=1.1422
+  taobao seed=0 ep=25 val_ll=1.1365 best=1.1422
+  taobao seed=0 ep=30 val_ll=1.1285 best=1.1422
+  taobao seed=0 ep=35 val_ll=1.1179 best=1.1422
+RESULT {"ll_per_event": 1.2533266703742623, "n_events": 27955.0, "time_ll": 2.6827232102933287, "mark_ll": -1.4293965399190665, "rmse": 0.1254901885986328, "acc": 0.6099445819854736, "dataset": "taobao", "seed": 0, "val_ll": 1.142219451406139, "epochs": 40, "seconds": 1808.263393163681, "hidden": 128, "n_rates": 8, "n_channels": 4, "phases": 4, "lr": 0.01, "gompertz": true, "model": "EPT-X", "renewal": true, "input_v2": true, "ept_channel": true, "rn_shift": false, "rn_scales": 24, "rn_orders": [1, 4, 16], "n_layers": 3, "layer_norm": true, "dropout": 0.1, "weight_decay": 0.0, "n_params": 653986, "batch_size": 64, "config": {"n_rates": 8, "phases": 4, "epochs": 100, "patience": 20, "renewal": true, "hidden": 128, "n_layers": 3, "layer_norm": true, "dropout": 0.1}, "tag": "sel_deep"}
