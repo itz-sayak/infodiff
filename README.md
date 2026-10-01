@@ -49,7 +49,10 @@ Benchmarks:
   all five scenarios. It has the lowest deficit on hump-shaped, multiscale and network
   kernels. tick is better on a pure exponential kernel (ExpKern 0.05 vs 0.24 ×10⁻³) and
   on a power law (SumExp 0.18 vs 0.33 ×10⁻³).
-- **Public neural-TPP datasets.** See `manuscript/main.pdf`.
+- **Public neural-TPP datasets** (S2P2 protocol, published Table 2). EPT-X: Retweet
+  −5.72 vs best published −6.35 (new best); Taobao 1.316 vs 1.318 and StackOverflow −2.166
+  vs −2.163 (tied); Taxi 0.503 vs 0.522; Amazon 0.594 vs 0.781 (second; sharp Erlang atoms
+  raised it from −0.50). Our S2P2 re-run on Taxi reproduces the published number (0.524).
 
 ## Where things are
 

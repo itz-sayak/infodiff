@@ -18,5 +18,7 @@ with an exact compensator that superposes a history-conditioned hyper-Erlang ren
 channel on a linear Hawkes backbone; on LOBSTER limit-order-book data it achieves the best
 test likelihood on all five stocks against six classical estimators and seven neural
 baselines, by \trackCmarginLo--\trackCmarginHi{} nats per event over the best neural model.
+On the public EasyTPP benchmarks it improves the best published likelihood on Retweet by
+more than 0.6 nats per event and matches it on Taobao and StackOverflow.
 Along the way we find that a widely used IntensityFree implementation clamps inter-event
 times before scoring, which overstates its likelihood on streams with many short gaps.

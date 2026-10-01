@@ -98,9 +98,10 @@ def table_b():
     best = {ds: max([PUBLISHED_S2P2[m][ds] for m in PUBLISHED_S2P2] + [v[ds] for v in means.values() if ds in v])
             for ds in DS_B}
     lines = ["\\begin{tabular}{l" + "c" * len(DS_B) + "}", "\\toprule",
-             "Model & " + " & ".join(d.capitalize() for d in DS_B) + " \\\\", "\\midrule"]
+             "Model & " + " & ".join("StackOverflow" if d == "stackoverflow" else d.capitalize() for d in DS_B)
+             + " \\\\", "\\midrule"]
     for m, v in PUBLISHED_S2P2.items():
-        lines.append(m + "$^\\dagger$ & " + " & ".join(fmt(v[d], bold=np.isclose(v[d], best[d])) for d in DS_B) + " \\\\")
+        lines.append(m.replace("IFTPP", "IntensityFree") + "$^\\dagger$ & " + " & ".join(fmt(v[d], bold=np.isclose(v[d], best[d])) for d in DS_B) + " \\\\")
     lines.append("\\midrule")
     for m in sorted(ours, key=lambda k: ("ours" not in k, k)):
         cells = []
@@ -220,18 +221,36 @@ def table_main():
     # absorption table from pooled (or latest available) fit
     key = "pooled" if "pooled" in res else list(res)[-1]
     v = res[key]
-    lines = ["\\begin{tabular}{llccccc}", "\\toprule",
-             "Release & Asset & $t_{50}$ direct & $t_{50}$ echo-corr. & $t_{90}$ echo-corr. & amplification & drift$_{+1\\sigma}$ (bp) \\\\",
-             "\\midrule"]
-    for typ in ["CPI", "NFP", "FOMC", "FOMCPC", "PPI", "RETAIL", "GDP", "CLAIMS", "ECB", "ECBPC", "BOJ"]:
-        e = v["per_type"].get(typ, {})
-        z0, zp = e.get("z0", {}), e.get("zpos", {})
-        for asset, r in z0.items():
-            dp = zp.get(asset, {}).get("drift_bps_final", np.nan)
-            lines.append(f"{typ} & {asset} & {fmt(r['t50_direct'], d=1)} & {fmt(r['t50_total'], d=1)} & "
-                         f"{fmt(r['t90_total'], d=1)} & {fmt(r['amplification'], d=2)} & {fmt(dp, d=2)} \\\\")
-    lines += ["\\bottomrule", "\\end{tabular}"]
-    (OUT / f"main_absorption.tex").write_text("\n".join(lines))
+    # compact release x asset grids (a 66-row long table does not fit a page)
+    kinds = ["CPI", "NFP", "PPI", "FOMC", "RETAIL", "GDP", "FOMCPC", "CLAIMS", "ECB", "ECBPC", "BOJ"]
+    names = dict(RETAIL="Retail", FOMCPC="FOMC press conf.", CLAIMS="Claims", ECBPC="ECB press conf.", BOJ="BoJ")
+    assets = list(v["per_type"]["CPI"]["z0"])
+    se = v.get("mass_se", {})
+    passes = {k: se.get(k, {}).get("mass", 0) >= 1.5 * se.get(f"PLACEBO_{k}", {}).get("mass", np.inf) for k in kinds}
+    head = " & ".join(a.replace("XAUUSD", "Gold").replace("SPX", "S\\&P 500") for a in assets)
+
+    def grid(cell, fname):
+        lines = ["\\begin{tabular}{l" + "c" * len(assets) + "}", "\\toprule", f"Release & {head} \\\\", "\\midrule"]
+        for typ in kinds:
+            e = v["per_type"].get(typ, {})
+            if typ == "GDP":
+                lines.append("\\midrule")
+            lab = names.get(typ, typ) + ("" if passes[typ] else "$^\\ast$")
+            lines.append(lab + " & " + " & ".join(cell(e, a) for a in assets) + " \\\\")
+        lines += ["\\bottomrule", "\\end{tabular}"]
+        (OUT / fname).write_text("\n".join(lines))
+
+    def t50_t90(r):  # t50 in seconds, t90 in minutes
+        a, b = r["t50_total"], r["t90_total"]
+        return "--" if not (np.isfinite(a) and np.isfinite(b)) else f"{a:.0f} / {b / 60:.1f}"
+
+    grid(lambda e, a: t50_t90(e["z0"][a]) if a in e.get("z0", {}) else "--", "main_absorption.tex")
+    def bp(x):
+        x = round(float(x), 1)
+        return "0.0" if x == 0 else f"{x:+.1f}"
+
+    grid(lambda e, a: bp(e["zpos"][a]["drift_bps_final"]) if a in e.get("zpos", {}) else "--",
+         "main_drift.tex")
 
 
 def numbers():

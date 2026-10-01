@@ -14,13 +14,14 @@ is roughly halved, and it recovers the causal graph perfectly (AUC $=1$). The
 exponential-only ablation isolates the contribution of Erlang phases, and the
 certificate of Proposition~\ref{prop:gap} was at most $3.3\times10^{-4}$ nats over all 100 MSX fits.
 
-\begin{table}[t]\centering\scriptsize
+\begin{table}[!htbp]\centering\scriptsize
 \caption{Track A. Five seeds; dLL is the held-out log-likelihood deficit to the true model
 ($10^{-3}$ nats/event, lower is better); bold marks the best dLL per scenario.}
 \label{tab:track-a}
 \resizebox{\linewidth}{!}{\input{tables/track_a}}
 \end{table}
 
+\FloatBarrier
 \subsection{Main study: how fast do markets absorb scheduled macro news?}
 The pooled 2022--2026 model (732 windows, 8.4 million $\delta$-crossing events, twelve
 dimensions) is certified optimal to within \gapMaxPooled{} nats per dimension. The
@@ -59,29 +60,42 @@ at most \ksMax{} against Exp(1), and the per-window excess-dispersion test rejec
 \edLo--\edHi\% of windows, compared with 42\% (power-law kernel) and 93\% (double
 exponential) reported for EBS FX data by \citet{rambaldi2015modeling}.
 
-\begin{figure}[t]\centering
+\begin{figure}[!htbp]\centering
 \includegraphics[width=0.75\linewidth]{figures/placebo_pooled.pdf}
 \caption{Placebo test. Direct news-kernel mass (expected extra events per release, all
 assets) for each release type and for a matched placebo at the same clock time on a
 release-free day.}\label{fig:placebo}
 \end{figure}
 
-\begin{figure}[t]\centering
+\begin{figure}[!htbp]\centering
 \includegraphics[width=\linewidth]{figures/absorption_CPI_pooled.pdf}
 \caption{Echo-corrected response to a CPI release (blue) versus the direct news kernel
 (orange), per asset; dotted lines mark $t_{50}$.}\label{fig:absorption}
 \end{figure}
 
-\begin{figure}[t]\centering
+\begin{figure}[!htbp]\centering
 \includegraphics[width=\linewidth]{figures/drift_CPI_pooled.pdf}
 \caption{Expected price-discovery curves after a $\pm1$ standard-deviation CPI surprise.}\label{fig:drift}
 \end{figure}
 
-\begin{table}[t]\centering\scriptsize
-\caption{Absorption by release and asset (pooled model).}\label{tab:absorption}
-\resizebox{\linewidth}{!}{\input{tables/main_absorption}}
+\begin{table}[!htbp]\centering\footnotesize
+\caption{Echo-corrected absorption by release and asset (pooled model): $t_{50}$ in seconds
+/ $t_{90}$ in minutes after the release. $^\ast$Release types that do not exceed their
+matched placebo by 50\%; their absorption times describe a statistically undetected
+effect.}\label{tab:absorption}
+\setlength{\tabcolsep}{4pt}
+\input{tables/main_absorption}
 \end{table}
 
+\begin{table}[!htbp]\centering\footnotesize
+\caption{Expected price drift (basis points, end of window) after a $+1$ standard-deviation
+surprise, by release and asset (pooled model). $^\ast$As in Table~\ref{tab:absorption}.}
+\label{tab:drift}
+\setlength{\tabcolsep}{4pt}
+\input{tables/main_drift}
+\end{table}
+
+\FloatBarrier
 \subsection{Track B: public marked-TPP benchmarks}
 Table~\ref{tab:track-b} compares our models with the published numbers of
 \citet{chang2025deep} under the same protocol; our re-run of S2P2 on Taxi (0.524 against
@@ -102,7 +116,7 @@ EPT on Taxi and 0.02 on StackOverflow. The linear MSX model is close to the neur
 on Taobao (1.305) and Retweet, and far behind on Amazon and Taxi, where the dynamics are
 not self-exciting.
 
-\begin{table}[t]\centering\scriptsize
+\begin{table}[!htbp]\centering\scriptsize
 \caption{Track B: test log-likelihood per event on the EasyTPP benchmarks. $^\dagger$Published
 numbers of \citet{chang2025deep} (five seeds); our rows give mean $\pm$ s.d.\ with the number
 of seeds as subscript; the EPT-X configuration is selected per dataset on validation.}
@@ -110,6 +124,7 @@ of seeds as subscript; the EPT-X configuration is selected per dataset on valida
 \resizebox{\linewidth}{!}{\input{tables/track_b}}
 \end{table}
 
+\FloatBarrier
 \subsection{Track C: limit-order-book event streams}
 Table~\ref{tab:track-c} reports test log-likelihood per event on the five LOBSTER
 stocks. EPT-X is the best model on every stock, ahead of MSX-auto, EPT and all seven
@@ -142,7 +157,7 @@ Hawkes backbone is essential for EPT: without it EPT underperforms plain MSX (su
 run, Appendix). The renewal channel of EPT-X adds 0.08--0.16 nats per event over EPT on
 every stock.
 
-\begin{table}[t]\centering\scriptsize
+\begin{table}[!htbp]\centering\scriptsize
 \caption{Track C: test log-likelihood per event on LOBSTER (6 event types, 128-event
 sequences, chronological split). Bold: best per stock. $^\ast$As shipped by EasyTPP,
 IntensityFree clamps gaps at $10^{-5}$\,s before scoring, which is not the likelihood of the
@@ -150,6 +165,7 @@ observed data; the IntensityFree row is re-trained and scored on the unclamped g
 \resizebox{\linewidth}{!}{\input{tables/track_c}}
 \end{table}
 
+\FloatBarrier
 \subsection{Track D: forecasting the post-release burst}
 On the \nTestReleases{} releases of 2025--2026, a model fitted on 2022--2024 forecasts the
 number of $\delta$-crossings in the first 1, 5 and 15 minutes (Table~\ref{tab:track-d}).
@@ -160,7 +176,7 @@ move the structural model is informative: the correlation between the forecast a
 realised signed drift over the first minute is \driftCorrOursOne{}, against
 \driftCorrBaseOne{} for the best baseline (mean drift by release type and surprise sign).
 
-\begin{table}[t]\centering\scriptsize
+\begin{table}[!htbp]\centering\scriptsize
 \caption{Track D: post-release activity forecasts (mean over assets; lower is better).}\label{tab:track-d}
 \input{tables/track_d}
 \end{table}
