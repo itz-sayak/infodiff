@@ -12,7 +12,8 @@ if spec.startswith("auto"):  # validation-selected config (+ optional overrides 
         cfg.update(json.loads(spec.split(":", 1)[1]))
 else:
     cfg = json.loads(spec)
-r = train_one(ds, seed, **cfg)
+ck = Path("results/ckpt") / f"{ds}__{tag}_s{seed}.pt"  # resumable: rerun the same command after a crash
+r = train_one(ds, seed, ckpt=str(ck), **cfg)
 r["config"], r["tag"] = cfg, tag
 out = Path("results/json/ept_runs") / f"{ds}__{tag}_s{seed}.json"
 out.parent.mkdir(parents=True, exist_ok=True)

@@ -17,3 +17,4 @@ manuscript/*.bbl
 manuscript/*.blg
 *.egg-info/
 .venv_cu126/
+results/ckpt/

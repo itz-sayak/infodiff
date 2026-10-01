@@ -96,7 +96,7 @@ def evaluate(model: EPTTPP, seqs, n_marks, device, predict: bool = False, s_max:
 def train_one(name: str, seed: int, hidden=64, n_rates=8, n_channels=4, phases=2, lr=1e-2, epochs=300, patience=40,
               bs=64, device=None, verbose=False, weight_decay=0.0, dropout=0.0, gompertz=True, warmup=0.01,
               renewal=False, rn_scales=24, rn_orders=(1, 4, 16), input_v2=None, ept_channel=True, rn_shift=False,
-              n_layers=1, layer_norm=False) -> dict:
+              n_layers=1, layer_norm=False, ckpt: str | None = None) -> dict:
     device = device or ("cuda" if torch.cuda.is_available() else "cpu")
     torch.manual_seed(seed)
     rng = np.random.default_rng(seed)
@@ -126,9 +126,21 @@ def train_one(name: str, seed: int, hidden=64, n_rates=8, n_channels=4, phases=2
     n_warm = max(1, int(warmup * steps))
     sched = torch.optim.lr_scheduler.LambdaLR(
         opt, lambda k: min(1.0, (k + 1) / n_warm) * 0.5 * (1 + math.cos(math.pi * min(1.0, k / steps))))
-    best, best_state, bad = -np.inf, None, 0
+    best, best_state, bad, start = -np.inf, None, 0, 0
     t0 = time.time()
-    for ep in range(epochs):
+    ck = Path(ckpt) if ckpt else None
+    if ck is not None and ck.exists():  # resume an interrupted run exactly where it stopped
+        s = torch.load(ck, map_location=device, weights_only=False)
+        model.load_state_dict(s["model"]); opt.load_state_dict(s["opt"]); sched.load_state_dict(s["sched"])
+        best, best_state, bad, start = s["best"], s["best_state"], s["bad"], s["ep"] + 1
+        rng.bit_generator.state = s["rng"]
+        torch.set_rng_state(s["torch_rng"])
+        t0 -= s["seconds"]
+        print(f"  resumed {name} seed={seed} from epoch {start}", flush=True)
+    ep = start - 1
+    for ep in range(start, epochs):
+        if bad >= patience:
+            break
         model.train()
         for dts, mk, msk in batches(tr, M, bs, True, device, rng):
             ll, n = model.loglik(dts, mk, msk)
@@ -146,6 +158,12 @@ def train_one(name: str, seed: int, hidden=64, n_rates=8, n_channels=4, phases=2
             bad += 1
         if verbose and ep % 5 == 0:
             print(f"  {name} seed={seed} ep={ep} val_ll={v:.4f} best={best:.4f}", flush=True)
+        if ck is not None:
+            ck.parent.mkdir(parents=True, exist_ok=True)
+            torch.save(dict(model=model.state_dict(), opt=opt.state_dict(), sched=sched.state_dict(), ep=ep,
+                            best=best, best_state=best_state, bad=bad, rng=rng.bit_generator.state,
+                            torch_rng=torch.get_rng_state(), seconds=time.time() - t0), str(ck) + ".tmp")
+            Path(str(ck) + ".tmp").replace(ck)
         if bad >= patience:
             break
     model.load_state_dict(best_state)

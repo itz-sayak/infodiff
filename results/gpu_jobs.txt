@@ -62,4 +62,4 @@ easy_S2P2_taxi_repro | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baseline
 eptx_retweet_s0 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_seed.py retweet 0 eptx "auto:{\"epochs\":300,\"renewal\":true}"
 eptx_retweet_s0_bs16 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_seed.py retweet 0 eptx "auto:{\"epochs\":150,\"patience\":20,\"renewal\":true,\"bs\":16,\"verbose\":true}"
 eptx_retweet_s0_bs32 | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_seed.py retweet 0 eptx "auto:{\"epochs\":25,\"patience\":5,\"renewal\":true,\"bs\":32,\"verbose\":true}"
-easy_S2P2_amazon_repro | D:\Quant\.venv\Scripts\python.exe -u -m infodiff.baselines.easytpp_runner S2P2 amazon 16 2019 - 128
+eptx_retweet_s1_gpu | D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_seed.py retweet 1 eptx "auto:{\"epochs\":25,\"patience\":5,\"renewal\":true,\"bs\":32,\"verbose\":true}"
