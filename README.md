@@ -103,3 +103,14 @@ Run only one CUDA process at a time on small GPUs (use `gpu_queue.py`). CPU jobs
   forecasts from real-time vintages.
 - LOBSTER: the free 2012-06-21 samples, with 100 ns jitter on tied timestamps.
 - Raw data is not redistributed; `data/` is gitignored.
+
+## License
+
+Copyright © 2026 Sayak Dutta.
+
+- **Code** (`src/`, `scripts/`, `tests/`, `notebooks/`, `dashboard/`, `docker/`): [Apache License 2.0](LICENSE).
+- **Paper** (`manuscript/`: text, figures, tables): [CC BY 4.0](manuscript/LICENSE).
+
+Third-party software and data are not redistributed; see [NOTICE](NOTICE).
+
+If you use this work, please cite the paper (`manuscript/main.pdf`).
