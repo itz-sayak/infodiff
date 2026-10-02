@@ -283,7 +283,9 @@ def track_c_results():
                 res.setdefault(r["method"], {}).setdefault(tk, []).append(r["ll_per_event"])
         for r in load_ept(f"lob_{tk}"):
             nm = "EPT-X (ours)" if r.get("model") == "EPT-X" else "EPT-TPP (ours)"
-            budget = f'{r.get("config", {}).get("epochs", r["epochs"])}|{r.get("tag", "default")}'  # budget and config
+            # budget and config; untagged rows predate tags and are the base configuration
+            tag = r.get("tag", "eptx" if r.get("model") == "EPT-X" else "ept")
+            budget = f'{r.get("config", {}).get("epochs", r["epochs"])}|{tag}'
             raw.setdefault((nm, tk), []).append((budget, r["val_ll"], r["ll_per_event"]))
     for r in load("easytpp_results.json") or []:
         if r["dataset"].startswith("lob_") and r.get("ll_per_event") is not None:
