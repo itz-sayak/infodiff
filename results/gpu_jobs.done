@@ -62,3 +62,16 @@ easy_S2P2_taxi_repro
 eptx_retweet_s0__FAILED
 eptx_retweet_s0_bs16__FAILED
 eptx_retweet_s0_bs32
+eptx_retweet_s1_gpu
+abl_lob_intc_sel_sharp
+abl_lob_intc_sel_sharp48
+abl_lob_intc_sel_deep
+abl_lob_intc_sel_sharpdeep
+abl_lob_intc_sel_wide
+abl_lob_intc_sel_bs256
+eptx_lob_intc_sharp_s0
+abl_lob_msft_sel_sharp
+eptx_lob_msft_sharp_s0
+eptx_lob_aapl_sharp_s0
+eptx_lob_aapl_sharp_s1
+eptx_amazon_sharp96_s2
