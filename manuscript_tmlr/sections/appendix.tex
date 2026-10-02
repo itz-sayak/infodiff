@@ -63,8 +63,9 @@ StackOverflow; Hawkes backbone with 10 rates and 2 phases; AdamW with learning r
 automatically on out-of-memory), early stopping on validation likelihood with patience 40 and
 a 300-epoch budget (25 epochs on Retweet, batch 32). The renewal channel uses 24 log-spaced
 mean gaps from half the 0.1\% to five times the 99.9\% quantile of training gaps with orders
-$\{1,4,16\}$; on Amazon the validation-selected variant uses 48 scales, orders up to 1024 and a
-history-dependent shift. Mark laws are initialised at empirical frequencies.
+$\{1,4,16\}$. Selected on validation, the LOBSTER streams and Amazon add orders up to 1024 and a
+history-dependent shift, and Amazon uses a finer grid (validation log-likelihood 0.604, 0.643 and
+0.653 with 24, 48 and 96 scales). Mark laws are initialised at empirical frequencies.
 
 \paragraph{Baselines.} Neural baselines run in EasyTPP with the authors' configuration files;
 classical Hawkes estimators use the \texttt{tick} library (positive-constrained

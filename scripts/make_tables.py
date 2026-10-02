@@ -464,6 +464,10 @@ def numbers():
             n_done += 1
             wins += max(ours) > max(others)
             margins.append(max(ours) - max(nb))
+    gains = [np.mean(tc["EPT-X (ours)"][tk]) - np.mean(tc["EPT-TPP (ours)"][tk]) for tk in TK
+             if tk in tc.get("EPT-X (ours)", {}) and tk in tc.get("EPT-TPP (ours)", {})]
+    if gains:  # renewal-channel gain of EPT-X over EPT on the order books
+        out.append(f"\\newcommand{{\\eptxGainLo}}{{{min(gains):.2f}}}\\newcommand{{\\eptxGainHi}}{{{max(gains):.2f}}}")
     if n_done:
         out.append(f"\\newcommand{{\\trackCwins}}{{{wins}}}\\newcommand{{\\trackCdone}}{{{n_done}}}")
         out.append(f"\\newcommand{{\\trackCmarginLo}}{{{min(margins):.2f}}}\\newcommand{{\\trackCmarginHi}}{{{max(margins):.2f}}}")
