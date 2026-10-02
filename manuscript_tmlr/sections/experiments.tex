@@ -79,9 +79,9 @@ narrow component. This is not the likelihood of the observed gaps, and it matter
 gaps are common: 29\% and 32\% of test gaps on INTC and MSFT lie below $10^{-5}$\,s, against
 10--14\% on the other stocks. As shipped, IntensityFree reports the highest numbers on INTC
 and MSFT; re-trained and scored on the unclamped gaps (same 1500-epoch budget) it loses 1.1 and
-0.7 nats per event and falls below EPT-X, and on INTC below MSX. Consistently, neither a denser
-MSX dictionary nor sharper EPT-X atoms change the INTC validation likelihood by more than 0.05
-nats per event. We report both IntensityFree variants and exclude the clamped one from the
+0.7 nats per event and falls below EPT-X, and on INTC below MSX. Consistently, a denser MSX
+dictionary and sharper EPT-X atoms change the INTC validation likelihood by at most about 0.05
+nats per event, an order of magnitude less than the effect of the clamp. We report both IntensityFree variants and exclude the clamped one from the
 ranking; the patch is part of the supplementary code.
 
 \begin{table}[!htbp]\centering\small
@@ -97,8 +97,9 @@ IntensityFree row is re-trained and scored on the unclamped gaps.}\label{tab:tra
 \FloatBarrier
 \subsection{Ablations}\label{sec:ablation}
 Table~\ref{tab:ablation} isolates the components of EPT-X on validation data. The renewal
-channel improves EPT on every dataset where both were run. Sharp atoms help only where the gap
-law has a narrow mode (Amazon), and a finer grid helps further there. Neither a deeper
+channel improves EPT on every dataset. Sharp atoms help where the gap law has sharp modes---by
+1.1 nats per event on Amazon, where a finer grid helps further, and by 0.05 on INTC---and are
+neutral or slightly worse elsewhere. Neither a deeper
 (three residual layers with LayerNorm and dropout) nor a wider (128 units) encoder improves any
 dataset, nor does S2P2's larger batch: S2P2's remaining edge on Taxi is not a matter of encoder
 capacity or optimisation protocol. Without the explicit Hawkes backbone, EPT reached

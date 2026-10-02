@@ -6,6 +6,12 @@
   "Taobao": 3,
   "StackOverflow": 3
  },
+ "EPT": {
+  "Amazon": 1,
+  "Taxi": 1,
+  "Taobao": 1,
+  "StackOverflow": 1
+ },
  "MSX-auto": {
   "Amazon": 1,
   "Retweet": 1,
@@ -36,11 +42,6 @@
  },
  "Conditional law": {
   "Retweet": 1,
-  "Taxi": 1,
-  "Taobao": 1,
-  "StackOverflow": 1
- },
- "EPT": {
   "Taxi": 1,
   "Taobao": 1,
   "StackOverflow": 1

@@ -46,8 +46,9 @@ neural baseline on all five stocks and MSX on three of them (Table~\ref{tab:trac
 
 \paragraph{Renewal channel and encoder.} Adding the hyper-Erlang renewal channel (EPT-X)
 improves EPT on every LOBSTER stock and on every public dataset where both were run. On
-validation, sharper Erlang atoms (orders up to 1024) help only on Amazon, whose gaps
-concentrate in a narrow band, and neither a three-layer residual encoder nor a 128-unit
+validation, sharper Erlang atoms (orders up to 1024) help where the gap law has sharp
+modes---by 1.1 nats per event on Amazon, whose gaps concentrate in a narrow band, and by
+0.05 on INTC---and neither a three-layer residual encoder nor a 128-unit
 encoder improves any dataset (Section~\ref{sec:results}).
 
 \section{Track A: all metrics}

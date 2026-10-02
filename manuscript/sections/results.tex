@@ -148,9 +148,10 @@ therefore reports the highest numbers on INTC and MSFT (row marked $\ast$); re-t
 scored on the unclamped gaps (clamp $10^{-12}$\,s, same 1500-epoch budget) it falls by
 1.1 and 0.7 nats per event, below EPT-X and on INTC below MSX. The patch is part of the
 replication package, and the as-shipped numbers are excluded from the best-model marks.
-Consistently, neither a denser MSX dictionary (40 instead of 12 rates) nor sharper,
-history-shifted Erlang atoms in EPT-X change the validation likelihood on INTC by more
-than 0.05 nats per event: the shipped margin came from the clamp, not from expressiveness.
+Consistently, a denser MSX dictionary (40 instead of 12 rates) and sharper,
+history-shifted Erlang atoms in EPT-X change the validation likelihood on INTC by at most
+about 0.05 nats per event, an order of magnitude less than the clamp: the shipped margin
+came from the clamp, not from expressiveness.
 Among the remaining neural
 baselines, recurrent and
 attention models with Monte-Carlo compensators (NHP, THP, AttNHP) fall well behind the
