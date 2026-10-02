@@ -1,16 +1,16 @@
 {
+ "EPT": {
+  "Amazon": 1,
+  "Taxi": 1,
+  "Taobao": 1,
+  "StackOverflow": 1
+ },
  "EPT-X": {
   "Amazon": 3,
   "Retweet": 3,
   "Taxi": 5,
   "Taobao": 3,
   "StackOverflow": 3
- },
- "EPT": {
-  "Amazon": 1,
-  "Taxi": 1,
-  "Taobao": 1,
-  "StackOverflow": 1
  },
  "MSX-auto": {
   "Amazon": 1,
