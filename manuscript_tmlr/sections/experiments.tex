@@ -60,6 +60,22 @@ dataset on validation. Bold: best; underlined: second best; shaded: our models.}
 \input{tables/track_b}
 \end{table}
 
+\paragraph{Next-event prediction.} Table~\ref{tab:pred} reports the two prediction metrics of
+\citet{chang2025deep}. EPT-X's Bayes-optimal next-time prediction is the best or tied with the
+best on every dataset (Retweet RMSE 14{,}336 against 15{,}911\,s for NHP), whereas its mark
+accuracy trails S2P2 and NHP on four of five datasets---the same split between time and mark
+that the likelihood decomposition shows on Taxi.
+
+\begin{table}[!htbp]\centering\small
+\caption{Next-event prediction on the public benchmarks: time RMSE (top, lower is better; Retweet
+in seconds) and mark accuracy (bottom, \%, higher is better). Published numbers from
+\citet{chang2025deep}, Table~2(b,c); EPT-X: mean $\pm$ s.d.\ over seeds of the validation-selected
+configuration. Bold: best; underlined: second best; shaded: ours.}\label{tab:pred}
+\setlength{\tabcolsep}{5pt}
+\input{tables/track_b_rmse}\\[6pt]
+\input{tables/track_b_acc}
+\end{table}
+
 \FloatBarrier
 \subsection{Limit-order-book event streams}\label{sec:lob}
 We use the LOBSTER samples of AAPL, AMZN, GOOG, INTC and MSFT (21 June 2012), six event
@@ -104,6 +120,18 @@ neutral or slightly worse elsewhere. Neither a deeper
 dataset, nor does S2P2's larger batch: S2P2's remaining edge on Taxi is not a matter of encoder
 capacity or optimisation protocol. Without the explicit Hawkes backbone, EPT reached
 \eptNoBackbone{} nats per event on LOBSTER AAPL, below the classical MSX estimator.
+
+\paragraph{Cost.} Exactness is not free in our implementation (Table~\ref{tab:cost}): EPT-X
+takes about four times longer per epoch than S2P2 on the same GPU (LOBSTER AAPL), because its
+event recursion runs as a sequential loop, whereas the Monte-Carlo baselines vectorise over events. The exact
+compensator itself adds only closed-form terms per event; a fused or parallel-scan kernel
+for the Erlang recursion is the natural way to remove this overhead.
+
+\begin{table}[!htbp]\centering\small
+\caption{Training cost per epoch (including validation) and model size. EasyTPP baselines are
+timed over their full epoch budget; EPT-X stops early on validation.}\label{tab:cost}
+\input{tables/cost}
+\end{table}
 
 \begin{table}[!htbp]\centering\small
 \caption{EPT-X ablations: validation log-likelihood per event (higher is better). EPT and EPT-X

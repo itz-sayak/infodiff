@@ -70,6 +70,8 @@ def cell(mu, sd=None, d=3, rank=0):
     """rank: 1 best (bold), 2 second (underline)."""
     if mu is None or not np.isfinite(mu):
         return "--"
+    if abs(mu) >= 1000:  # large magnitudes (e.g. Retweet RMSE in seconds): no decimals
+        d = 0
     s = f"{mu:.{d}f}".replace("-", "$-$")
     s = "\\textbf{" + s + "}" if rank == 1 else ("\\underline{" + s + "}" if rank == 2 else s)
     if sd is not None and np.isfinite(sd):
@@ -155,10 +157,11 @@ def table_a_full():
             dll = r.get(("dLL", "mean"), np.nan)
             cells = [fmt(r[("G_err", "mean")], r[("G_err", "std")]),
                      fmt(r[("rho_err", "mean")], r[("rho_err", "std")]),
-                     fmt(r.get(("kern_L1", "mean"), np.nan)),
+                     fmt(r.get(("kern_L1", "mean"), np.nan), r.get(("kern_L1", "std"), np.nan)),
                      fmt(1e3 * dll if np.isfinite(dll) else np.nan, 1e3 * r.get(("dLL", "std"), np.nan), 2,
                          bold=np.isfinite(dll) and np.isclose(dll, best_dll)),
-                     fmt(r.get(("AUC", "mean"), np.nan))]
+                     # AUC is defined only when the true graph has absent edges (S4, S5)
+                     fmt(r.get(("AUC", "mean"), np.nan)) if np.isfinite(r.get(("AUC", "mean"), np.nan)) else "n/a"]
             lines.append(f"{sc if first else ''} & {meth} & " + " & ".join(cells) + " \\\\")
             first = False
         lines.append("\\midrule")
@@ -179,6 +182,29 @@ PUBLISHED_S2P2 = {  # Chang et al. (2025), Table 2(a): test LL per event (5 seed
     "S2P2": dict(amazon=0.781, retweet=-6.365, taxi=0.522, taobao=1.304, stackoverflow=-2.163),
 }
 DS_B = ["amazon", "retweet", "taxi", "taobao", "stackoverflow"]
+# Chang et al. (2025), Table 2(b) next-event time RMSE and 2(c) next-mark accuracy (%), means over
+# five seeds, transcribed from paper/chang2024_s2p2_state_space_pp.pdf (page 9)
+PUBLISHED_RMSE = {
+    "RMTPP": dict(amazon=0.338, retweet=16488, taxi=0.283, taobao=0.126, stackoverflow=1.049),
+    "SAHP": dict(amazon=0.335, retweet=16102, taxi=0.290, taobao=0.126, stackoverflow=1.031),
+    "THP": dict(amazon=0.332, retweet=16268, taxi=0.285, taobao=0.125, stackoverflow=1.033),
+    "IFTPP": dict(amazon=0.327, retweet=16625, taxi=0.362, taobao=0.125, stackoverflow=1.340),
+    "MHP": dict(amazon=0.329, retweet=16109, taxi=0.284, taobao=0.126, stackoverflow=1.046),
+    "NHP": dict(amazon=0.339, retweet=15911, taxi=0.282, taobao=0.126, stackoverflow=1.019),
+    "AttNHP": dict(amazon=2.656, retweet=16171, taxi=1.739, taobao=0.130, stackoverflow=1.256),
+    "S2P2": dict(amazon=0.327, retweet=15987, taxi=0.281, taobao=0.126, stackoverflow=1.014),
+}
+PUBLISHED_ACC = {
+    "RMTPP": dict(amazon=30.8, retweet=53.4, taxi=91.4, taobao=60.9, stackoverflow=45.6),
+    "SAHP": dict(amazon=32.4, retweet=57.5, taxi=91.4, taobao=60.5, stackoverflow=44.7),
+    "THP": dict(amazon=34.6, retweet=60.2, taxi=91.4, taobao=60.0, stackoverflow=46.6),
+    "IFTPP": dict(amazon=35.9, retweet=50.4, taxi=91.8, taobao=61.0, stackoverflow=45.6),
+    "MHP": dict(amazon=35.1, retweet=60.0, taxi=91.4, taobao=60.7, stackoverflow=46.5),
+    "NHP": dict(amazon=39.4, retweet=61.4, taxi=92.9, taobao=61.5, stackoverflow=47.1),
+    "AttNHP": dict(amazon=38.9, retweet=60.7, taxi=92.6, taobao=61.3, stackoverflow=48.2),
+    "S2P2": dict(amazon=40.7, retweet=61.3, taxi=93.1, taobao=61.1, stackoverflow=47.5),
+}
+_PRED = {}  # filled by table_b: model -> ds -> (rmse list, acc list) of the validation-selected config
 
 
 def table_b():
@@ -190,10 +216,13 @@ def table_b():
         for r in load_ept(ds):
             if "model" in r:
                 nm = "EPT-X (ours)" if r["model"] == "EPT-X" else "EPT-TPP (ours)"
-                groups.setdefault((nm, r.get("tag", "default")), []).append((r["val_ll"], r["ll_per_event"]))
+                groups.setdefault((nm, r.get("tag", "default")), []).append(
+                    (r["val_ll"], r["ll_per_event"], r.get("rmse"), r.get("acc")))
         for nm in {k[0] for k in groups}:
-            tag = max((k for k in groups if k[0] == nm), key=lambda k: np.mean([v for v, _ in groups[k]]))
-            ours.setdefault(nm, {})[ds] = [t for _, t in groups[tag]]
+            tag = max((k for k in groups if k[0] == nm), key=lambda k: np.mean([g[0] for g in groups[k]]))
+            ours.setdefault(nm, {})[ds] = [g[1] for g in groups[tag]]
+            _PRED.setdefault(nm, {})[ds] = ([g[2] for g in groups[tag] if g[2] is not None],
+                                            [100 * g[3] for g in groups[tag] if g[3] is not None])
         for r in load(f"track_b_classical_{ds}.json") or []:
             if "ll_per_event" in r:
                 ours.setdefault(r["method"], {}).setdefault(ds, []).append(r["ll_per_event"])
@@ -212,6 +241,57 @@ def table_b():
     (OUT / "track_b.tex").write_text(tab)
     seeds = {nice(m): {head[d]: len(x) for d, x in dv.items()} for m, dv in ours.items()}
     (OUT / "track_b_seeds.json").write_text(json.dumps(seeds, indent=1))
+
+
+def table_pred():
+    """Next-event prediction on the public benchmarks: time RMSE (lower better) and mark accuracy
+    (%, higher better); published numbers vs EPT-X (validation-selected configuration)."""
+    head = {d: ("StackOverflow" if d == "stackoverflow" else d.capitalize()) for d in DS_B}
+    pub = [m.replace("IFTPP", "IntensityFree") for m in PUBLISHED_RMSE]
+    for name, published, idx, higher, d in (("rmse", PUBLISHED_RMSE, 0, False, 3), ("acc", PUBLISHED_ACC, 1, True, 1)):
+        values = {m.replace("IFTPP", "IntensityFree"): {head[k]: (v[k], None) for k in DS_B} for m, v in published.items()}
+        x = _PRED.get("EPT-X (ours)", {})
+        values["EPT-X"] = {head[k]: mean_sd(x[k][idx]) for k in x if len(x[k][idx])}
+        tab = grouped_table([head[k] for k in DS_B], [("Published (Chang et al., 2025)", pub, False),
+                                                      ("Ours", ["EPT-X"], True)], values, higher=higher, d=d)
+        (OUT / f"track_b_{name}.tex").write_text(tab)
+
+
+def table_cost():
+    """Training cost per epoch and parameter count (EPT-X: exact likelihood; EasyTPP baselines:
+    Monte-Carlo compensator, trained for their full epoch budget). Device read from the queue log."""
+    logs = ROOT / "results" / "logs"
+
+    def device(job):
+        hits = list(logs.glob(f"*/{job}.log"))
+        return ("GPU" if hits[0].parent.name == "gpu" else "CPU (4 thr.)") if hits else "?"
+
+    rows = []
+    for ds, label, job in (("taxi", "Taxi", "eptx_taxi_s0"), ("lob_aapl", "LOBSTER AAPL", "eptx_lob_aapl_sharp_s0")):
+        tag = "eptx" if ds == "taxi" else "eptx_sharp"
+        f = J / "ept_runs" / f"{ds}__{tag}_s0.json"
+        if f.exists():
+            r = json.loads(f.read_text())
+            rows.append((label, "EPT-X (ours)", device(job), r["seconds"] / r["epochs"], r["n_params"], "exact"))
+        for m in ("S2P2", "NHP", "AttNHP", "THP", "IntensityFree"):
+            cand = [r for r in load("easytpp_results.json") or [] if r["dataset"] == ds and r["model"] == m
+                    and r.get("seconds") and (r.get("max_epoch") in (None, 100, 300))]
+            if cand:
+                r = cand[0]
+                rows.append((label, m, "GPU", r["seconds"] / (r.get("max_epoch") or 300), r["n_params"],
+                             "exact" if m == "IntensityFree" else "Monte Carlo"))
+    lines = ["\\begin{tabular}{llllrr}", "\\toprule",
+             "Data & Model & Compensator & Device & s / epoch & Parameters \\\\", "\\midrule"]
+    last = None
+    for label, m, dev, spe, npar, comp in rows:
+        if last is not None and label != last:
+            lines.append("\\midrule")
+        shade = "\\rowcolor{oursbg} " if "ours" in m else ""
+        lines.append(f"{shade}{label if label != last else ''} & {m.replace(' (ours)', '')} & {comp} & {dev} & "
+                     f"{spe:.1f} & {npar / 1e3:.0f}k \\\\")
+        last = label
+    lines += ["\\bottomrule", "\\end{tabular}"]
+    (OUT / "cost.tex").write_text("\n".join(lines))
 
 
 def table_ablation():
@@ -500,7 +580,7 @@ def numbers():
 
 
 if __name__ == "__main__":
-    for f in (table_a, table_b, table_ablation, table_c, table_d, table_main, numbers):
+    for f in (table_a, table_b, table_pred, table_cost, table_ablation, table_c, table_d, table_main, numbers):
         try:
             f()
             print("ok", f.__name__)

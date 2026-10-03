@@ -55,6 +55,10 @@ encoder improves any dataset (Section~\ref{sec:results}).
 \begin{table}[!htbp]\centering\scriptsize
 \caption{Track A, all metrics (mean $\pm$ s.d.\ over five seeds): relative branching-matrix
 error, spectral-radius error, kernel $L^1$ error, held-out deficit dLL ($10^{-3}$
-nats/event) and edge AUC.}\label{tab:track-a-full}
+nats/event) and edge AUC. AUC measures how well absent and present edges are separated, so
+it is defined only for scenarios whose true graph has absent edges (S4, S5); ``n/a'' marks
+S1--S3, whose graphs are complete. ``--'' marks a metric the method does not produce
+(NPHC estimates only the branching matrix, not kernels or a likelihood); rows absent for a
+scenario are fits that failed to converge.}\label{tab:track-a-full}
 \resizebox{\linewidth}{!}{\input{tables/track_a_full}}
 \end{table}

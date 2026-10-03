@@ -132,6 +132,19 @@ shaded: our models.}
 \input{tables/track_b}
 \end{table}
 
+For next-event prediction (Table~\ref{tab:pred}), EPT-X's Bayes-optimal time prediction is the
+best or tied with the best on every dataset, while its mark accuracy trails S2P2 and NHP on
+four of the five---the same time-versus-mark split as in the likelihood decomposition.
+
+\begin{table}[!htbp]\centering\small
+\caption{Next-event prediction on the public benchmarks: time RMSE (top, lower is better; Retweet
+in seconds) and mark accuracy (bottom, \%, higher is better). Published numbers from
+\citet{chang2025deep}, Table~2(b,c). Bold: best; underlined: second best; shaded: ours.}\label{tab:pred}
+\setlength{\tabcolsep}{5pt}
+\input{tables/track_b_rmse}\\[6pt]
+\input{tables/track_b_acc}
+\end{table}
+
 \FloatBarrier
 \subsection{Track C: limit-order-book event streams}
 Table~\ref{tab:track-c} reports test log-likelihood per event on the five LOBSTER

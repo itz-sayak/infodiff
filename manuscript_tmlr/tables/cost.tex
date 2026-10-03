@@ -1,0 +1,15 @@
+\begin{tabular}{llllrr}
+\toprule
+Data & Model & Compensator & Device & s / epoch & Parameters \\
+\midrule
+\rowcolor{oursbg} Taxi & EPT-X & exact & CPU (4 thr.) & 15.4 & 146k \\
+ & S2P2 & Monte Carlo & GPU & 7.7 & 35k \\
+\midrule
+\rowcolor{oursbg} LOBSTER AAPL & EPT-X & exact & GPU & 22.0 & 76k \\
+ & S2P2 & Monte Carlo & GPU & 5.8 & 34k \\
+ & NHP & Monte Carlo & GPU & 1.6 & 232k \\
+ & AttNHP & Monte Carlo & GPU & 7.5 & 20k \\
+ & THP & Monte Carlo & GPU & 0.4 & 51k \\
+ & IntensityFree & exact & GPU & 0.4 & 7k \\
+\bottomrule
+\end{tabular}
