@@ -1,0 +1,23 @@
+
+=== Fri Oct  2 05:53:05 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_ablation.py amazon 0 sel_bs256 "{\"epochs\": 100, \"patience\": 20, \"renewal\": true, \"n_rates\": 8, \"phases\": 4, \"bs\": 256, \"hidden\": 64}"
+  amazon seed=0 ep=0 val_ll=-2.4671 best=-2.4671
+  amazon seed=0 ep=5 val_ll=-1.2320 best=-1.2320
+  amazon seed=0 ep=10 val_ll=-0.8872 best=-0.8872
+  amazon seed=0 ep=15 val_ll=-0.7494 best=-0.7494
+  amazon seed=0 ep=20 val_ll=-0.6829 best=-0.6829
+  amazon seed=0 ep=25 val_ll=-0.6230 best=-0.6230
+  amazon seed=0 ep=30 val_ll=-0.5926 best=-0.5926
+  amazon seed=0 ep=35 val_ll=-0.5730 best=-0.5730
+  amazon seed=0 ep=40 val_ll=-0.5636 best=-0.5613
+  amazon seed=0 ep=45 val_ll=-0.5493 best=-0.5493
+  amazon seed=0 ep=50 val_ll=-0.5395 best=-0.5395
+  amazon seed=0 ep=55 val_ll=-0.5357 best=-0.5357
+  amazon seed=0 ep=60 val_ll=-0.5310 best=-0.5310
+  amazon seed=0 ep=65 val_ll=-0.5264 best=-0.5264
+  amazon seed=0 ep=70 val_ll=-0.5231 best=-0.5231
+  amazon seed=0 ep=75 val_ll=-0.5219 best=-0.5216
+  amazon seed=0 ep=80 val_ll=-0.5198 best=-0.5198
+  amazon seed=0 ep=85 val_ll=-0.5186 best=-0.5186
+  amazon seed=0 ep=90 val_ll=-0.5183 best=-0.5182
+  amazon seed=0 ep=95 val_ll=-0.5181 best=-0.5181
+RESULT {"ll_per_event": -0.5273180211322903, "n_events": 82197.0, "time_ll": 1.3529323274039806, "mark_ll": -1.880250348536271, "rmse": 0.3312734067440033, "acc": 0.35941702127456665, "dataset": "amazon", "seed": 0, "val_ll": -0.5181036380303944, "epochs": 100, "seconds": 4983.528560638428, "hidden": 64, "n_rates": 8, "n_channels": 4, "phases": 4, "lr": 0.01, "gompertz": true, "model": "EPT-X", "renewal": true, "input_v2": true, "ept_channel": true, "rn_shift": false, "rn_scales": 24, "rn_orders": [1, 4, 16], "n_layers": 1, "layer_norm": false, "dropout": 0.0, "weight_decay": 0.0, "n_params": 210363, "batch_size": 256, "config": {"epochs": 100, "patience": 20, "renewal": true, "n_rates": 8, "phases": 4, "bs": 256, "hidden": 64}, "tag": "sel_bs256"}

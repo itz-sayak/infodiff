@@ -1,0 +1,23 @@
+
+=== Fri Oct  2 05:05:46 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_ablation.py stackoverflow 0 sel_bs256 "{\"epochs\": 100, \"patience\": 20, \"renewal\": true, \"n_rates\": 8, \"phases\": 4, \"bs\": 256, \"hidden\": 64}"
+  stackoverflow seed=0 ep=0 val_ll=-5.5040 best=-5.5040
+  stackoverflow seed=0 ep=5 val_ll=-3.7684 best=-3.7684
+  stackoverflow seed=0 ep=10 val_ll=-3.3648 best=-3.3648
+  stackoverflow seed=0 ep=15 val_ll=-3.0987 best=-3.0987
+  stackoverflow seed=0 ep=20 val_ll=-2.9244 best=-2.9244
+  stackoverflow seed=0 ep=25 val_ll=-2.8024 best=-2.8024
+  stackoverflow seed=0 ep=30 val_ll=-2.7182 best=-2.7182
+  stackoverflow seed=0 ep=35 val_ll=-2.6500 best=-2.6500
+  stackoverflow seed=0 ep=40 val_ll=-2.5992 best=-2.5992
+  stackoverflow seed=0 ep=45 val_ll=-2.5600 best=-2.5600
+  stackoverflow seed=0 ep=50 val_ll=-2.5285 best=-2.5285
+  stackoverflow seed=0 ep=55 val_ll=-2.5047 best=-2.5047
+  stackoverflow seed=0 ep=60 val_ll=-2.4860 best=-2.4860
+  stackoverflow seed=0 ep=65 val_ll=-2.4707 best=-2.4707
+  stackoverflow seed=0 ep=70 val_ll=-2.4597 best=-2.4597
+  stackoverflow seed=0 ep=75 val_ll=-2.4520 best=-2.4520
+  stackoverflow seed=0 ep=80 val_ll=-2.4470 best=-2.4470
+  stackoverflow seed=0 ep=85 val_ll=-2.4438 best=-2.4438
+  stackoverflow seed=0 ep=90 val_ll=-2.4423 best=-2.4423
+  stackoverflow seed=0 ep=95 val_ll=-2.4418 best=-2.4418
+RESULT {"ll_per_event": -2.4445186713874105, "n_events": 26117.0, "time_ll": -0.7459420139420684, "mark_ll": -1.698576657445342, "rmse": 1.0384105443954468, "acc": 0.44932419061660767, "dataset": "stackoverflow", "seed": 0, "val_ll": -2.441714378745909, "epochs": 100, "seconds": 3002.340868473053, "hidden": 64, "n_rates": 8, "n_channels": 4, "phases": 4, "lr": 0.01, "gompertz": true, "model": "EPT-X", "renewal": true, "input_v2": true, "ept_channel": true, "rn_shift": false, "rn_scales": 24, "rn_orders": [1, 4, 16], "n_layers": 1, "layer_norm": false, "dropout": 0.0, "weight_decay": 0.0, "n_params": 276477, "batch_size": 256, "config": {"epochs": 100, "patience": 20, "renewal": true, "n_rates": 8, "phases": 4, "bs": 256, "hidden": 64}, "tag": "sel_bs256"}

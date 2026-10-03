@@ -1,0 +1,23 @@
+
+=== Fri Oct  2 01:03:43 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_ablation.py stackoverflow 0 sel_sharp48 "{\"epochs\": 100, \"patience\": 20, \"renewal\": true, \"n_rates\": 8, \"phases\": 4, \"rn_shift\": true, \"rn_scales\": 48, \"rn_orders\": [1, 4, 16, 64, 256, 1024], \"hidden\": 64}"
+  stackoverflow seed=0 ep=0 val_ll=-4.2310 best=-4.2310
+  stackoverflow seed=0 ep=5 val_ll=-2.9159 best=-2.9159
+  stackoverflow seed=0 ep=10 val_ll=-2.5700 best=-2.5700
+  stackoverflow seed=0 ep=15 val_ll=-2.4219 best=-2.4219
+  stackoverflow seed=0 ep=20 val_ll=-2.3354 best=-2.3354
+  stackoverflow seed=0 ep=25 val_ll=-2.2888 best=-2.2888
+  stackoverflow seed=0 ep=30 val_ll=-2.2609 best=-2.2609
+  stackoverflow seed=0 ep=35 val_ll=-2.2369 best=-2.2369
+  stackoverflow seed=0 ep=40 val_ll=-2.2212 best=-2.2212
+  stackoverflow seed=0 ep=45 val_ll=-2.2088 best=-2.2088
+  stackoverflow seed=0 ep=50 val_ll=-2.2015 best=-2.2015
+  stackoverflow seed=0 ep=55 val_ll=-2.1957 best=-2.1957
+  stackoverflow seed=0 ep=60 val_ll=-2.1914 best=-2.1914
+  stackoverflow seed=0 ep=65 val_ll=-2.1875 best=-2.1875
+  stackoverflow seed=0 ep=70 val_ll=-2.1872 best=-2.1858
+  stackoverflow seed=0 ep=75 val_ll=-2.1850 best=-2.1846
+  stackoverflow seed=0 ep=80 val_ll=-2.1831 best=-2.1827
+  stackoverflow seed=0 ep=85 val_ll=-2.1823 best=-2.1823
+  stackoverflow seed=0 ep=90 val_ll=-2.1819 best=-2.1819
+  stackoverflow seed=0 ep=95 val_ll=-2.1819 best=-2.1819
+RESULT {"ll_per_event": -2.1880370962878586, "n_events": 26117.0, "time_ll": -0.6471750021537696, "mark_ll": -1.540862094134089, "rmse": 1.012999176979065, "acc": 0.45296168327331543, "dataset": "stackoverflow", "seed": 0, "val_ll": -2.181877131717992, "epochs": 100, "seconds": 8095.812772989273, "hidden": 64, "n_rates": 8, "n_channels": 4, "phases": 4, "lr": 0.01, "gompertz": true, "model": "EPT-X", "renewal": true, "input_v2": true, "ept_channel": true, "rn_shift": true, "rn_scales": 48, "rn_orders": [1, 4, 16, 64, 256, 1024], "n_layers": 1, "layer_norm": false, "dropout": 0.0, "weight_decay": 0.0, "n_params": 328485, "batch_size": 64, "config": {"epochs": 100, "patience": 20, "renewal": true, "n_rates": 8, "phases": 4, "rn_shift": true, "rn_scales": 48, "rn_orders": [1, 4, 16, 64, 256, 1024], "hidden": 64}, "tag": "sel_sharp48"}

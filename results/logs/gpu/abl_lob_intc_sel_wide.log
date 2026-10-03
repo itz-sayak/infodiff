@@ -1,0 +1,15 @@
+
+=== Fri Oct  2 03:59:44 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_ablation.py lob_intc 0 sel_wide "{\"epochs\": 100, \"patience\": 20, \"renewal\": true, \"n_rates\": 8, \"phases\": 2, \"hidden\": 128, \"dropout\": 0.1}"
+  lob_intc seed=0 ep=0 val_ll=4.8886 best=4.8886
+  lob_intc seed=0 ep=5 val_ll=5.3137 best=5.3137
+  lob_intc seed=0 ep=10 val_ll=5.4029 best=5.4029
+  lob_intc seed=0 ep=15 val_ll=5.4293 best=5.4346
+  lob_intc seed=0 ep=20 val_ll=5.4443 best=5.4501
+  lob_intc seed=0 ep=25 val_ll=5.4571 best=5.4571
+  lob_intc seed=0 ep=30 val_ll=5.4562 best=5.4593
+  lob_intc seed=0 ep=35 val_ll=5.4595 best=5.4595
+  lob_intc seed=0 ep=40 val_ll=5.4537 best=5.4595
+  lob_intc seed=0 ep=45 val_ll=5.4488 best=5.4595
+  lob_intc seed=0 ep=50 val_ll=5.4394 best=5.4595
+  lob_intc seed=0 ep=55 val_ll=5.4386 best=5.4595
+RESULT {"ll_per_event": 6.116007478823669, "n_events": 104775.0, "time_ll": 7.166139719040801, "mark_ll": -1.050132240217132, "rmse": 0.1668066680431366, "acc": 0.5454258918762207, "dataset": "lob_intc", "seed": 0, "val_ll": 5.459467921156237, "epochs": 56, "seconds": 3062.5627040863037, "hidden": 128, "n_rates": 8, "n_channels": 4, "phases": 2, "lr": 0.01, "gompertz": true, "model": "EPT-X", "renewal": true, "input_v2": true, "ept_channel": true, "rn_shift": false, "rn_scales": 24, "rn_orders": [1, 4, 16], "n_layers": 1, "layer_norm": false, "dropout": 0.1, "weight_decay": 0.0, "n_params": 161549, "batch_size": 64, "config": {"epochs": 100, "patience": 20, "renewal": true, "n_rates": 8, "phases": 2, "hidden": 128, "dropout": 0.1}, "tag": "sel_wide"}

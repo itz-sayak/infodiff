@@ -1,0 +1,11 @@
+
+=== Sat Oct  3 12:13:30 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_ablation.py amazon 0 sel_attn "{\"epochs\": 100, \"patience\": 20, \"renewal\": true, \"hidden\": 64, \"encoder\": \"transformer\", \"n_rates\": 8, \"phases\": 4}"
+  amazon seed=0 ep=0 val_ll=-1.8652 best=-1.8652
+  amazon seed=0 ep=5 val_ll=-0.6746 best=-0.6746
+  amazon seed=0 ep=10 val_ll=-0.5630 best=-0.5630
+  amazon seed=0 ep=15 val_ll=-0.5343 best=-0.5343
+  amazon seed=0 ep=20 val_ll=-0.5424 best=-0.5312
+  amazon seed=0 ep=25 val_ll=-0.5375 best=-0.5312
+  amazon seed=0 ep=30 val_ll=-0.5513 best=-0.5312
+  amazon seed=0 ep=35 val_ll=-0.5695 best=-0.5312
+RESULT {"ll_per_event": -0.5394649428343912, "n_events": 82197.0, "time_ll": 1.3633232781743099, "mark_ll": -1.902788221008701, "rmse": 0.3293531537055969, "acc": 0.3566553592681885, "dataset": "amazon", "seed": 0, "val_ll": -0.5311646729338099, "epochs": 40, "seconds": 5702.627121448517, "hidden": 64, "n_rates": 8, "n_channels": 4, "phases": 4, "lr": 0.01, "gompertz": true, "model": "EPT-X", "renewal": true, "input_v2": true, "ept_channel": true, "rn_shift": false, "rn_scales": 24, "rn_orders": [1, 4, 16], "n_layers": 1, "layer_norm": false, "dropout": 0.0, "weight_decay": 0.0, "encoder": "transformer", "n_params": 541883, "batch_size": 64, "config": {"epochs": 100, "patience": 20, "renewal": true, "hidden": 64, "encoder": "transformer", "n_rates": 8, "phases": 4}, "tag": "sel_attn"}

@@ -1,0 +1,23 @@
+
+=== Thu Oct  1 23:22:46 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_ablation.py taxi 0 sel_sharp48 "{\"epochs\": 100, \"patience\": 20, \"renewal\": true, \"n_rates\": 8, \"phases\": 4, \"rn_shift\": true, \"rn_scales\": 48, \"rn_orders\": [1, 4, 16, 64, 256, 1024], \"hidden\": 64}"
+  taxi seed=0 ep=0 val_ll=-0.6317 best=-0.6317
+  taxi seed=0 ep=5 val_ll=0.0851 best=0.0851
+  taxi seed=0 ep=10 val_ll=0.2524 best=0.2524
+  taxi seed=0 ep=15 val_ll=0.3297 best=0.3297
+  taxi seed=0 ep=20 val_ll=0.3748 best=0.3748
+  taxi seed=0 ep=25 val_ll=0.3987 best=0.3987
+  taxi seed=0 ep=30 val_ll=0.4132 best=0.4132
+  taxi seed=0 ep=35 val_ll=0.4272 best=0.4272
+  taxi seed=0 ep=40 val_ll=0.4335 best=0.4335
+  taxi seed=0 ep=45 val_ll=0.4426 best=0.4426
+  taxi seed=0 ep=50 val_ll=0.4443 best=0.4454
+  taxi seed=0 ep=55 val_ll=0.4504 best=0.4504
+  taxi seed=0 ep=60 val_ll=0.4505 best=0.4505
+  taxi seed=0 ep=65 val_ll=0.4530 best=0.4530
+  taxi seed=0 ep=70 val_ll=0.4539 best=0.4541
+  taxi seed=0 ep=75 val_ll=0.4540 best=0.4545
+  taxi seed=0 ep=80 val_ll=0.4553 best=0.4553
+  taxi seed=0 ep=85 val_ll=0.4546 best=0.4553
+  taxi seed=0 ep=90 val_ll=0.4551 best=0.4553
+  taxi seed=0 ep=95 val_ll=0.4550 best=0.4553
+RESULT {"ll_per_event": 0.5001462304145717, "n_events": 14420.0, "time_ll": 0.7317815561069695, "mark_ll": -0.2316353256923977, "rmse": 0.280089795589447, "acc": 0.9176837801933289, "dataset": "taxi", "seed": 0, "val_ll": 0.45525679093212107, "epochs": 100, "seconds": 3214.49942111969, "hidden": 64, "n_rates": 8, "n_channels": 4, "phases": 4, "lr": 0.01, "gompertz": true, "model": "EPT-X", "renewal": true, "input_v2": true, "ept_channel": true, "rn_shift": true, "rn_scales": 48, "rn_orders": [1, 4, 16, 64, 256, 1024], "n_layers": 1, "layer_norm": false, "dropout": 0.0, "weight_decay": 0.0, "n_params": 178689, "batch_size": 64, "config": {"epochs": 100, "patience": 20, "renewal": true, "n_rates": 8, "phases": 4, "rn_shift": true, "rn_scales": 48, "rn_orders": [1, 4, 16, 64, 256, 1024], "hidden": 64}, "tag": "sel_sharp48"}

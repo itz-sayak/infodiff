@@ -1,0 +1,16 @@
+  amazon seed=1 ep=0 val_ll=-1.3050 best=-1.3050
+  amazon seed=1 ep=5 val_ll=0.3738 best=0.3738
+  amazon seed=1 ep=10 val_ll=0.5482 best=0.5482
+  amazon seed=1 ep=15 val_ll=0.5999 best=0.5999
+  amazon seed=1 ep=20 val_ll=0.6150 best=0.6150
+  amazon seed=1 ep=25 val_ll=0.6238 best=0.6249
+  amazon seed=1 ep=30 val_ll=0.6283 best=0.6283
+  amazon seed=1 ep=35 val_ll=0.6247 best=0.6324
+  amazon seed=1 ep=40 val_ll=0.6204 best=0.6324
+  amazon seed=1 ep=45 val_ll=0.6249 best=0.6324
+  amazon seed=1 ep=50 val_ll=0.6264 best=0.6324
+  amazon seed=1 ep=55 val_ll=0.6170 best=0.6324
+  amazon seed=1 ep=60 val_ll=0.6167 best=0.6324
+  amazon seed=1 ep=65 val_ll=0.6133 best=0.6324
+  amazon seed=1 ep=70 val_ll=0.6156 best=0.6324
+RESULT {"ll_per_event": 0.6310318538750654, "n_events": 82197.0, "time_ll": 2.5124172909291094, "mark_ll": -1.881385437054044, "rmse": 0.32767805457115173, "acc": 0.35921019315719604, "dataset": "amazon", "seed": 1, "val_ll": 0.6323622718616649, "epochs": 75, "seconds": 23828.523420095444, "hidden": 64, "n_rates": 8, "n_channels": 4, "phases": 4, "lr": 0.01, "gompertz": true, "model": "EPT-X", "renewal": true, "input_v2": true, "ept_channel": true, "rn_shift": true, "rn_scales": 48, "rn_orders": [1, 4, 16, 64, 256, 1024], "n_layers": 1, "layer_norm": false, "dropout": 0.0, "weight_decay": 0.0, "n_params": 252867, "batch_size": 64, "config": {"n_rates": 8, "phases": 4, "hidden": 64, "epochs": 300, "patience": 40, "renewal": true, "rn_shift": true, "rn_scales": 48, "rn_orders": [1, 4, 16, 64, 256, 1024], "verbose": true}, "tag": "eptx_sharp48"}

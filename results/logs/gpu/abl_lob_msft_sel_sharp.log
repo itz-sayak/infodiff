@@ -1,0 +1,17 @@
+
+=== Fri Oct  2 09:13:07 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_ablation.py lob_msft 0 sel_sharp "{\"n_rates\": 8, \"phases\": 2, \"hidden\": 64, \"renewal\": true, \"rn_shift\": true, \"rn_orders\": [1, 4, 16, 64, 256, 1024], \"epochs\": 100, \"patience\": 20}"
+  lob_msft seed=0 ep=0 val_ll=5.9644 best=5.9644
+  lob_msft seed=0 ep=5 val_ll=6.5117 best=6.5117
+  lob_msft seed=0 ep=10 val_ll=6.6012 best=6.6012
+  lob_msft seed=0 ep=15 val_ll=6.6339 best=6.6342
+  lob_msft seed=0 ep=20 val_ll=6.6655 best=6.6655
+  lob_msft seed=0 ep=25 val_ll=6.6789 best=6.6789
+  lob_msft seed=0 ep=30 val_ll=6.6885 best=6.6885
+  lob_msft seed=0 ep=35 val_ll=6.6910 best=6.6910
+  lob_msft seed=0 ep=40 val_ll=6.6908 best=6.6910
+  lob_msft seed=0 ep=45 val_ll=6.6881 best=6.6910
+  lob_msft seed=0 ep=50 val_ll=6.6895 best=6.6926
+  lob_msft seed=0 ep=55 val_ll=6.6875 best=6.6926
+  lob_msft seed=0 ep=60 val_ll=6.6890 best=6.6926
+  lob_msft seed=0 ep=65 val_ll=6.6833 best=6.6926
+RESULT {"ll_per_event": 6.666940573140065, "n_events": 112141.0, "time_ll": 7.668742364523234, "mark_ll": -1.0018017913831694, "rmse": 0.18457649648189545, "acc": 0.5786197781562805, "dataset": "lob_msft", "seed": 0, "val_ll": 6.692606544685511, "epochs": 67, "seconds": 4272.217019319534, "hidden": 64, "n_rates": 8, "n_channels": 4, "phases": 2, "lr": 0.01, "gompertz": true, "model": "EPT-X", "renewal": true, "input_v2": true, "ept_channel": true, "rn_shift": true, "rn_scales": 24, "rn_orders": [1, 4, 16, 64, 256, 1024], "n_layers": 1, "layer_norm": false, "dropout": 0.0, "weight_decay": 0.0, "n_params": 75885, "batch_size": 64, "config": {"n_rates": 8, "phases": 2, "hidden": 64, "renewal": true, "rn_shift": true, "rn_orders": [1, 4, 16, 64, 256, 1024], "epochs": 100, "patience": 20}, "tag": "sel_sharp"}

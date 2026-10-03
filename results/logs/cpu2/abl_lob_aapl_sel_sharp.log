@@ -1,0 +1,19 @@
+
+=== Fri Oct  2 09:25:42 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_ablation.py lob_aapl 0 sel_sharp "{\"n_rates\": 8, \"phases\": 2, \"hidden\": 64, \"renewal\": true, \"rn_shift\": true, \"rn_orders\": [1, 4, 16, 64, 256, 1024], \"epochs\": 100, \"patience\": 20}"
+  lob_aapl seed=0 ep=0 val_ll=1.7895 best=1.7895
+  lob_aapl seed=0 ep=5 val_ll=2.2663 best=2.2663
+  lob_aapl seed=0 ep=10 val_ll=2.4102 best=2.4102
+  lob_aapl seed=0 ep=15 val_ll=2.4831 best=2.4831
+  lob_aapl seed=0 ep=20 val_ll=2.5135 best=2.5135
+  lob_aapl seed=0 ep=25 val_ll=2.5454 best=2.5454
+  lob_aapl seed=0 ep=30 val_ll=2.5694 best=2.5694
+  lob_aapl seed=0 ep=35 val_ll=2.5822 best=2.5842
+  lob_aapl seed=0 ep=40 val_ll=2.5931 best=2.5931
+  lob_aapl seed=0 ep=45 val_ll=2.5977 best=2.5977
+  lob_aapl seed=0 ep=50 val_ll=2.5920 best=2.5982
+  lob_aapl seed=0 ep=55 val_ll=2.5904 best=2.5984
+  lob_aapl seed=0 ep=60 val_ll=2.5931 best=2.5998
+  lob_aapl seed=0 ep=65 val_ll=2.5922 best=2.5998
+  lob_aapl seed=0 ep=70 val_ll=2.5933 best=2.5998
+  lob_aapl seed=0 ep=75 val_ll=2.5923 best=2.5998
+RESULT {"ll_per_event": 3.54903298404769, "n_events": 33655.0, "time_ll": 4.765443296408409, "mark_ll": -1.216410312360719, "rmse": 0.43070629239082336, "acc": 0.47166839241981506, "dataset": "lob_aapl", "seed": 0, "val_ll": 2.599765230197438, "epochs": 78, "seconds": 1993.3111193180084, "hidden": 64, "n_rates": 8, "n_channels": 4, "phases": 2, "lr": 0.01, "gompertz": true, "model": "EPT-X", "renewal": true, "input_v2": true, "ept_channel": true, "rn_shift": true, "rn_scales": 24, "rn_orders": [1, 4, 16, 64, 256, 1024], "n_layers": 1, "layer_norm": false, "dropout": 0.0, "weight_decay": 0.0, "n_params": 75885, "batch_size": 64, "config": {"n_rates": 8, "phases": 2, "hidden": 64, "renewal": true, "rn_shift": true, "rn_orders": [1, 4, 16, 64, 256, 1024], "epochs": 100, "patience": 20}, "tag": "sel_sharp"}

@@ -1,0 +1,23 @@
+
+=== Fri Oct  2 09:39:14 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_ablation.py lob_goog 0 sel_sharp "{\"n_rates\": 8, \"phases\": 2, \"hidden\": 64, \"renewal\": true, \"rn_shift\": true, \"rn_orders\": [1, 4, 16, 64, 256, 1024], \"epochs\": 100, \"patience\": 20}"
+  lob_goog seed=0 ep=0 val_ll=1.3707 best=1.3707
+  lob_goog seed=0 ep=5 val_ll=1.9493 best=1.9493
+  lob_goog seed=0 ep=10 val_ll=2.1046 best=2.1046
+  lob_goog seed=0 ep=15 val_ll=2.2071 best=2.2071
+  lob_goog seed=0 ep=20 val_ll=2.3006 best=2.3006
+  lob_goog seed=0 ep=25 val_ll=2.3590 best=2.3590
+  lob_goog seed=0 ep=30 val_ll=2.3922 best=2.3922
+  lob_goog seed=0 ep=35 val_ll=2.4021 best=2.4047
+  lob_goog seed=0 ep=40 val_ll=2.4323 best=2.4323
+  lob_goog seed=0 ep=45 val_ll=2.4417 best=2.4417
+  lob_goog seed=0 ep=50 val_ll=2.4447 best=2.4476
+  lob_goog seed=0 ep=55 val_ll=2.4524 best=2.4605
+  lob_goog seed=0 ep=60 val_ll=2.4656 best=2.4685
+  lob_goog seed=0 ep=65 val_ll=2.4740 best=2.4740
+  lob_goog seed=0 ep=70 val_ll=2.4699 best=2.4740
+  lob_goog seed=0 ep=75 val_ll=2.4727 best=2.4744
+  lob_goog seed=0 ep=80 val_ll=2.4754 best=2.4761
+  lob_goog seed=0 ep=85 val_ll=2.4756 best=2.4761
+  lob_goog seed=0 ep=90 val_ll=2.4761 best=2.4769
+  lob_goog seed=0 ep=95 val_ll=2.4763 best=2.4769
+RESULT {"ll_per_event": 2.9809737166501034, "n_events": 13081.0, "time_ll": 4.227146003745891, "mark_ll": -1.2461722870957879, "rmse": 0.9596243500709534, "acc": 0.5094411969184875, "dataset": "lob_goog", "seed": 0, "val_ll": 2.476863381461138, "epochs": 100, "seconds": 1064.20019364357, "hidden": 64, "n_rates": 8, "n_channels": 4, "phases": 2, "lr": 0.01, "gompertz": true, "model": "EPT-X", "renewal": true, "input_v2": true, "ept_channel": true, "rn_shift": true, "rn_scales": 24, "rn_orders": [1, 4, 16, 64, 256, 1024], "n_layers": 1, "layer_norm": false, "dropout": 0.0, "weight_decay": 0.0, "n_params": 75885, "batch_size": 64, "config": {"n_rates": 8, "phases": 2, "hidden": 64, "renewal": true, "rn_shift": true, "rn_orders": [1, 4, 16, 64, 256, 1024], "epochs": 100, "patience": 20}, "tag": "sel_sharp"}

@@ -1,0 +1,23 @@
+
+=== Fri Oct  2 03:18:43 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_ablation.py stackoverflow 0 sel_wide "{\"epochs\": 100, \"patience\": 20, \"renewal\": true, \"n_rates\": 8, \"phases\": 4, \"hidden\": 128, \"dropout\": 0.1}"
+  stackoverflow seed=0 ep=0 val_ll=-4.1777 best=-4.1777
+  stackoverflow seed=0 ep=5 val_ll=-2.9449 best=-2.9449
+  stackoverflow seed=0 ep=10 val_ll=-2.6205 best=-2.6205
+  stackoverflow seed=0 ep=15 val_ll=-2.4733 best=-2.4733
+  stackoverflow seed=0 ep=20 val_ll=-2.3924 best=-2.3924
+  stackoverflow seed=0 ep=25 val_ll=-2.3359 best=-2.3359
+  stackoverflow seed=0 ep=30 val_ll=-2.3047 best=-2.3047
+  stackoverflow seed=0 ep=35 val_ll=-2.2758 best=-2.2758
+  stackoverflow seed=0 ep=40 val_ll=-2.2380 best=-2.2380
+  stackoverflow seed=0 ep=45 val_ll=-2.2242 best=-2.2242
+  stackoverflow seed=0 ep=50 val_ll=-2.2180 best=-2.2174
+  stackoverflow seed=0 ep=55 val_ll=-2.2084 best=-2.2084
+  stackoverflow seed=0 ep=60 val_ll=-2.2047 best=-2.2047
+  stackoverflow seed=0 ep=65 val_ll=-2.2031 best=-2.2031
+  stackoverflow seed=0 ep=70 val_ll=-2.1978 best=-2.1978
+  stackoverflow seed=0 ep=75 val_ll=-2.1972 best=-2.1972
+  stackoverflow seed=0 ep=80 val_ll=-2.1959 best=-2.1959
+  stackoverflow seed=0 ep=85 val_ll=-2.1957 best=-2.1949
+  stackoverflow seed=0 ep=90 val_ll=-2.1955 best=-2.1949
+  stackoverflow seed=0 ep=95 val_ll=-2.1956 best=-2.1949
+RESULT {"ll_per_event": -2.201813444068997, "n_events": 26117.0, "time_ll": -0.6545861382193591, "mark_ll": -1.5472273058496382, "rmse": 1.0121351480484009, "acc": 0.45204272866249084, "dataset": "stackoverflow", "seed": 0, "val_ll": -2.1948755286167736, "epochs": 100, "seconds": 6417.677875041962, "hidden": 128, "n_rates": 8, "n_channels": 4, "phases": 4, "lr": 0.01, "gompertz": true, "model": "EPT-X", "renewal": true, "input_v2": true, "ept_channel": true, "rn_shift": false, "rn_scales": 24, "rn_orders": [1, 4, 16], "n_layers": 1, "layer_norm": false, "dropout": 0.1, "weight_decay": 0.0, "n_params": 559869, "batch_size": 64, "config": {"epochs": 100, "patience": 20, "renewal": true, "n_rates": 8, "phases": 4, "hidden": 128, "dropout": 0.1}, "tag": "sel_wide"}
