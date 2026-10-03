@@ -1,0 +1,25 @@
+% Measurement pipeline of the application: data, events, windows, certified fit, closed-form outputs.
+\begin{tikzpicture}[
+    font=\small,
+    >={Stealth[length=2.2mm]},
+    box/.style={draw, thick, minimum height=9mm, minimum width=20mm, align=center, inner sep=3pt},
+    fitbox/.style={box, fill=black!6},
+    res/.style={align=center, font=\footnotesize},
+    node distance=6mm,
+  ]
+  \node[box] (tk)  {ticks and\\ releases};
+  \node[box, right=of tk] (ev) {$\delta$-crossing\\ events};
+  \node[box, right=of ev] (win) {release and\\ placebo windows};
+  \node[fitbox, right=of win] (fit) {MSX fit\\ EM, Newton};
+  \node[box, right=of fit] (emb) {Markov\\ embedding};
+
+  \draw[->] (tk) -- (ev);
+  \draw[->] (ev) -- (win);
+  \draw[->] (win) -- (fit);
+  \draw[->] (fit) -- node[font=\footnotesize, above] {$\hat{\bm\theta}$} (emb);
+
+  \node[res, below=6mm of fit] (gap) {duality gap,\\ placebo test};
+  \draw[->] (fit) -- (gap);
+  \node[res, below=6mm of emb] (abs) {$\bm m(t)$, $t_{50}$, $t_{90}$,\\ drift};
+  \draw[->] (emb) -- (abs);
+\end{tikzpicture}

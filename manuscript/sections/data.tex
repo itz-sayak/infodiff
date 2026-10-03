@@ -1,5 +1,15 @@
 \section{Data}\label{sec:data}
 
+Figure~\ref{fig:pipeline} summarises the steps from raw data to absorption times.
+
+\begin{figure}[!htbp]\centering
+\input{figures/pipeline}
+\caption{Measurement pipeline. Prices become $\delta$-crossing events, which are grouped into
+release windows and matched placebo windows. A single certified MSX fit gives the duality gap and
+the placebo test, and its Markov embedding gives the response $\bm m(t)$, the absorption times
+and the expected price drift in closed form.}\label{fig:pipeline}
+\end{figure}
+
 \paragraph{Releases.}
 The calendar covers January 2022--August 2026 (670 scheduled events). US data releases
 (CPI, nonfarm payrolls, PPI, retail sales, GDP advance estimate, initial jobless claims)

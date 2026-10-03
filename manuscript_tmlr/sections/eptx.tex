@@ -59,6 +59,16 @@ EPT-X adds the corresponding hazard to EPT:
 \[
 \lambda_y(t)=\lambda^{\mathrm{EPT}}_y(t)+\frac{p(s,y)}{S_{\mathrm{ren}}(s)} .
 \]
+Figure~\ref{fig:eptx} shows how the parts fit together. The network only acts at event times;
+between events every term evolves in closed form.
+
+\begin{figure}[!htbp]\centering
+\input{figures/eptx_arch}
+\caption{EPT-X at one event. The GRU summary $\bm h_n$ sets the jump of the neural Erlang state,
+the hazard parameters and the renewal weights, while the Hawkes state is driven by the event mark
+alone. The grey boxes are the states carried from one event to the next. Until the next event,
+all four terms evolve in closed form, and their sum is the intensity $\lambda_y(t)$.}\label{fig:eptx}
+\end{figure}
 
 \begin{proposition}\label{prop:eptx}
 Let $\Lambda^{\mathrm{EPT}}(\Delta)=\int_{t_n}^{t_n+\Delta}\sum_y\lambda^{\mathrm{EPT}}_y(t)\,\mathrm{d}t$

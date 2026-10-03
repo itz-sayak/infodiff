@@ -4,5 +4,5 @@ set -e
 cd "$(dirname "$0")/.."
 cp manuscript/tables/*.tex manuscript_tmlr/tables/
 cp manuscript/numbers.tex manuscript_tmlr/numbers.tex
-cp manuscript/figures/*.pdf manuscript_tmlr/figures/
+cp manuscript/figures/*.pdf manuscript/figures/*.tex manuscript_tmlr/figures/
 cd manuscript_tmlr && tectonic -X compile main.tex

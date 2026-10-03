@@ -1,5 +1,15 @@
 \section{Application: how fast do markets absorb macroeconomic news?}\label{sec:application}
 
+Figure~\ref{fig:pipeline} summarises the steps from raw data to absorption times.
+
+\begin{figure}[!htbp]\centering
+\input{figures/pipeline}
+\caption{Measurement pipeline. Prices become $\delta$-crossing events, which are grouped into
+release windows and matched placebo windows. A single certified MSX fit gives the duality gap and
+the placebo test, and its Markov embedding gives the response $\bm m(t)$, the absorption times and
+the expected price drift in closed form.}\label{fig:pipeline}
+\end{figure}
+
 \paragraph{Releases.} Our calendar covers 670 scheduled releases between January 2022 and August
 2026. It contains CPI, nonfarm payrolls, PPI, retail sales, the GDP advance estimate and initial
 jobless claims, each dated by its first vintage in ALFRED, together with FOMC statements and press

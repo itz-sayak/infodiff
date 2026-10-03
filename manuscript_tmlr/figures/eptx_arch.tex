@@ -1,0 +1,43 @@
+% EPT-X architecture: one event step and the closed-form evolution until the next event.
+\begin{tikzpicture}[
+    font=\small,
+    >={Stealth[length=2.2mm]},
+    box/.style={draw, thick, minimum height=8mm, minimum width=27mm, align=center, inner sep=3pt},
+    state/.style={box, fill=black!6},
+    lab/.style={font=\footnotesize, inner sep=1.5pt},
+  ]
+  % input and encoder
+  \node (in) at (0,0) {$(\Delta_n,\,y_n)$};
+  \node[box, minimum width=14mm] (gru) at (2.1,0) {GRU};
+  \draw[->] (in) -- (gru);
+
+  % the four terms of the intensity
+  \node[state] (hk) at (7.0, 2.4)  {Hawkes state $\bm\xi^{\mathrm H}$};
+  \node[state] (xi) at (7.0, 0.95) {Erlang state $\bm\xi$};
+  \node[box]   (hz) at (7.0,-0.5)  {hazard terms};
+  \node[box]   (rn) at (7.0,-1.95) {Erlang mixture};
+
+  % encoder outputs
+  \coordinate (split) at (3.6,0);
+  \draw[thick] (gru) -- node[lab, above] {$\bm h_n$} (split);
+  \draw[->] (split) |- node[lab, above, pos=0.68] {gate, jump} (xi);
+  \draw[->] (split) |- node[lab, above, pos=0.68] {$\mu, g, \alpha, \kappa$} (hz);
+  \draw[->] (split) |- node[lab, above, pos=0.68] {$\pi, \omega$} (rn);
+
+  % the Hawkes state is driven by the event mark, not by the network
+  \draw[->] (in.north) |- node[lab, above, pos=0.72] {$+\beta$ on mark $y_n$} (hk);
+
+  % region evolved in closed form between events
+  \node[draw, dashed, rounded corners=2pt, inner sep=5pt, fit=(hk)(xi)(hz)(rn)] (cf) {};
+  \node[lab, below=1pt of cf.south] {closed form for $t\in(t_n,t_{n+1}]$};
+
+  % sum bar
+  \node[draw, thick, minimum width=5mm, minimum height=50mm, inner sep=0pt] (sum) at (11.0,0.225) {$\Sigma$};
+  \draw[->] (hk.east) -- node[lab, above] {$\Theta\bm\xi^{\mathrm H}$} (hk.east -| sum.west);
+  \draw[->] (xi.east) -- node[lab, above] {$C\bm\xi$} (xi.east -| sum.west);
+  \draw[->] (hz.east) -- (hz.east -| sum.west);
+  \draw[->] (rn.east) -- node[lab, above] {$p/S_{\mathrm{ren}}$} (rn.east -| sum.west);
+
+  \node (lam) at (12.6,0.225) {$\lambda_y(t)$};
+  \draw[->] (sum) -- (lam);
+\end{tikzpicture}
