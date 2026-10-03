@@ -26,3 +26,4 @@ manuscript_tmlr/*.log
 manuscript_tmlr/*.out
 manuscript_tmlr/*.bbl
 manuscript_tmlr/*.blg
+dist/

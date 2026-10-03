@@ -276,10 +276,15 @@ def table_cost():
     """Training cost per epoch and parameter count (EPT-X: exact likelihood; EasyTPP baselines:
     Monte-Carlo compensator, trained for their full epoch budget). Device read from the queue log."""
     logs = ROOT / "results" / "logs"
+    dev_file = J / "run_devices.json"  # device of each timed run, kept for builds without the logs
+    known = json.loads(dev_file.read_text()) if dev_file.exists() else {}
 
     def device(job):
         hits = list(logs.glob(f"*/{job}.log"))
-        return ("GPU" if hits[0].parent.name == "gpu" else "CPU (4 thr.)") if hits else "?"
+        if hits:
+            known[job] = "GPU" if hits[0].parent.name == "gpu" else "CPU (4 thr.)"
+            dev_file.write_text(json.dumps(known, indent=1))
+        return known.get(job, "?")
 
     rows = []
     for ds, label, job in (("taxi", "Taxi", "eptx_taxi_s0"), ("lob_aapl", "LOBSTER AAPL", "eptx_lob_aapl_sharp_s0")):
