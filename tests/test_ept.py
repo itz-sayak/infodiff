@@ -159,3 +159,40 @@ def test_eptx_sharp_atoms_finite_gradients_with_zero_gaps():
     ll, _ = m.loglik(dts, marks, mask)
     ll.backward()
     assert all(torch.isfinite(p.grad).all() for p in m.parameters() if p.grad is not None)
+
+
+def _tf_model():
+    torch.manual_seed(4)
+    cfg = EPTConfig(n_marks=3, hidden=16, n_rates=3, n_channels=2, phases=2, tau_min=0.05, tau_max=20.0,
+                    renewal=True, rn_scales=6, rn_orders=(1, 4), rn_lo=1e-3, rn_hi=10.0, input_v2=True,
+                    gap_eps=1e-6, gap_mu=-1.0, gap_sd=2.0, tie_thr=1e-3, encoder="transformer",
+                    tf_layers=2, tf_heads=2)
+    return cfg, EPTTPP(cfg).double().eval()
+
+
+def test_transformer_encoder_is_causal():
+    cfg, m = _tf_model()
+    dts, marks, mask = _toy(L=7)
+    with torch.no_grad():
+        h1 = m._encode_all(dts, marks, mask)
+        dts2, marks2 = dts.clone(), marks.clone()
+        dts2[:, 5] += 1.0
+        marks2[:, 5] = (marks2[:, 5] + 1) % 3
+        h2 = m._encode_all(dts2, marks2, mask)
+    assert torch.allclose(h1[:, :5], h2[:, :5], atol=1e-10)
+    assert not torch.allclose(h1[:, 5:], h2[:, 5:])
+
+
+def test_transformer_encoder_exact_compensator():
+    cfg, m = _tf_model()
+    dts, marks, mask = _toy()
+    B, L = dts.shape
+    with torch.no_grad():
+        log_lam, comp, states, mus = m.forward(dts, marks, mask)
+        H = m._last_h
+        for n in range(1, L):
+            u = torch.linspace(0, 1, 200001, dtype=torch.float64)
+            grid = (u ** 3)[None, :] * dts[:, n:n + 1]
+            lam, Lam = m._curve(states[:, n - 1], mus[:, n - 1], grid, H[:, n - 1])
+            assert torch.allclose(torch.trapezoid(lam.sum(-1), grid, dim=1), comp[:, n - 1], rtol=2e-4)
+            assert torch.allclose(torch.log(lam[torch.arange(B), -1, marks[:, n]]), log_lam[:, n - 1], atol=1e-8)

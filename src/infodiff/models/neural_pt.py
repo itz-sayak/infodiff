@@ -78,6 +78,12 @@ class EPTConfig:
     # so the between-event intensity and compensator stay closed form
     n_layers: int = 1
     layer_norm: bool = False
+    # history encoder: "gru" (sequential) or "transformer" (causal self-attention over past
+    # events, computed in parallel; the intensity and compensator between events are unchanged)
+    encoder: str = "gru"
+    tf_layers: int = 2
+    tf_heads: int = 4
+    tf_max_len: int = 4096
 
 
 class EPTTPP(nn.Module):
@@ -140,6 +146,26 @@ class EPTTPP(nn.Module):
             self.gru_up = nn.ModuleList([nn.GRUCell(cfg.hidden, cfg.hidden) for _ in range(cfg.n_layers - 1)])
         if cfg.layer_norm:
             self.lns = nn.ModuleList([nn.LayerNorm(cfg.hidden) for _ in range(cfg.n_layers)])
+        if cfg.encoder == "transformer":  # created last: the default model's initialisation is unchanged
+            d_in = cfg.mark_emb + (3 if cfg.input_v2 else 2)
+            self.tf_in = nn.Linear(d_in, cfg.hidden)
+            self.tf_pos = nn.Embedding(cfg.tf_max_len, cfg.hidden)
+            layer = nn.TransformerEncoderLayer(cfg.hidden, cfg.tf_heads, 2 * cfg.hidden, cfg.dropout,
+                                               batch_first=True, norm_first=True)
+            self.tf = nn.TransformerEncoder(layer, cfg.tf_layers, enable_nested_tensor=False)
+            self.tf_out = nn.LayerNorm(cfg.hidden)
+
+    def _encode_all(self, dts, marks, mask):
+        """Causal Transformer summaries h_n of events 0..n for every position (B, L, hidden)."""
+        B, L = marks.shape
+        gap = dts.clone()
+        gap[:, 0] = 0.0
+        feats = torch.cat([self.emb(marks.clamp(max=self.cfg.n_marks))]
+                          + [f.view(B, L, 1) for f in self._gap_features(gap.reshape(-1))], -1)
+        pos = torch.arange(L, device=dts.device).clamp(max=self.cfg.tf_max_len - 1)
+        x = self.tf_in(self.drop(feats)) + self.tf_pos(pos)[None]
+        causal = torch.triu(torch.ones(L, L, dtype=torch.bool, device=dts.device), 1)
+        return self.tf_out(self.tf(x, mask=causal, src_key_padding_mask=~mask))
 
     def _encode(self, inp, hs):
         """One event step of the (possibly deep) encoder. hs: list of per-layer states.
@@ -314,6 +340,8 @@ class EPTTPP(nn.Module):
         Csum = None if mixing else Cm.sum(0)
         log_lam, comp, states, mus, hs, log_tot = [], [], [], [], [], []
         H = [h] * self.cfg.n_layers  # per-layer encoder states
+        tf = self.cfg.encoder == "transformer"
+        Htf = self._encode_all(dts, marks, mask) if tf else None
         for n in range(L):
             if n > 0:
                 dt = dts[:, n]
@@ -343,11 +371,14 @@ class EPTTPP(nn.Module):
             else:
                 x_left = x
                 xh_left = xh
-            gap = dts[:, n] if n > 0 else torch.zeros(B, device=dev, dtype=dts.dtype)
-            inp = torch.cat([self.emb(marks[:, n].clamp(max=self.cfg.n_marks))] + self._gap_features(gap), -1)
             valid = mask[:, n].unsqueeze(-1)
-            H_new, h_new = self._encode(inp, H)
-            H = [torch.where(valid, a, b) for a, b in zip(H_new, H)]
+            if tf:
+                h_new = Htf[:, n]
+            else:
+                gap = dts[:, n] if n > 0 else torch.zeros(B, device=dev, dtype=dts.dtype)
+                inp = torch.cat([self.emb(marks[:, n].clamp(max=self.cfg.n_marks))] + self._gap_features(gap), -1)
+                H_new, h_new = self._encode(inp, H)
+                H = [torch.where(valid, a, b) for a, b in zip(H_new, H)]
             h = torch.where(valid, h_new, h)
             x_new = torch.sigmoid(self.gate(h)) * x_left + F.softplus(self.jump(h))
             x = torch.where(valid, x_new, x)

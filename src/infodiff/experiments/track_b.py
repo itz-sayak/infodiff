@@ -98,7 +98,7 @@ def evaluate(model: EPTTPP, seqs, n_marks, device, predict: bool = False, s_max:
 def train_one(name: str, seed: int, hidden=64, n_rates=8, n_channels=4, phases=2, lr=1e-2, epochs=300, patience=40,
               bs=64, device=None, verbose=False, weight_decay=0.0, dropout=0.0, gompertz=True, warmup=0.01,
               renewal=False, rn_scales=24, rn_orders=(1, 4, 16), input_v2=None, ept_channel=True, rn_shift=False,
-              n_layers=1, layer_norm=False, ckpt: str | None = None) -> dict:
+              n_layers=1, layer_norm=False, ckpt: str | None = None, encoder="gru") -> dict:
     device = device or ("cuda" if torch.cuda.is_available() else "cpu")
     torch.manual_seed(seed)
     rng = np.random.default_rng(seed)
@@ -117,7 +117,8 @@ def train_one(name: str, seed: int, hidden=64, n_rates=8, n_channels=4, phases=2
                     renewal=renewal, rn_scales=rn_scales, rn_orders=tuple(rn_orders),
                     rn_lo=0.5 * q001, rn_hi=5 * q999, input_v2=input_v2, gap_eps=eps,
                     gap_mu=float(lg.mean()), gap_sd=float(lg.std() + 1e-6), tie_thr=10 * q01,
-                    ept_channel=ept_channel, rn_shift=rn_shift, n_layers=n_layers, layer_norm=layer_norm)
+                    ept_channel=ept_channel, rn_shift=rn_shift, n_layers=n_layers, layer_norm=layer_norm,
+                    encoder=encoder)
     model = EPTTPP(cfg).to(device)
     if renewal:  # renewal mark law starts at the empirical mark frequencies
         freq = np.bincount(np.concatenate([k[1:] for _, k in tr]), minlength=M) + 1.0
@@ -176,7 +177,7 @@ def train_one(name: str, seed: int, hidden=64, n_rates=8, n_channels=4, phases=2
                model=("EPT-X" if ept_channel else "EPT-X-renewal-only") if renewal else "EPT",
                renewal=renewal, input_v2=input_v2, ept_channel=ept_channel, rn_shift=rn_shift,
                rn_scales=rn_scales if renewal else None, rn_orders=list(rn_orders) if renewal else None,
-               n_layers=n_layers, layer_norm=layer_norm, dropout=dropout, weight_decay=weight_decay,
+               n_layers=n_layers, layer_norm=layer_norm, dropout=dropout, weight_decay=weight_decay, encoder=encoder,
                n_params=int(sum(p.numel() for p in model.parameters())))
     return res
 
