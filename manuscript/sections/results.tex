@@ -10,9 +10,11 @@ power law (S2) the sum-of-exponentials estimators---tick's and MSX---are statist
 tied (held-out deficit $0.2$ vs.\ $0.3\times10^{-3}$ nats/event; tick's solver failed on
 one of five seeds). Whenever the kernel has structure outside a single family---a
 delayed hump (S3), components ten milliseconds and thirty seconds apart (S4), or a sparse
-ten-dimensional power-law network (S5)---MSX-auto is best on every metric: its held-out
-deficit is 7--10 times smaller than the best competitor's, its branching-matrix error
-is roughly halved, and it recovers the causal graph perfectly (AUC $=1$). The
+ten-dimensional power-law network (S5)---MSX-auto has the smallest held-out deficit, 7--10
+times smaller than the best competitor's. On the two network scenarios it also roughly halves
+the best competitor's branching-matrix error and recovers the causal graph perfectly (AUC
+$=1$, as do several competitors); on the hump the nonparametric EM estimates the branching
+matrix slightly better. The
 exponential-only ablation isolates the contribution of Erlang phases, and the
 certificate of Proposition~\ref{prop:gap} was at most $3.3\times10^{-4}$ nats over all 100 MSX fits.
 

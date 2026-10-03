@@ -11,9 +11,13 @@ held-out likelihood on shared benchmarks
 \citep{du2016recurrent,mei2017neural,zuo2020transformer,shchur2020intensity,xue2024easytpp,chang2025deep}.
 The two communities rarely meet, and each inherits a weakness. Measurement relies on
 non-convex fits whose optimality is unknown and on summaries---such as the ``half-life''
-$\ln2/\beta$ of a news kernel---that ignore the echoes the news triggers. Prediction relies on
-neural intensities whose compensator $\int\lambda$ is estimated by Monte Carlo, so that
-reported likelihoods carry sampling error and, as we show, are sensitive to implementation
+$\ln2/\beta$ of a news kernel---that ignore the echoes the news triggers. On the prediction
+side, most intensity-based neural models estimate the compensator $\int\lambda$ by Monte Carlo
+\citep{mei2017neural,zuo2020transformer,yang2022transformer,chang2025deep}, so that reported
+likelihoods carry sampling error; models with an exact likelihood exist---through a monotone
+network for the cumulative hazard \citep{omi2019fully} or a mixture density for the next gap
+\citep{shchur2020intensity}---but give up the Hawkes structure that makes a model interpretable
+\citep{shchur2021neural}. As we show, reported likelihoods are also sensitive to implementation
 details.
 
 We argue that one algebraic object serves both purposes exactly: the \emph{phase-type
@@ -48,6 +52,7 @@ PPI and the FOMC is absorbed in about a second while echoes stretch half of the 
 \tEchoLo--\tEchoHi{}\,s and ninety percent to \tNinetyLo--\tNinetyHi{} minutes.
 \end{enumerate}
 Linear-in-parameters kernel dictionaries \citep{bacry2015hawkes}, EM for Hawkes processes
-\citep{lewis2011nonparametric,zhou2013learning} and Erlang-chain embeddings are known
-individually; our contribution is their combination into certified, closed-form measurement
-and into an exact-likelihood neural model, together with the evidence that both work.
+\citep{veen2008estimation,zhou2013learning}, Erlang-chain embeddings and exact-likelihood neural
+point processes \citep{omi2019fully,shchur2020intensity} are known individually; our contribution
+is their combination into certified, closed-form measurement and into an exact-likelihood neural
+model that nests the linear Hawkes process, together with the evidence that both work.

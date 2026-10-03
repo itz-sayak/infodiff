@@ -146,28 +146,43 @@ def table_a_full():
     if not rows:
         return
     df = pd.DataFrame([r for r in rows if "error" not in r])
-    lines = ["\\begin{tabular}{llccccc}", "\\toprule",
-             "Scenario & Method & $G$ err. & $\\rho$ err. & kernel $L^1$ & dLL ($10^{-3}$) & AUC \\\\", "\\midrule"]
+    metrics = [("G_err", "$G$ error", 1, False, 3), ("rho_err", "$\\rho$ error", 1, False, 3),
+               ("kern_L1", "kernel $L^1$", 1, False, 3), ("dLL", "dLL ($10^{-3}$)", 1e3, False, 2),
+               ("AUC", "edge AUC", 1, True, 3)]
+    names = {"S1-exp": "S1: exponential", "S2-powerlaw": "S2: power law", "S3-hump": "S3: hump",
+             "S4-multiscale": "S4: multiscale network", "S5-network10": "S5: 10-dim.\\ power-law network"}
+    ncol = len(metrics) + 1
+    lines = ["\\begin{tabular}{l" + "r" * len(metrics) + "}", "\\toprule",
+             "& " + " & ".join(h for _, h, _, _, _ in metrics) + " \\\\", "\\midrule"]
+    first = True
     for sc, g in df.groupby("scenario", sort=False):
-        num = g[["method"] + [c for c in ("G_err", "rho_err", "kern_L1", "dLL", "AUC") if c in g]]
-        agg = num.groupby("method", sort=False).agg(["mean", "std"])
-        best_dll = agg[("dLL", "mean")].min() if ("dLL", "mean") in agg else np.nan
-        first = True
-        for meth, r in agg.iterrows():
-            dll = r.get(("dLL", "mean"), np.nan)
-            cells = [fmt(r[("G_err", "mean")], r[("G_err", "std")]),
-                     fmt(r[("rho_err", "mean")], r[("rho_err", "std")]),
-                     fmt(r.get(("kern_L1", "mean"), np.nan), r.get(("kern_L1", "std"), np.nan)),
-                     fmt(1e3 * dll if np.isfinite(dll) else np.nan, 1e3 * r.get(("dLL", "std"), np.nan), 2,
-                         bold=np.isfinite(dll) and np.isclose(dll, best_dll)),
-                     # AUC is defined only when the true graph has absent edges (S4, S5)
-                     fmt(r.get(("AUC", "mean"), np.nan)) if np.isfinite(r.get(("AUC", "mean"), np.nan)) else "n/a"]
-            lines.append(f"{sc if first else ''} & {meth} & " + " & ".join(cells) + " \\\\")
-            first = False
-        lines.append("\\midrule")
-    lines[-1] = "\\bottomrule"
-    lines.append("\\end{tabular}")
-    (OUT / "track_a_full.tex").write_text("\n".join(lines).replace("tick-", "").replace("(ours", "(ours"))
+        agg = g.groupby("method", sort=False)
+        meths = list(agg.groups)
+        meths = [m for m in meths if not is_ours(m)] + [m for m in meths if is_ours(m)]
+        stats = {m: {k: (agg.get_group(m)[k].dropna() * s if k in g else pd.Series(dtype=float))
+                     for k, _, s, _, _ in metrics} for m in meths}
+        rk = {}
+        for k, _, _, hi, _ in metrics:
+            b, s2 = ranks([stats[m][k].mean() if len(stats[m][k]) else np.nan for m in meths], hi)
+            rk[k] = (meths[b] if b is not None else None, meths[s2] if s2 is not None else None)
+        hdr = group_row(names.get(sc, sc), ncol)
+        lines.append(hdr.replace("\\addlinespace[3pt]", "") if first else hdr)
+        first = False
+        for m in meths:
+            cells = []
+            for k, _, _, hi, d in metrics:
+                x = stats[m][k]
+                if k == "AUC" and sc in ("S1-exp", "S2-powerlaw", "S3-hump"):
+                    cells.append("n/a")  # complete true graph: AUC undefined
+                elif not len(x):
+                    cells.append("--")
+                else:
+                    rank = 1 if rk[k][0] == m else 2 if rk[k][1] == m else 0
+                    cells.append(cell(x.mean(), x.std(ddof=1) if len(x) > 1 else None, d, rank))
+            shade = "\\rowcolor{oursbg} " if is_ours(m) else ""
+            lines.append(f"{shade}\\quad {nice(m)} & " + " & ".join(cells) + " \\\\")
+    lines += ["\\bottomrule", "\\end{tabular}"]
+    (OUT / "track_a_full.tex").write_text("\n".join(lines))
 
 
 # ------------------------------------------------------------------ Track B
@@ -305,6 +320,7 @@ def table_ablation():
                 ("\\quad + deep encoder (3 layers)", ("abl", "sel_deep")),
                 ("\\quad + sharp atoms + deep encoder", ("abl", "sel_sharpdeep")),
                 ("\\quad + wide encoder (128 units)", ("abl", "sel_wide")),
+                ("\\quad + attention encoder (causal Transformer)", ("abl", "sel_attn")),
                 ("\\quad batch 256 (S2P2 setting)", ("abl", "sel_bs256"))]
     values = {}
     for name, (kind, tag) in variants:

@@ -44,7 +44,7 @@ half of the extra activity arrives within \tEchoLo--\tEchoHi{}\,s and ninety per
 \tNinetyLo--\tNinetyHi{} minutes (Figure~\ref{fig:absorption}, Table~\ref{tab:absorption}).
 The ``news half-life'' $\ln2/\beta$ therefore understates absorption time by one to two orders
 of magnitude. Because signed surprises enter the news kernel separately by sign, the model also
-gives price-discovery curves (Figure~\ref{fig:drift}, Table~\ref{tab:drift}); hotter inflation
+gives price-discovery curves (Figure~\ref{fig:drift}); hotter inflation
 lowers bitcoin and ether, cooler inflation lifts them.
 
 \begin{figure}[!htbp]\centering
@@ -65,29 +65,11 @@ minutes. $^\ast$Release types that do not exceed their placebo by 50\%.}\label{t
 \caption{Expected price-discovery curves after a $\pm1$ standard-deviation CPI surprise.}\label{fig:drift}
 \end{figure}
 
-\begin{table}[!htbp]\centering\small
-\caption{Expected price drift (basis points, end of window) after a $+1$ standard-deviation
-surprise. $^\ast$As in Table~\ref{tab:absorption}.}\label{tab:drift}
-\setlength{\tabcolsep}{4pt}
-\input{tables/main_drift}
-\end{table}
-
 \paragraph{Goodness of fit.} Time-rescaled residuals \citep{brown2002time} have
 Kolmogorov--Smirnov statistics of at most \ksMax{} against Exp(1); the per-window
 excess-dispersion test rejects in \edLo--\edHi\% of windows, compared with 42\% (power-law
 kernel) and 93\% (double exponential) reported for FX data by \citet{rambaldi2015modeling}.
 
-\paragraph{Forecasting the post-release burst.} On the \nTestReleases{} releases of 2025--2026,
-an MSX model fitted on 2022--2024 forecasts the number of $\delta$-crossings in the first 1, 5
-and 15 minutes in closed form (Table~\ref{tab:track-d}). It improves on same-type climatology
-at every horizon but is beaten by the \bestActivityModel{} and HAR regressions, which are fitted
-directly to this target; we report this negative result as is. For the direction of the move
-the structural model is informative: the correlation between its forecast and the realised
-one-minute drift is \driftCorrOursOne{}, against \driftCorrBaseOne{} for the best baseline.
-
-\begin{table}[!htbp]\centering\small
-\caption{Post-release activity forecasts on the \nTestReleases{} test releases (mean over
-assets; lower is better). Bold: best; underlined: second best; shaded: our model.}\label{tab:track-d}
-\setlength{\tabcolsep}{5pt}
-\input{tables/track_d}
-\end{table}
+\paragraph{Forecasting.} Out of sample, closed-form MSX forecasts of post-release activity
+improve on climatology but not on regressions fitted directly to that target, whereas its drift
+forecasts are more informative than the best baseline (Appendix~\ref{app:forecast}).

@@ -1,8 +1,9 @@
 \section{Related work}\label{sec:related}
 
 \paragraph{Hawkes estimation.} Exponential and sum-of-exponential kernels are fitted by
-maximum likelihood \citep{bacry2015hawkes}; nonparametric alternatives include EM on
-histogram kernels \citep{lewis2011nonparametric}, ADM4 with low-rank and sparse penalties
+maximum likelihood \citep{bacry2015hawkes}, for instance with the \texttt{tick} library
+\citep{bacry2018tick}; alternatives include EM algorithms that exploit the branching structure
+\citep{veen2008estimation}, ADM4 with low-rank and sparse penalties
 \citep{zhou2013learning}, the conditional-law (Wiener--Hopf) method \citep{bacry2016estimation},
 cumulant matching \citep{achab2017uncovering} and INAR approximations
 \citep{kirchner2017estimation}. None of these returns a certificate of global optimality for
@@ -15,19 +16,22 @@ price impact of announcement surprises. Absorption speed is typically read off t
 exogenous kernel alone. We give the echo-corrected response in closed form and test the news
 kernels against matched placebo windows inside the likelihood.
 
-\paragraph{Neural temporal point processes.} RMTPP \citep{du2016recurrent}, NHP
-\citep{mei2017neural}, SAHP \citep{zhang2020self}, THP \citep{zuo2020transformer}, AttNHP
-\citep{yang2022transformer} and the state-space S2P2 \citep{chang2025deep} parameterise the
-intensity with recurrent, attention or state-space encoders and estimate the compensator by
-Monte Carlo or quadrature; IntensityFree \citep{shchur2020intensity} instead models the
-next-gap density with a log-normal mixture. Recent work explores Mamba-style encoders
+\paragraph{Neural temporal point processes.} See \citet{shchur2021neural} for a review. RMTPP
+\citep{du2016recurrent} uses an exponential intensity between events, whose integral is closed
+form. NHP \citep{mei2017neural}, SAHP \citep{zhang2020self}, THP \citep{zuo2020transformer},
+AttNHP \citep{yang2022transformer} and the state-space S2P2 \citep{chang2025deep} parameterise
+the intensity with recurrent, attention or state-space encoders and estimate the compensator by
+Monte Carlo or quadrature. FullyNN \citep{omi2019fully} models the cumulative hazard with a
+monotone network and IntensityFree \citep{shchur2020intensity} the next-gap density with a
+log-normal mixture; both have exact likelihoods but no Hawkes structure. Recent work explores Mamba-style encoders
 \citep{gao2024mamba} and interpretable latent Hawkes dynamics \citep{boyd2025hyper}.
 EasyTPP \citep{xue2024easytpp} provides shared implementations, and
 \citet{bosser2023predictive} study the predictive accuracy of neural TPPs. EPT-X differs in
 that its intensity between events is a read-out of an explicitly solvable phase-type system
 with bounded closed-form hazard terms, plus a renewal channel whose survival function is a closed-form mixture of Erlang
 survivals---so the likelihood we train and report is exact---and in that its backbone is the
-linear Hawkes process itself.
+linear Hawkes process itself, so the fitted model retains branching ratios and excitation
+kernels that can be read off.
 
 \paragraph{Phase-type distributions.} Mixtures of Erlang distributions are dense in the
 distributions on $(0,\infty)$ \citep{tijms1994stochastic,lee2010modeling}; we use this fact

@@ -3,7 +3,7 @@
 \paragraph{EPT: a neural phase-type state.} The latent state $\bm x(t)\in\R_{\ge0}^P$
 consists of $C$ channels of Erlang-$R$ chains with learnable rates $\beta_{ck}$, evolving
 between events by Lemma~\ref{lem:recursion}. At event $n$ with mark $m_n$ and gap
-$\Delta_n$, a GRU summary $\bm h_n$ of the history (inputs: a mark embedding and log
+$\Delta_n$, a GRU \citep{cho2014learning} summary $\bm h_n$ of the history (inputs: a mark embedding and log
 transforms of the gap; EPT-X uses the gap's standardised logarithm, which separates
 nanosecond ties from zero) produces a gate and a nonnegative jump,
 $\bm x(t_n^+)=\sigma(W_g\bm h_n)\odot\bm x(t_n^-)+\mathrm{softplus}(W_j\bm h_n)$. The marked

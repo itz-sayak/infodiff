@@ -40,15 +40,33 @@ log-likelihood relative to the best level).}\label{tab:l1}
 \end{table}
 
 \section{Synthetic recovery: all metrics}\label{app:synthetic}
-\begin{table}[!htbp]\centering\scriptsize
+\begin{table}[!htbp]\centering\footnotesize
 \caption{Synthetic recovery, all metrics (mean $\pm$ s.d.\ over five seeds): relative
 branching-matrix error, spectral-radius error, kernel $L^1$ error, held-out deficit dLL
-($10^{-3}$ nats/event) and edge AUC. AUC measures how well absent and present edges are
+($10^{-3}$ nats/event; lower is better for these four) and edge AUC (higher is better). Bold:
+best; underlined: second best within each scenario; shaded: our estimators. AUC measures how well absent and present edges are
 separated, so it is defined only for scenarios whose true graph has absent edges (S4, S5);
 ``n/a'' marks S1--S3, whose graphs are complete. ``--'' marks a metric the method does not
 produce (NPHC estimates only the branching matrix, not kernels or a likelihood); rows absent
 for a scenario are fits that failed to converge.}\label{tab:track-a-full}
-\resizebox{\linewidth}{!}{\input{tables/track_a_full}}
+\scriptsize\setlength{\tabcolsep}{5pt}\renewcommand{\arraystretch}{1.0}
+\input{tables/track_a_full}
+\end{table}
+
+\section{Forecasting the post-release burst}\label{app:forecast}
+On the \nTestReleases{} releases of 2025--2026, an MSX model fitted on 2022--2024 forecasts
+the number of $\delta$-crossings in the first 1, 5 and 15 minutes in closed form
+(Table~\ref{tab:track-d}). It improves on same-type climatology at every horizon but is beaten
+by the \bestActivityModel{} and HAR regressions, which are fitted directly to this target. For
+the direction of the move the structural model is informative: the correlation between its
+forecast and the realised one-minute drift is \driftCorrOursOne{}, against \driftCorrBaseOne{}
+for the best baseline (mean drift by release type and surprise sign).
+
+\begin{table}[!htbp]\centering\small
+\caption{Post-release activity forecasts on the \nTestReleases{} test releases (mean over
+assets; lower is better). Bold: best; underlined: second best; shaded: our model.}\label{tab:track-d}
+\setlength{\tabcolsep}{5pt}
+\input{tables/track_d}
 \end{table}
 
 \section{Experimental details}\label{app:details}
@@ -62,7 +80,7 @@ in $\{0,0.01,0.05\}$ on the validation split.
 
 \paragraph{EPT and EPT-X.} GRU with 64 units; 4 latent channels of 8 learnable rates; Erlang
 phases selected on validation from $\{2,4\}$ (with hidden size $\{64,128\}$) on Taxi, Taobao and
-StackOverflow; Hawkes backbone with 10 rates and 2 phases; AdamW with learning rate $10^{-2}$,
+StackOverflow; Hawkes backbone with 10 rates and 2 phases; AdamW \citep{loshchilov2019decoupled} with learning rate $10^{-2}$,
 1\% linear warm-up and cosine decay, gradient clipping at 1, batch size 64 (halved
 automatically on out-of-memory), early stopping on validation likelihood with patience 40 and
 a 300-epoch budget (25 epochs on Retweet, batch 32). The renewal channel uses 24 log-spaced
@@ -72,7 +90,7 @@ history-dependent shift, and Amazon uses a finer grid (single-seed validation lo
 0.604, 0.643, 0.653 and 0.649 with 24, 48, 96 and 192 scales; 96 is selected). Mark laws are initialised at empirical frequencies.
 
 \paragraph{Baselines.} Neural baselines run in EasyTPP with the authors' configuration files;
-classical Hawkes estimators use the \texttt{tick} library (positive-constrained
+classical Hawkes estimators use the \texttt{tick} library \citep{bacry2018tick} (positive-constrained
 accelerated gradient descent, tolerance $10^{-10}$, decay grids matched to MSX). The IntensityFree clamp is made configurable by a
 two-line patch included in the supplementary code.
 

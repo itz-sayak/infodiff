@@ -16,8 +16,10 @@ Table~\ref{tab:track-a} reports the held-out likelihood deficit to the true mode
 truth is a single exponential, the correctly specified single-decay estimators win, as they
 must; under a power law the sum-of-exponential estimators are tied. Whenever the kernel has
 structure outside a single family---a delayed hump, two separated time scales or a power-law
-network---MSX-auto is best, with deficits 7--10 times smaller than the best competitor's, a
-branching-matrix error roughly halved and perfect recovery of the causal graph
+network---MSX-auto has the smallest likelihood deficit, 7--10 times smaller than the best
+competitor's. On the two network scenarios it also roughly halves the best competitor's
+branching-matrix error and recovers the causal graph perfectly (AUC $=1$, as do several
+competitors); on the hump the nonparametric EM estimates the branching matrix slightly better
 (Table~\ref{tab:track-a-full}). The certificate of Proposition~\ref{prop:gap} was at most
 $3.3\times10^{-4}$ nats over all 100 MSX fits.
 
@@ -39,14 +41,24 @@ published 0.522, validating the harness. EPT-X reports the exact likelihood.
 
 On Retweet, the largest dataset (2.2 million training events), EPT-X improves on the best
 published model by more than 0.6 nats per event, with a 25-epoch budget imposed by compute
-and the validation likelihood still rising (Table~\ref{tab:track-b}). It is statistically
-tied with the best published model on Taobao and StackOverflow and close on Taxi, where the
-time term equals S2P2's on our re-run (0.733 vs.\ 0.735 nats per event) and the difference lies
-entirely in the mark term. On Amazon the gaps concentrate in a narrow band (median 0.73,
+and the validation likelihood still rising (Table~\ref{tab:track-b}). On Taobao
+($1.316\pm0.005$ against IntensityFree's published $1.318\pm0.017$) and StackOverflow
+($-2.166\pm0.001$ against S2P2's $-2.163\pm0.009$) the differences are within one published
+standard deviation. On Taxi EPT-X is 0.02 nats per event behind S2P2; a single-seed diagnostic
+run with the same test likelihood (0.502) has the same time term as our S2P2 re-run (0.733 vs.\
+0.735 nats per event), so the difference lies in the mark term. On Amazon the gaps concentrate in a narrow band (median 0.73,
 99th percentile 0.80); Erlang orders up to 16 cannot represent the mode, and atoms of order up
 to 1024 on a finer grid raise EPT-X by more than 1.1 nats per event, into second place. Here,
-in contrast to Taxi, our mark term is better than S2P2's (\,$-1.87$ vs.\ $-1.90$ on the
-re-run) and the remaining gap is in the time term. The linear MSX model is close to the neural
+in contrast to Taxi, our mark term is slightly better than S2P2's ($-1.89$ vs.\ $-1.90$ on the
+re-run) and the remaining gap is in the time term.
+
+\paragraph{Tuning budgets.} EPT-X's configuration was selected on validation data from a
+search over Erlang orders, grid size, encoder depth and width, attention, batch size and
+weight decay (one seed per variant; Table~\ref{tab:ablation} and Appendix~\ref{app:details}),
+whereas published baselines are quoted with their authors' tuning and our order-book baselines
+use the authors' EasyTPP configurations with one seed each. Readers should weigh the small
+margins on Taobao and StackOverflow accordingly; the margins on Retweet and on the order books
+are large compared with all reported seed-to-seed variation. The linear MSX model is close to the neural
 models on Taobao and Retweet and far behind on Amazon and Taxi, whose dynamics are not
 self-exciting.
 
@@ -78,7 +90,8 @@ configuration. Bold: best; underlined: second best; shaded: ours.}\label{tab:pre
 
 \FloatBarrier
 \subsection{Limit-order-book event streams}\label{sec:lob}
-We use the LOBSTER samples of AAPL, AMZN, GOOG, INTC and MSFT (21 June 2012), six event
+We use the public LOBSTER \citep{huang2011lobster} samples of AAPL, AMZN, GOOG, INTC and MSFT
+(21 June 2012), six event
 types, a chronological 60/20/20 split and sequences of 128 events. Tied timestamps, which
 EasyTPP rejects, are displaced by $U(0,100\,\text{ns})$ in the files that every model is
 trained and scored on. Neural baselines run in EasyTPP with the S2P2 authors' configurations
