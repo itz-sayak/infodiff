@@ -1,6 +1,6 @@
 # Copyright 2026 Sayak Dutta
 # SPDX-License-Identifier: Apache-2.0
-"""Track B — public marked-TPP benchmarks (EasyTPP splits, S2P2 protocol).
+"""Track B: public marked-TPP benchmarks (EasyTPP splits, S2P2 protocol).
 
 Metric definitions follow EasyTPP / S2P2 (Chang et al. 2025):
   * log-likelihood per event = sum over sequences of [sum_{n>=1} log lambda_{k_n}(t_n)

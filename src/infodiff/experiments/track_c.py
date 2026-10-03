@@ -1,6 +1,6 @@
 # Copyright 2026 Sayak Dutta
 # SPDX-License-Identifier: Apache-2.0
-"""Track C — LOBSTER order-book event streams: classical Hawkes family under the
+"""Track C: LOBSTER order-book event streams: classical Hawkes family under the
 EasyTPP / S2P2 protocol (test log-likelihood per scored event; the first event of each
 sequence conditions, the compensator runs from t_0 to t_N).
 

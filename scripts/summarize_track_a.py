@@ -29,7 +29,7 @@ for sc, g in df.groupby("scenario", sort=False):
         for m in metrics:
             mu, sd = r[(m, "mean")], r[(m, "std")]
             if np.isnan(mu):
-                cells.append("—")
+                cells.append("--")
                 continue
             fmt = f"{mu:.1f}" if m == "seconds" else f"{mu:.4f}" if m == "dLL" else f"{mu:.3f}"
             sdf = "" if np.isnan(sd) else (f" ± {sd:.1f}" if m == "seconds" else f" ± {sd:.4f}" if m == "dLL" else f" ± {sd:.3f}")

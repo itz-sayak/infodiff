@@ -4,7 +4,7 @@
 with the S2P2 authors' own per-model configuration (examples/configs/exp_config_taxi.yaml
 of github.com/UCIDataLab/state_space_point_process), changing only the dataset, seed,
 GPU and epoch budget.  The reported test metrics are those at the epoch with the best
-validation log-likelihood — the protocol of Chang et al. (2025).
+validation log-likelihood, following the protocol of Chang et al. (2025).
 """
 from __future__ import annotations
 

@@ -1,65 +1,114 @@
 \section{EPT-X: exact neural prediction}\label{sec:eptx}
 
-\paragraph{EPT: a neural phase-type state.} The latent state $\bm x(t)\in\R_{\ge0}^P$
-consists of $C$ channels of Erlang-$R$ chains with learnable rates $\beta_{ck}$, evolving
-between events by Lemma~\ref{lem:recursion}. At event $n$ with mark $m_n$ and gap
-$\Delta_n$, a GRU \citep{cho2014learning} summary $\bm h_n$ of the history (inputs: a mark embedding and log
-transforms of the gap; EPT-X uses the gap's standardised logarithm, which separates
-nanosecond ties from zero) produces a gate and a nonnegative jump,
-$\bm x(t_n^+)=\sigma(W_g\bm h_n)\odot\bm x(t_n^-)+\mathrm{softplus}(W_j\bm h_n)$. The marked
-intensities are
-\[
-\lambda^{\rm EPT}_m(t)=\mu_m(\bm h_n)+\sum_p C_{mp}(\bm h_n)\,x_p(t)
-+g_{1m}(\bm h_n)e^{-a(\bm h_n)s}+g_{2m}(\bm h_n)\bigl(1-e^{-\kappa(\bm h_n)s}\bigr)
-+\bigl[\Theta\,\bm x^{\rm H}(t)\bigr]_m,
-\]
-with $s=t-t_n$, all coefficients nonnegative, and $\bm x^{\rm H}$ the state of a
-\emph{linear multivariate phase-type Hawkes process} on a fixed log grid of rates, which
-receives the jump $\beta_k$ in the source's first phase at every event. The last term is a
-residual path: with the neural read-outs at zero the model \emph{is} the Hawkes process of
-Section~\ref{sec:msx}, so the network only learns departures from linear excitation.
-Bounded hazard heads replace an unbounded Gompertz term, which overflows on heavy-tailed gaps.
+We now turn to prediction. Events arrive at times $t_1<t_2<\dots$ with marks
+$y_n\in\{1,\dots,M\}$, and we write $\Delta_n=t_n-t_{n-1}$ for the gaps. For a time $t$ after the
+$n$-th event, $s=t-t_n$ denotes the time elapsed since that event.
 
-\paragraph{The renewal channel.} Order-book and social streams contain cascades: several
-events within a tiny interval, followed by a pause. A linear Hawkes intensity describes
-excitation \emph{between} cascades but has no direct handle on the gap distribution
-\emph{within} them. EPT-X adds, by superposition, a channel that models the next gap
-directly. Fix $J$ Erlang atoms $(R_j,\beta_j)$ whose means $R_j/\beta_j$ lie on a logarithmic
-grid spanning the data's time scales, with orders $R_j\in\{1,4,16\}$ (optionally up to
-$1024$; coefficient of variation $R_j^{-1/2}$). From $\bm h_n$ the network outputs weights
-$\bm w$ on the simplex over the $J$ atoms and a \emph{defect} atom $w_\infty$, a mark law
-$q_{m\mid j}$ per time scale and, optionally, a bounded log-rate shift that lets each atom
-slide within its grid cell. The channel's joint density of the next gap $s$ and mark $m$
-and its survival function are
+\paragraph{EPT: a neural phase-type state.} The latent state $\bm\xi(t)\in\R_{\ge0}^P$ consists of
+$L$ channels of Erlang chains of order $R$, each with its own learnable rate. Between events it
+evolves exactly as in Lemma~\ref{lem:recursion}. At each event, a recurrent network summarises the
+history: a GRU \citep{cho2014learning} receives an embedding of the mark $y_n$ and log transforms of
+the gap $\Delta_n$ and produces a hidden vector $\bm h_n$. In EPT-X the gap enters through its
+standardised logarithm, which keeps nanosecond-scale gaps distinguishable from zero. The state
+then jumps to
 \[
-p(s,m)=\sum_{j=1}^J w_j\,q_{m\mid j}\,\frac{\beta_j^{R_j}s^{R_j-1}e^{-\beta_js}}{(R_j-1)!},\qquad
-S_X(s)=w_\infty+\sum_{j=1}^J w_j\,e^{-\beta_js}\sum_{i<R_j}\frac{(\beta_js)^i}{i!},
+\bm\xi(t_n^+)=\sigma(W_g\bm h_n)\odot\bm\xi(t_n^-)+\mathrm{softplus}(W_\xi\bm h_n),
 \]
-and EPT-X has intensity $\lambda_m(t)=\lambda^{\rm EPT}_m(t)+p(s,m)/S_X(s)$.
+where $\sigma$ is the logistic function, $\odot$ the elementwise product and $W_g,W_\xi$ learned
+matrices. The first term lets the network forget part of the old state; the second adds a
+nonnegative jump. For $t\in(t_n,t_{n+1}]$ the intensity of mark $y$ is
+\begin{equation}\label{eq:ept}
+\lambda^{\mathrm{EPT}}_y(t)=\mu_y+\sum_{p=1}^{P}C_{yp}\,\xi_p(t)
++g_{1y}\,e^{-\alpha s}+g_{2y}\bigl(1-e^{-\kappa s}\bigr)
++\sum_{q}\Theta_{yq}\,\xi^{\mathrm{H}}_q(t).
+\end{equation}
+The quantities $\mu_y$, $C_{yp}$, $g_{1y}$, $g_{2y}$, $\alpha$ and $\kappa$ are nonnegative outputs
+of the network computed from $\bm h_n$, so they stay fixed until the next event. The two hazard
+terms let the intensity decay or rise with $s$, but stay bounded. An unbounded Gompertz term would
+overflow on heavy-tailed gaps. The last term is a \emph{linear multivariate phase-type Hawkes
+process}: $\bm\xi^{\mathrm{H}}(t)$ collects Erlang chains on a fixed logarithmic grid of rates, one
+group per source mark, and every event of mark $y$ adds $\beta_k$ to the first phase of the chains
+of source $y$. Its weights $\Theta_{yq}\ge0$ are learned. This term is a residual path: when the
+neural read-outs are zero, EPT \emph{is} the Hawkes process of Section~\ref{sec:msx}, so the network
+only has to learn departures from linear excitation.
+
+\paragraph{The renewal channel.} Order-book and social streams contain cascades, several events in
+a very short interval followed by a pause. A linear Hawkes intensity describes excitation
+\emph{between} cascades well, but it has no direct handle on the distribution of gaps
+\emph{within} them. EPT-X therefore adds a second channel that models the next gap directly.
+
+We fix $Q$ Erlang ``atoms'' indexed by $q$, each with an order $R_q$ and a rate $\beta_q$. Their means
+$R_q/\beta_q$ lie on a logarithmic grid that spans the time scales of the data, and their orders
+come from $\{1,4,16\}$, optionally up to $1024$. An atom of order $R_q$ has coefficient of variation
+$R_q^{-1/2}$, so high orders give sharp peaks in log-time. From $\bm h_n$ the network outputs:
+\begin{itemize}
+\item weights $\pi_1,\dots,\pi_Q,\pi_\infty\ge0$ summing to one, where $\pi_\infty$ is the weight of a
+\emph{defect} atom meaning ``the renewal channel produces no event'';
+\item for each time scale, a distribution $\omega_{y\mid q}$ over the marks, so that the mark of a
+burst may depend on how quickly it follows the last event;
+\item optionally, a bounded shift of each log-rate, which lets an atom move within its grid cell.
+\end{itemize}
+The renewal channel's joint density of the next gap $s$ and mark $y$, and its survival function,
+are
+\begin{equation}\label{eq:renewal}
+p(s,y)=\sum_{q=1}^{Q}\pi_q\,\omega_{y\mid q}\,
+\frac{\beta_q^{R_q}\,s^{R_q-1}e^{-\beta_q s}}{(R_q-1)!},\qquad
+S_{\mathrm{ren}}(s)=\pi_\infty+\sum_{q=1}^{Q}\pi_q\,e^{-\beta_q s}\sum_{i=0}^{R_q-1}\frac{(\beta_q s)^i}{i!}.
+\end{equation}
+EPT-X adds the corresponding hazard to EPT:
+\[
+\lambda_y(t)=\lambda^{\mathrm{EPT}}_y(t)+\frac{p(s,y)}{S_{\mathrm{ren}}(s)} .
+\]
 
 \begin{proposition}\label{prop:eptx}
-(i) The compensator of EPT-X over $(t_n,t_n+\Delta]$ is
-$\Lambda^{\rm EPT}(\Delta)-\log S_X(\Delta)$, in closed form. (ii) With $w_\infty=1$ EPT-X
-equals EPT, which nests the linear phase-type Hawkes process. (iii) Given $\bm h_n$, the
-renewal channel is the absorption time of a finite continuous-time Markov chain, so its
-survival, quantiles and moments are closed-form matrix functionals. (iv) Mixtures of Erlang
-distributions are dense in the distributions on $(0,\infty)$
-\citep{tijms1994stochastic,lee2010modeling}, so the channel can approximate any conditional
-gap law as the dictionary is refined---the expressiveness of a conditional mixture density
-\citep{shchur2020intensity}, with an exact intensity and compensator.
+Let $\Lambda^{\mathrm{EPT}}(\Delta)=\int_{t_n}^{t_n+\Delta}\sum_y\lambda^{\mathrm{EPT}}_y(t)\,\mathrm{d}t$
+be the compensator of EPT over a gap of length $\Delta$.
+\begin{enumerate}
+\item The compensator of EPT-X over the same gap is $\Lambda^{\mathrm{EPT}}(\Delta)-\log S_{\mathrm{ren}}(\Delta)$,
+and both terms are in closed form.
+\item If $\pi_\infty=1$, EPT-X coincides with EPT, which in turn contains the linear phase-type
+Hawkes process.
+\item Given $\bm h_n$, the gap produced by the renewal channel is the absorption time of a finite
+continuous-time Markov chain, so its survival function, quantiles and moments are closed-form
+matrix expressions.
+\item As the grid of atoms is refined, the renewal channel can approximate any conditional
+distribution of the next gap.
+\end{enumerate}
 \end{proposition}
+
 \begin{proof}
-(i) The compensator of a superposition is the sum of compensators, and that of a renewal
-hazard $p/S_X$ is $-\log S_X$. (ii) $w_\infty=1$ forces $w_j=0$, hence $p\equiv0$ and
-$S_X\equiv1$. (iii) An Erlang mixture with a defect is a phase-type law. (iv) is the cited
-density result applied to the mixture over atoms.
+\emph{Part 1.} The intensity of EPT-X is a sum of two intensities, so its compensator is the sum of
+the two compensators. For the renewal channel, $\sum_y p(s,y)=-\frac{\mathrm{d}}{\mathrm{d}s}S_{\mathrm{ren}}(s)$,
+because each Erlang density is the negative derivative of its survival function. Hence
+\[
+\int_0^{\Delta}\frac{\sum_y p(s,y)}{S_{\mathrm{ren}}(s)}\,\mathrm{d}s
+=-\int_0^{\Delta}\frac{\mathrm{d}}{\mathrm{d}s}\log S_{\mathrm{ren}}(s)\,\mathrm{d}s
+=-\log S_{\mathrm{ren}}(\Delta),
+\]
+using $S_{\mathrm{ren}}(0)=1$. The EPT part is closed form by Lemma~\ref{lem:recursion} and by direct
+integration of the two exponential hazard terms.
+
+\emph{Part 2.} If $\pi_\infty=1$, all other weights are zero. Then $p\equiv0$ and $S_{\mathrm{ren}}\equiv1$,
+so the renewal hazard vanishes. Setting the neural read-outs of EPT to zero leaves the Hawkes term.
+
+\emph{Part 3.} An Erlang distribution of order $R$ is the absorption time of a chain of $R$
+exponential phases. A mixture of such chains, entered at random according to the weights
+$\pi_q$, together with an absorbing ``never'' state of weight $\pi_\infty$, is again a finite
+continuous-time Markov chain with one absorbing state.
+
+\emph{Part 4.} Mixtures of Erlang distributions are dense in the distributions on $(0,\infty)$
+\citep{tijms1994stochastic,lee2010modeling}. The renewal channel is such a mixture, with weights
+that depend on the history. This is the same expressiveness as a conditional mixture density
+\citep{shchur2020intensity}, with the difference that the intensity and compensator stay exact.
 \end{proof}
 
-\paragraph{Exact training and Bayes-optimal prediction.} Training maximises the exact
-log-likelihood $\sum_n\log\lambda_{m_n}(t_n)-\Lambda$, so gradients carry no sampling noise;
-for large orders $S_X$ is evaluated through the regularised upper incomplete gamma function,
-whose gradient we guard at zero lags. The log-likelihood splits exactly into a time term
-($\log\lambda(t_n)-\Lambda$) and a mark term ($\log\lambda_{m_n}/\lambda$), which we report
-separately. Next-event predictions are Bayes-optimal functionals of the exact density,
-$\E[\Delta]=\int_0^\infty S$ and $\hat m=\arg\max_m\int\lambda_mS$, computed by
-one-dimensional quadrature on a logarithmic grid.
+\paragraph{Training and prediction.} We maximise the exact log-likelihood
+$\sum_n\log\lambda_{y_n}(t_n)-\Lambda$, where $\Lambda$ is the total compensator, so the gradients
+contain no sampling noise. For large orders we evaluate $S_{\mathrm{ren}}$ through the regularised
+upper incomplete gamma function, and we take care that its gradient stays finite at zero gaps. The
+log-likelihood splits exactly into a time term, $\log\lambda(t_n)-\Lambda$ with
+$\lambda=\sum_y\lambda_y$, and a mark term, $\log\bigl(\lambda_{y_n}(t_n)/\lambda(t_n)\bigr)$, which we
+report separately. Predictions of the next event are Bayes-optimal functionals of the exact
+density: the expected gap is $\int_0^\infty S(s)\,\mathrm{d}s$, where $S$ is the survival function
+of the full model, and the predicted mark is $\arg\max_y\int_0^\infty\lambda_y(s)S(s)\,\mathrm{d}s$.
+Both integrals are computed by one-dimensional quadrature on a logarithmic grid.

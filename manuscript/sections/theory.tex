@@ -1,110 +1,224 @@
 \section{Theory}\label{sec:theory}
 
 \subsection{Exact recursion}
+\paragraph{Exact recursion.} Every state in this paper is built from such Erlang chains: the
+Hawkes excitation, the response to news, the neural latent state of EPT and the renewal channel of
+EPT-X. For all of them, the evolution between two events and its integral are available in closed
+form. The following lemma gives the formulas for one source and one rate.
+
 \begin{lemma}[Erlang-chain recursion]\label{lem:recursion}
-Let $s_r(t)=\sum_{t_n<t}g_{kr}(t-t_n)$ for one source and one rate $\beta$. Between
-events, $\bm s=(s_0,\dots,s_{R-1})$ solves $\dot{\bm s}=\beta(N-I)\bm s$ with $N$ the
-down-shift, and at an event $s_0\mathrel{+}=\beta$. Hence, with $y=\beta\Delta$ and
-$w_j=e^{-y}y^j/j!$,
+Let $t_1<t_2<\dots$ be the event times of one source, let $\beta>0$ be one rate of the
+dictionary, and define the chain of states
 \[
-s_r(t+\Delta)=\sum_{j\le r}w_j\,s_{r-j}(t),\qquad
-\int_t^{t+\Delta}s_r=\frac1\beta\sum_{j\le r}P(j+1,y)\,s_{r-j}(t),
+s_r(t)=\sum_{n:\,t_n<t} g_r(t-t_n),\qquad r=0,\dots,R-1,
 \]
-where $P$ is the regularised lower incomplete gamma function.
+where $g_r$ is the basis density~(\ref{eq:basis}) with rate $\beta$. Write
+$\bm s=(s_0,\dots,s_{R-1})^\top$, let $I$ be the $R\times R$ identity and let $B$ be the
+$R\times R$ down-shift matrix ($B_{r,r-1}=1$ and all other entries zero).
+\begin{enumerate}
+\item Between events, $\dot{\bm s}=\beta(B-I)\,\bm s$; at an event, $s_0$ increases by $\beta$.
+\item For a gap $\Delta\ge0$ with no event in $(t,t+\Delta)$, let $y=\beta\Delta$ and
+$w_j=e^{-y}y^j/j!$. Then
+\[
+s_r(t+\Delta)=\sum_{j=0}^{r}w_j\,s_{r-j}(t),\qquad
+\int_t^{t+\Delta}s_r(u)\,\mathrm{d}u=\frac{1}{\beta}\sum_{j=0}^{r}P(j+1,y)\,s_{r-j}(t),
+\]
+where $P(a,y)$ is the regularised lower incomplete gamma function.
+\end{enumerate}
 \end{lemma}
+
 \begin{proof}
-$\frac{\dd}{\dd t}g_{kr}=\beta(g_{k,r-1}-g_{kr})$ for $r\ge1$ and
-$\frac{\dd}{\dd t}g_{k0}=-\beta g_{k0}$, with $g_{kr}(0)=\beta\mathbb 1[r=0]$. The
-matrix exponential of $\beta(N-I)\Delta$ is $e^{-y}\sum_{j<R}\frac{y^j}{j!}N^j$ since $N$
-is nilpotent and commutes with $I$; integrating term by term gives $P(j+1,y)/\beta$.
+\emph{Step 1 (dynamics).} Differentiating~(\ref{eq:basis}) gives
+\[
+\frac{\mathrm{d}}{\mathrm{d}t}g_0(t)=-\beta\,g_0(t),\qquad
+\frac{\mathrm{d}}{\mathrm{d}t}g_r(t)=\beta\bigl(g_{r-1}(t)-g_r(t)\bigr)\quad(r\ge1).
+\]
+Summing over past events gives $\dot s_0=-\beta s_0$ and $\dot s_r=\beta(s_{r-1}-s_r)$, which is
+$\dot{\bm s}=\beta(B-I)\bm s$. Since $g_r(0)=\beta\,\mathbb{1}[r=0]$, a new event adds $\beta$ to
+$s_0$ and leaves the other states unchanged.
+
+\emph{Step 2 (evolution over a gap).} The solution is $\bm s(t+\Delta)=e^{\beta(B-I)\Delta}\bm s(t)$.
+The matrices $B$ and $I$ commute and $B^R=0$, so
+\[
+e^{\beta(B-I)\Delta}=e^{-y}\,e^{yB}=e^{-y}\sum_{j=0}^{R-1}\frac{y^j}{j!}B^j .
+\]
+Because $B^j$ shifts a vector down by $j$ places, component $r$ of $e^{\beta(B-I)\Delta}\bm s(t)$
+is $\sum_{j\le r}w_j s_{r-j}(t)$.
+
+\emph{Step 3 (integral over a gap).} Integrating the weights over the gap,
+\[
+\int_0^{\Delta}e^{-\beta u}\frac{(\beta u)^j}{j!}\,\mathrm{d}u=\frac{1}{\beta}\,P(j+1,y),
+\]
+which gives the second formula.
 \end{proof}
 
+Evaluating a likelihood therefore costs $O(N d K R^2)$ operations for $N$ events in $d$
+dimensions, and it involves no Monte Carlo or quadrature error.
+
 \subsection{Concavity, EM and a certificate of global optimality}
-Problem \eqref{eq:ll} is the maximisation of a concave function over the nonnegative
-orthant (a Poisson linear-inverse problem). Nonnegative $\ell_1$ penalties are linear,
-$\gamma^\top\bm\theta$, and are absorbed into $\bm\Phi$. The multiplicative EM map
+\paragraph{Concavity and a certificate.} Problem~(\ref{eq:ll}) maximises a concave function over
+the nonnegative orthant. We add an $\ell_1$ penalty $\bm\gamma^\top\bm\theta_i$ with weights
+$\bm\gamma\ge0$ proportional to each feature's exposure; since $\bm\theta_i\ge0$, the penalty is
+linear and simply adds $\bm\gamma$ to $\bm\Phi$. We maximise with the multiplicative EM update
 \[
-\theta_p\leftarrow\theta_p\frac{\sum_n x_{np}/\lambda_n}{\Phi_p+\gamma_p}
+\theta_p\;\leftarrow\;\theta_p\,\frac{\sum_n x_{np}/\lambda_n}{\Phi_p+\gamma_p},
 \]
-is monotone and keeps iterates positive; we accelerate it with SQUAREM and polish with a
-log-barrier Newton method whose Hessian $\sum_n \bm x_n\bm x_n^\top/\lambda_n^2$ is
-assembled blockwise (dense endogenous block, sparse baseline/news block).
+where $x_{np}$ is feature $p$ at the $n$-th event of type $i$ and $\lambda_n$ the current intensity
+there. We accelerate it with SQUAREM \citep{varadhan2008simple} and finish with a log-barrier
+Newton method. The following bound tells us how far any fit is from the optimum.
 
 \begin{proposition}[Duality-gap certificate]\label{prop:gap}
-For any $\bm v>0$ with $X^\top\bm v\le\bm\Phi+\bm\gamma$ and any feasible $\bm\theta$,
+Fix an event type and drop the index $i$. Let $X$ be the matrix whose $n$-th row is
+$\bm x(t_n)^\top$ for the $N$ events of this type, let $\bm\theta\ge0$ be any parameter vector with
+intensities $\lambda_n=(X\bm\theta)_n>0$, and let $\ell^\star$ be the maximum of the penalised
+log-likelihood $\ell(\bm\theta)=\sum_n\log\lambda_n-(\bm\Phi+\bm\gamma)^\top\bm\theta$. Define
+\[
+s=\max_p\frac{\sum_n x_{np}/\lambda_n}{\Phi_p+\gamma_p}.
+\]
+Then
+\[
+\ell^\star-\ell(\bm\theta)\;\le\;N\log s+\bigl(\bm\theta^\top(\bm\Phi+\bm\gamma)-N\bigr),
+\]
+and both terms on the right are zero at the optimum.
+\end{proposition}
+\begin{proof}
+We use the notation of the proposition: $X$ has rows $\bm x_n^\top=\bm x(t_n)^\top$,
+$\lambda_n=\bm x_n^\top\bm\theta$, and
+$\ell(\bm\theta)=\sum_{n=1}^{N}\log\lambda_n-(\bm\Phi+\bm\gamma)^\top\bm\theta$.
+
+\emph{Step 1 (an upper bound for every feasible point).} For $u,v>0$, Fenchel's inequality gives
+\[
+\log u\;\le\;v\,u-1-\log v .
+\]
+Take any vector $\bm v=(v_1,\dots,v_N)$ with positive entries such that
+$X^\top\bm v\le\bm\Phi+\bm\gamma$ componentwise. Applying the inequality with $u=\lambda_n$ and
+$v=v_n$ and summing over $n$,
+\[
+\sum_{n}\log\lambda_n\;\le\;\sum_n v_n\lambda_n-N-\sum_n\log v_n
+\;=\;\bm\theta^\top X^\top\bm v-N-\sum_n\log v_n .
+\]
+Since $\bm\theta\ge0$ and $X^\top\bm v\le\bm\Phi+\bm\gamma$, we have
+$\bm\theta^\top X^\top\bm v\le\bm\theta^\top(\bm\Phi+\bm\gamma)$. Subtracting
+$(\bm\Phi+\bm\gamma)^\top\bm\theta$ from both sides therefore gives
 \[
 \ell(\bm\theta)\;\le\;D(\bm v):=-N-\sum_n\log v_n .
 \]
-Taking $\bm v=\bm\lambda^{-1}/s$ with $s=\max_p (X^\top\bm\lambda^{-1})_p/(\Phi_p+\gamma_p)$
-gives the computable bound
-$\ell^\star-\ell(\bm\theta)\le D(\bm v)-\ell(\bm\theta)=N\log s+\big(\bm\theta^\top(\bm\Phi+\bm\gamma)-N\big)$.
-\end{proposition}
-\begin{proof}
-Fenchel's inequality $\log u\le vu-1-\log v$ ($u,v>0$) applied to $u=\lambda_n$ gives
-$\sum_n\log\lambda_n\le\bm\theta^\top X^\top\bm v-N-\sum_n\log v_n$, and
-$\bm\theta^\top X^\top\bm v\le\bm\theta^\top(\bm\Phi+\bm\gamma)$ for $\bm\theta\ge0$;
-subtracting $\bm\theta^\top(\bm\Phi+\bm\gamma)$ from both sides yields $\ell(\bm\theta)\le D(\bm v)$
-for every feasible $\bm\theta$, hence also for the maximiser. With
-$v_n=1/(s\lambda_n)$, $-\sum_n\log v_n=\sum_n\log\lambda_n+N\log s$, which gives the
-stated gap. Both terms vanish at a KKT point, where $s=1$ and
-$\bm\theta^\top(\bm\Phi+\bm\gamma)=\sum_n\bm\theta^\top\bm x_n/\lambda_n=N$.
+This holds for every feasible $\bm\theta$, in particular for the maximiser, so
+$\ell^\star\le D(\bm v)$.
+
+\emph{Step 2 (a computable choice of $\bm v$).} Let $\bm\theta$ be the current fit and set
+$v_n=1/(s\lambda_n)$, with $s=\max_p\bigl(\sum_n x_{np}/\lambda_n\bigr)/(\Phi_p+\gamma_p)$. Then
+$(X^\top\bm v)_p=\frac{1}{s}\sum_n x_{np}/\lambda_n\le\Phi_p+\gamma_p$ by the definition of $s$, so
+$\bm v$ is admissible in Step 1. For this choice,
+\[
+D(\bm v)=-N+N\log s+\sum_n\log\lambda_n ,
+\qquad\text{hence}\qquad
+\ell^\star-\ell(\bm\theta)\;\le\;D(\bm v)-\ell(\bm\theta)=N\log s+\bm\theta^\top(\bm\Phi+\bm\gamma)-N .
+\]
+
+\emph{Step 3 (the bound vanishes at the optimum).} The Karush--Kuhn--Tucker conditions of the
+maximisation state that $\sum_n x_{np}/\lambda_n=\Phi_p+\gamma_p$ when $\theta_p>0$ and
+$\sum_n x_{np}/\lambda_n\le\Phi_p+\gamma_p$ when $\theta_p=0$. Hence $s=1$, so $N\log s=0$. Moreover,
+\[
+\bm\theta^\top(\bm\Phi+\bm\gamma)=\sum_p\theta_p\sum_n\frac{x_{np}}{\lambda_n}
+=\sum_n\frac{\bm x_n^\top\bm\theta}{\lambda_n}=N ,
+\]
+so the second term is also zero.
 \end{proof}
-At the optimum $s=1$ (KKT), and the expected number of events $\bm\theta^\top\bm\Phi$
-equals the observed number $N_i$ for unpenalised fits---both are checked in our tests.
+
+Every fit reported in this paper comes with this bound.
 
 \subsection{Markov embedding and echo-corrected responses}
-Stack the states $s_{jkr}$ of all sources into $\bm x$, let $F$ be the block-diagonal
-Erlang-chain generator, $G_{\rm in}$ inject $\beta_k$ into phase $r=0$ of source $j$, and
-$\Theta$ the endogenous weights, so $\lambda=\mu+\Theta\bm x$. Taking expectations of the
-jump dynamics, the \emph{mean} excess intensity caused by one release with news states
-$\bm y$ ($\dot{\bm y}=F_e\bm y$, $\bm y(0)=\bm y_0$) satisfies
-\begin{equation}
-\dot{\bm z}=\mathcal A\bm z,\quad
-\mathcal A=\begin{pmatrix}F+G_{\rm in}\Theta & G_{\rm in}\Theta_e\\ 0 & F_e\end{pmatrix},\quad
-r(t)=\begin{pmatrix}\Theta&\Theta_e\end{pmatrix}\bm z(t),\quad
-\bm z(0)=\begin{pmatrix}0\\ \bm y_0\end{pmatrix}.
+\paragraph{Markov embedding.} To study the response to a single release, we collect all
+endogenous Erlang states $s_{jkr}$ into one vector $\bm u(t)$ and the states of the release's
+news kernels into $\bm v(t)$. Let $F$ be the block-diagonal generator of the endogenous chains
+(one block $\beta_k(B-I)$ per source and rate, as in Lemma~\ref{lem:recursion}) and $F_e$ the
+generator of the news chains. Let $G_{\mathrm{in}}$ be the matrix that adds $\beta_k$ to the first
+phase of every chain of source $j$ when an event of type $j$ occurs. Finally, let $\Theta$ hold the
+endogenous weights $a_{ijkr}$ and $\Theta_e$ the news weights of this release, so that the excess
+intensity is $\Theta\bm u(t)+\Theta_e\bm v(t)$.
+
+Taking expectations, each event of type $j$ occurs at the mean rate $m_j(t)$ and adds
+$G_{\mathrm{in}}\bm e_j$ to $\bm u$. The mean excess intensity $\bm m(t)$ caused by the release
+therefore satisfies a linear system:
+\begin{equation}\label{eq:embedding}
+\dot{\bm z}=\mathcal A\bm z,\qquad
+\mathcal A=\begin{pmatrix}F+G_{\mathrm{in}}\Theta & G_{\mathrm{in}}\Theta_e\\ 0 & F_e\end{pmatrix},\qquad
+\bm m(t)=C\bm z(t),\qquad C=\begin{pmatrix}\Theta&\Theta_e\end{pmatrix},
 \end{equation}
+where $\bm z=(\bar{\bm u},\bm v)$ stacks the expected endogenous states and the news states, and
+$\bm z(0)=\bm z_0=(\bm 0,\bm v_0)$ with $\bm v_0$ the news states just after the release.
 
 \begin{theorem}[Stability]\label{thm:stab}
-Let $G_{ij}=\sum_{k,r}a_{ijkr}$ be the branching matrix. Then $F+G_{\rm in}\Theta$ is
-Hurwitz if and only if $\rho(G)<1$.
+Let $G$ be the $d\times d$ branching matrix with entries $G_{ij}=\sum_{k,r}a_{ijkr}$, the expected
+number of type-$i$ events triggered directly by one type-$j$ event, and let $\rho(G)$ be its
+spectral radius. Then the matrix $F+G_{\mathrm{in}}\Theta$ is Hurwitz (all eigenvalues have negative
+real part) if and only if $\rho(G)<1$.
 \end{theorem}
+
 \begin{proof}
-$F$ is Metzler and Hurwitz ($-F$ is a nonsingular M-matrix: lower-triangular blocks with
-diagonal $-\beta_k<0$) and $G_{\rm in}\Theta\ge0$. For a Metzler matrix $F+P$ with $F$
-Hurwitz-Metzler and $P\ge0$, $F+P$ is Hurwitz iff $\rho(-F^{-1}P)<1$ (regular
-splitting of the M-matrix $-(F+P)$; Varga, Thm.~3.29). Now
-$\rho(-F^{-1}G_{\rm in}\Theta)=\rho(\Theta(-F)^{-1}G_{\rm in})$ and
-$\big(\Theta(-F)^{-1}G_{\rm in}\big)_{ij}=\sum_{k,r}a_{ijkr}\int_0^\infty g_{kr}=G_{ij}$,
-because $(-F)^{-1}G_{\rm in}\bm e_j$ collects the integrals of the basis densities
-excited by one event of source $j$.
+\emph{Step 1.} Every block $\beta_k(B-I)$ of $F$ is lower triangular with diagonal $-\beta_k<0$
+and nonnegative off-diagonal entries. Hence $F$ is Hurwitz with nonnegative off-diagonal entries,
+and $-F$ is a nonsingular M-matrix. The matrix $P=G_{\mathrm{in}}\Theta$ is entrywise nonnegative.
+
+\emph{Step 2.} For such a pair, $F+P$ is Hurwitz if and only if $\rho\bigl((-F)^{-1}P\bigr)<1$. This
+is the regular-splitting theorem for M-matrices \citep[Thm.~3.29]{varga2000matrix}, applied to
+$-(F+P)=(-F)-P$.
+
+\emph{Step 3.} The products $AB$ and $BA$ have the same nonzero eigenvalues, so
+\[
+\rho\bigl((-F)^{-1}G_{\mathrm{in}}\Theta\bigr)=\rho\bigl(\Theta(-F)^{-1}G_{\mathrm{in}}\bigr).
+\]
+
+\emph{Step 4.} Column $j$ of $(-F)^{-1}G_{\mathrm{in}}=\int_0^\infty e^{Ft}G_{\mathrm{in}}\,\mathrm{d}t$
+contains, for every chain of source $j$, the integral over time of the state left by a single
+type-$j$ event. By Lemma~\ref{lem:recursion} this state is $g_{kr}(t)$, whose integral is one.
+Hence
+\[
+\bigl(\Theta(-F)^{-1}G_{\mathrm{in}}\bigr)_{ij}=\sum_{k,r}a_{ijkr}\int_0^\infty g_{kr}(t)\,\mathrm{d}t
+=\sum_{k,r}a_{ijkr}=G_{ij}.
+\]
+Combining Steps 2 to 4, $F+G_{\mathrm{in}}\Theta$ is Hurwitz if and only if $\rho(G)<1$.
 \end{proof}
 
 \begin{corollary}[Closed-form absorption]\label{cor:abs}
-Under $\rho(G)<1$, the echo-corrected response is $r(t)=C e^{\mathcal A t}\bm z_0$, its
-total is $\int_0^\infty r=-C\mathcal A^{-1}\bm z_0$, the cumulative fraction absorbed by
-time $t$ is
+Assume $\rho(G)<1$. Then $\mathcal A$ is Hurwitz, because it is block triangular and $F_e$ is
+Hurwitz, and the following quantities are available in closed form.
+\begin{enumerate}
+\item The mean excess intensity after a release, echoes included: $\bm m(t)=Ce^{\mathcal At}\bm z_0$.
+\item Its total, the expected number of extra events: $M=\int_0^\infty\bm m(t)\,\mathrm{d}t=-C\mathcal A^{-1}\bm z_0$.
+\item The fraction of the response absorbed by time $t$, summed over event types:
 \[
-F(t)=\frac{C\mathcal A^{-1}(e^{\mathcal At}-I)\bm z_0}{C\mathcal A^{-1}(-\bm z_0)},
+\Pi(t)=\frac{\bm 1^\top C\mathcal A^{-1}\bigl(e^{\mathcal At}-I\bigr)\bm z_0}{-\bm 1^\top C\mathcal A^{-1}\bm z_0}.
 \]
-the echo-corrected absorption quantile is $t_q=F^{-1}(q)$, and the \emph{amplification}
-(echo multiplier) is $\int r/\int r_{\rm direct}$ with $r_{\rm direct}(t)=\Theta_e e^{F_et}\bm y_0$.
-For an asset with dimensions $(u,v)$ the expected price-discovery curve is
-$\delta_a\int_0^t (r_u-r_v)$.
+Its quantiles $t_q=\Pi^{-1}(q)$ are the echo-corrected absorption times; we report $t_{50}$ and $t_{90}$.
+\item The amplification $\kappa=M/M_{\mathrm{direct}}$, where $M_{\mathrm{direct}}=-\Theta_eF_e^{-1}\bm v_0$
+is the total of the direct news response $\bm m_{\mathrm{direct}}(t)=\Theta_e e^{F_et}\bm v_0$ alone.
+\item For an asset whose price is observed through upward and downward crossings of size $\delta$
+(types $u$ and $v$), the expected price change up to time $t$:
+$\delta\int_0^t\bigl(m_u(s)-m_v(s)\bigr)\,\mathrm{d}s$.
+\end{enumerate}
 \end{corollary}
 
-\begin{remark}
-The popular ``half-life $\ln2/\beta$'' of a single exponential news kernel measures only
-$r_{\rm direct}$; when $\rho(G)$ is close to one the echoes dominate and $t_{50}$ of the
-full response can be orders of magnitude longer. Section~\ref{sec:results} quantifies
-the gap.
-\end{remark}
+The usual ``news half-life'' $\ln 2/\beta$ describes only $\bm m_{\mathrm{direct}}$. When $\rho(G)$
+is close to one, the echoes dominate the response, and Section~\ref{sec:results} shows that
+the two can differ by one to two orders of magnitude.
 
 \subsection{Closed-form conditional forecasts}
-Given the pre-release history (states $\bm x(\tau)$ computed exactly by
-Lemma~\ref{lem:recursion}), the observed surprise of the release at $\tau$, and a
-constant baseline $\bm\mu$ over the horizon,
-$\E[\bm N(\tau,\tau+h]\mid\mathcal F_\tau]=\bm\mu h+C\big[\mathcal A^{-1}(e^{\mathcal Ah}-I)\bm z_0
-+\mathcal A^{-1}(\mathcal A^{-1}(e^{\mathcal Ah}-I)-hI)\bm u\big]$ with
-$\bm u=(G_{\rm in}\bm\mu,0)$. Under $\delta$-sampling this is also a realised-variance
-($\delta_a^2 N$) and drift forecast (Track~D).
+The same system gives forecasts. Suppose a release occurs at time $\tau$, and let
+$\mathcal F_\tau$ denote the information available just after it: the history of events, the type
+of the release and its surprise. We compute the endogenous states $\bm u(\tau)$ exactly from the
+history with Lemma~\ref{lem:recursion}, set the news states $\bm v_0$ from the surprise, and write
+$\bm z_0=(\bm u(\tau),\bm v_0)$. Over a short horizon we treat the baseline intensity as a constant
+vector $\bm\mu$. Baseline events then also excite the endogenous chains, which adds the constant
+input $\bm b=(G_{\mathrm{in}}\bm\mu,\bm 0)$ to the system, so that
+$\dot{\bm z}=\mathcal A\bm z+\bm b$. Solving this equation and integrating over $(\tau,\tau+h]$ gives the
+expected number of events of each type,
+\[
+\E\bigl[\bm N(\tau,\tau+h]\,\big|\,\mathcal F_\tau\bigr]
+=\bm\mu h+C\Bigl[\mathcal A^{-1}\bigl(e^{\mathcal Ah}-I\bigr)\bm z_0
++\mathcal A^{-1}\bigl(\mathcal A^{-1}(e^{\mathcal Ah}-I)-hI\bigr)\bm b\Bigr].
+\]
+Because each event corresponds to a price move of size $\delta_a$, this is also a forecast of
+realised variance ($\delta_a^2$ times the number of events) and, through the difference between
+upward and downward events, of the price drift (Track~D).

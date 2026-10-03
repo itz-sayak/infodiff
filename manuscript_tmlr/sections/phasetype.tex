@@ -1,35 +1,74 @@
 \section{Phase-type state spaces}\label{sec:phasetype}
 
-\paragraph{Dictionary.} Fix rates $\beta_1,\dots,\beta_K$ on a logarithmic grid and Erlang
-orders $r=0,\dots,R-1$. The normalised basis densities
-\begin{equation}
-g_{kr}(t)=\beta_k\frac{(\beta_k t)^r}{r!}e^{-\beta_k t},\qquad \int_0^\infty g_{kr}=1,
+\paragraph{A dictionary of Erlang densities.} Fix a set of rates $\beta_1,\dots,\beta_K>0$ on a
+logarithmic grid, so that each rate corresponds to a time scale $1/\beta_k$, and an Erlang order
+$R\ge1$. For $k=1,\dots,K$ and $r=0,\dots,R-1$ we define the basis densities
+\begin{equation}\label{eq:basis}
+g_{kr}(t)=\beta_k\,\frac{(\beta_k t)^r}{r!}\,e^{-\beta_k t},\qquad t\ge0 .
 \end{equation}
-generate kernels $\phi(t)=\sum_{k,r}a_{kr}g_{kr}(t)$ with $a_{kr}\ge0$ and mass (branching
-ratio) $\sum_{k,r}a_{kr}$. Exponential mixtures ($R=1$) approximate every completely monotone
-kernel, including power laws (Bernstein's theorem); higher orders add delayed humps
-($\phi(0)=0$); and phase-type densities are dense in the densities on $\R_+$.
+Each $g_{kr}$ is the density of a gamma (Erlang) distribution with shape $r+1$ and rate
+$\beta_k$, so $\int_0^\infty g_{kr}(t)\,\mathrm{d}t=1$ and its mean is $(r+1)/\beta_k$. A kernel is a
+nonnegative combination
+\begin{equation}\label{eq:kernel}
+\phi(t)=\sum_{k=1}^{K}\sum_{r=0}^{R-1}a_{kr}\,g_{kr}(t),\qquad a_{kr}\ge0 .
+\end{equation}
+Because each basis density integrates to one, the total mass of the kernel, which is its
+branching ratio, is simply $\sum_{k,r}a_{kr}$. With $R=1$ the dictionary contains only
+exponentials, and mixtures of exponentials can approximate any completely monotone kernel,
+power laws included (Bernstein's theorem). Orders $r\ge1$ add kernels that start at zero and peak
+later, which describe delayed reactions. More generally, phase-type densities are dense in the set
+of densities on $\R_+$.
 
-\paragraph{Exact recursion.} All states used in this paper---Hawkes excitation, news
-response, the neural latent state of EPT and the renewal channel of EPT-X---are Erlang
-chains, for which evolution and integrals between events are closed form.
+\paragraph{Exact recursion.} Every state in this paper is built from such Erlang chains: the
+Hawkes excitation, the response to news, the neural latent state of EPT and the renewal channel of
+EPT-X. For all of them, the evolution between two events and its integral are available in closed
+form. The following lemma gives the formulas for one source and one rate.
 
 \begin{lemma}[Erlang-chain recursion]\label{lem:recursion}
-Let $s_r(t)=\sum_{t_n<t}g_{kr}(t-t_n)$ for one source and one rate $\beta$. Between events,
-$\bm s=(s_0,\dots,s_{R-1})$ solves $\dot{\bm s}=\beta(N-I)\bm s$ with $N$ the down-shift,
-and at an event $s_0\mathrel{+}=\beta$. Hence, with $y=\beta\Delta$ and $w_j=e^{-y}y^j/j!$,
+Let $t_1<t_2<\dots$ be the event times of one source, let $\beta>0$ be one rate of the
+dictionary, and define the chain of states
 \[
-s_r(t+\Delta)=\sum_{j\le r}w_j\,s_{r-j}(t),\qquad
-\int_t^{t+\Delta}s_r=\frac1\beta\sum_{j\le r}P(j+1,y)\,s_{r-j}(t),
+s_r(t)=\sum_{n:\,t_n<t} g_r(t-t_n),\qquad r=0,\dots,R-1,
 \]
-where $P$ is the regularised lower incomplete gamma function.
+where $g_r$ is the basis density~(\ref{eq:basis}) with rate $\beta$. Write
+$\bm s=(s_0,\dots,s_{R-1})^\top$, let $I$ be the $R\times R$ identity and let $B$ be the
+$R\times R$ down-shift matrix ($B_{r,r-1}=1$ and all other entries zero).
+\begin{enumerate}
+\item Between events, $\dot{\bm s}=\beta(B-I)\,\bm s$; at an event, $s_0$ increases by $\beta$.
+\item For a gap $\Delta\ge0$ with no event in $(t,t+\Delta)$, let $y=\beta\Delta$ and
+$w_j=e^{-y}y^j/j!$. Then
+\[
+s_r(t+\Delta)=\sum_{j=0}^{r}w_j\,s_{r-j}(t),\qquad
+\int_t^{t+\Delta}s_r(u)\,\mathrm{d}u=\frac{1}{\beta}\sum_{j=0}^{r}P(j+1,y)\,s_{r-j}(t),
+\]
+where $P(a,y)$ is the regularised lower incomplete gamma function.
+\end{enumerate}
 \end{lemma}
+
 \begin{proof}
-$\frac{\dd}{\dd t}g_{kr}=\beta(g_{k,r-1}-g_{kr})$ for $r\ge1$ and
-$\frac{\dd}{\dd t}g_{k0}=-\beta g_{k0}$, with $g_{kr}(0)=\beta\mathbb 1[r=0]$. The matrix
-exponential of $\beta(N-I)\Delta$ is $e^{-y}\sum_{j<R}\frac{y^j}{j!}N^j$ because $N$ is
-nilpotent and commutes with $I$; integrating term by term gives $P(j+1,y)/\beta$.
+\emph{Step 1 (dynamics).} Differentiating~(\ref{eq:basis}) gives
+\[
+\frac{\mathrm{d}}{\mathrm{d}t}g_0(t)=-\beta\,g_0(t),\qquad
+\frac{\mathrm{d}}{\mathrm{d}t}g_r(t)=\beta\bigl(g_{r-1}(t)-g_r(t)\bigr)\quad(r\ge1).
+\]
+Summing over past events gives $\dot s_0=-\beta s_0$ and $\dot s_r=\beta(s_{r-1}-s_r)$, which is
+$\dot{\bm s}=\beta(B-I)\bm s$. Since $g_r(0)=\beta\,\mathbb{1}[r=0]$, a new event adds $\beta$ to
+$s_0$ and leaves the other states unchanged.
+
+\emph{Step 2 (evolution over a gap).} The solution is $\bm s(t+\Delta)=e^{\beta(B-I)\Delta}\bm s(t)$.
+The matrices $B$ and $I$ commute and $B^R=0$, so
+\[
+e^{\beta(B-I)\Delta}=e^{-y}\,e^{yB}=e^{-y}\sum_{j=0}^{R-1}\frac{y^j}{j!}B^j .
+\]
+Because $B^j$ shifts a vector down by $j$ places, component $r$ of $e^{\beta(B-I)\Delta}\bm s(t)$
+is $\sum_{j\le r}w_j s_{r-j}(t)$.
+
+\emph{Step 3 (integral over a gap).} Integrating the weights over the gap,
+\[
+\int_0^{\Delta}e^{-\beta u}\frac{(\beta u)^j}{j!}\,\mathrm{d}u=\frac{1}{\beta}\,P(j+1,y),
+\]
+which gives the second formula.
 \end{proof}
 
-The cost of evaluating a likelihood is therefore $O(NdKR^2)$ for $N$ events in $d$
-dimensions, with no Monte-Carlo or quadrature error.
+Evaluating a likelihood therefore costs $O(N d K R^2)$ operations for $N$ events in $d$
+dimensions, and it involves no Monte Carlo or quadrature error.

@@ -1,4 +1,4 @@
-# infodiff — echo-corrected information diffusion
+# infodiff: echo-corrected information diffusion
 
 How fast do markets absorb scheduled macro news, and how much of the response is the news
 itself versus the market re-trading its own reaction?

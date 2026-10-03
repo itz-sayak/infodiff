@@ -1,6 +1,6 @@
 # Copyright 2026 Sayak Dutta
 # SPDX-License-Identifier: Apache-2.0
-"""Main study — echo-corrected absorption of scheduled macro news across markets.
+"""Main study: echo-corrected absorption of scheduled macro news across markets.
 
 Model (per year and pooled): 12-dimensional MSX-Hawkes on delta-crossing events of
 EURUSD, USDJPY, XAUUSD, SPX, BTC, ETH (up/down each) with

@@ -1,74 +1,140 @@
 \section{MSX: certified measurement with echo-corrected responses}\label{sec:msx}
 
-\paragraph{Model.} Consider $d$ event dimensions observed in windows $w$ with likelihood
-intervals $[t_0^w,t_1^w)$, and exogenous shocks $e$ (here: scheduled releases) at times
-$\tau_e$ with type $c_e$ and nonnegative mark features $\bm z_e=(1,z_e^+,z_e^-)$, the
-standardised surprise split by sign. The MSX intensity of dimension $i$ is
+\paragraph{Model.} We observe $d$ event types (for example upward and downward price moves of
+several assets) inside observation windows $w$, each with a likelihood interval
+$[t_0^w,t_1^w)$. Exogenous shocks $e$, here scheduled macroeconomic releases, occur at known times
+$\tau_e$. Each shock has a type $c_e$ (CPI, payrolls, and so on) and a nonnegative mark vector
+$\bm z_e=(1,z_e^+,z_e^-)$, where $z_e^+$ and $z_e^-$ are the positive and negative parts of the
+standardised surprise. The MSX intensity of event type $i$ is
 \begin{align}
-\lambda_i(t)={}&\underbrace{c_{iw}+\textstyle\sum_{m}\eta_{im}h_m(\mathrm{tod}(t))}_{\text{baseline}}
-+\underbrace{\sum_{j}\sum_{t_n^j<t}\sum_{k,r}a_{ijkr}\,g_{kr}(t-t_n^j)}_{\text{endogenous}}\nonumber\\
-&+\underbrace{\sum_{e:\tau_e<t}\sum_{k,r,m}b_{i c_e k r m}\,z_{em}\,g^{\rm exo}_{kr}(t-\tau_e)}_{\text{exogenous (news)}}
-+\underbrace{\sum_{e:\tau_e>t}\sum_{k}\alpha_{ic_ek}\,\beta^{\rm ant}_k e^{-\beta^{\rm ant}_k(\tau_e-t)}}_{\text{anticipation}},
+\lambda_i(t)={}&\underbrace{c_{iw}+\sum_{m}\eta_{im}\,h_m\bigl(\mathrm{tod}(t)\bigr)}_{\text{baseline}}
++\underbrace{\sum_{j=1}^{d}\sum_{n:\,t_n^j<t}\sum_{k,r}a_{ijkr}\,g_{kr}(t-t_n^j)}_{\text{endogenous}}\nonumber\\
+&+\underbrace{\sum_{e:\,\tau_e<t}\sum_{k,r,m}b_{i c_e k r m}\,z_{em}\,g^{\mathrm{exo}}_{kr}(t-\tau_e)}_{\text{response to news}}
++\underbrace{\sum_{e:\,\tau_e>t}\sum_{k}\alpha_{ic_ek}\,\beta^{\mathrm{ant}}_k e^{-\beta^{\mathrm{ant}}_k(\tau_e-t)}}_{\text{anticipation}} .
 \label{eq:intensity}
 \end{align}
-with per-window intercepts $c_{iw}$, periodic hat functions $h_m$ of local time of day, and
-all parameters nonnegative. Writing $\bm x(t)\ge0$ for the stacked features,
-$\lambda_i(t)=\bm x(t)^\top\bm\theta_i$, and the log-likelihood separates across targets,
-\begin{equation}
-\ell_i(\bm\theta_i)=\sum_{n:\,u_n=i}\log\big(\bm x(t_n)^\top\bm\theta_i\big)-\bm\Phi^\top\bm\theta_i,
-\qquad \bm\Phi=\sum_w\int_{t_0^w}^{t_1^w}\bm x(t)\dd t,\label{eq:ll}
+The terms are as follows.
+\begin{itemize}
+\item \emph{Baseline.} $c_{iw}$ is an intercept for window $w$, and $h_m$ are periodic hat
+functions of the local time of day $\mathrm{tod}(t)$ with weights $\eta_{im}$.
+\item \emph{Endogenous excitation.} $t_n^j$ is the $n$-th event of type $j$, the $g_{kr}$ are the
+basis densities~(\ref{eq:basis}), and $a_{ijkr}$ is the weight with which an event of type $j$
+excites type $i$ at time scale $k$ and order $r$.
+\item \emph{Response to news.} $g^{\mathrm{exo}}_{kr}$ is a second dictionary with its own rates,
+and $b_{ickrm}$ weights mark component $m$ of a release of type $c$.
+\item \emph{Anticipation.} $\alpha_{ick}$ captures activity that builds up before a release of type
+$c$, with rates $\beta^{\mathrm{ant}}_k$.
+\end{itemize}
+All parameters are nonnegative. Every term is linear in its parameters, so we can write
+$\lambda_i(t)=\bm x(t)^\top\bm\theta_i$, where $\bm\theta_i$ stacks the parameters of type $i$ and
+$\bm x(t)\ge0$ stacks the corresponding known functions of time. The log-likelihood then
+separates across event types:
+\begin{equation}\label{eq:ll}
+\ell_i(\bm\theta_i)=\sum_{n:\,u_n=i}\log\bigl(\bm x(t_n)^\top\bm\theta_i\bigr)-\bm\Phi^\top\bm\theta_i,
+\qquad \bm\Phi=\sum_w\int_{t_0^w}^{t_1^w}\bm x(t)\,\mathrm{d}t ,
 \end{equation}
-where every entry of $\bm x(t_n)$ and $\bm\Phi$ follows from Lemma~\ref{lem:recursion}.
+where $u_n$ is the type of the $n$-th event. Every entry of $\bm x(t_n)$ and of $\bm\Phi$ follows
+from Lemma~\ref{lem:recursion}.
 
-\paragraph{Concavity and a certificate.} Problem~\eqref{eq:ll} maximises a concave function
-over the nonnegative orthant. Exposure-weighted $\ell_1$ penalties are linear,
-$\bm\gamma^\top\bm\theta$, and are absorbed into $\bm\Phi$. We run the multiplicative EM map
-$\theta_p\leftarrow\theta_p\,(\sum_n x_{np}/\lambda_n)/(\Phi_p+\gamma_p)$, accelerated by
-SQUAREM \citep{varadhan2008simple}, and polish with a log-barrier Newton method.
+\paragraph{Concavity and a certificate.} Problem~(\ref{eq:ll}) maximises a concave function over
+the nonnegative orthant. We add an $\ell_1$ penalty $\bm\gamma^\top\bm\theta_i$ with weights
+$\bm\gamma\ge0$ proportional to each feature's exposure; since $\bm\theta_i\ge0$, the penalty is
+linear and simply adds $\bm\gamma$ to $\bm\Phi$. We maximise with the multiplicative EM update
+\[
+\theta_p\;\leftarrow\;\theta_p\,\frac{\sum_n x_{np}/\lambda_n}{\Phi_p+\gamma_p},
+\]
+where $x_{np}$ is feature $p$ at the $n$-th event of type $i$ and $\lambda_n$ the current intensity
+there. We accelerate it with SQUAREM \citep{varadhan2008simple} and finish with a log-barrier
+Newton method. The following bound tells us how far any fit is from the optimum.
 
 \begin{proposition}[Duality-gap certificate]\label{prop:gap}
-For any feasible $\bm\theta\ge0$ with intensities $\lambda_n=\bm x_n^\top\bm\theta>0$, let
-$s=\max_p (X^\top\bm\lambda^{-1})_p/(\Phi_p+\gamma_p)$. Then
+Fix an event type and drop the index $i$. Let $X$ be the matrix whose $n$-th row is
+$\bm x(t_n)^\top$ for the $N$ events of this type, let $\bm\theta\ge0$ be any parameter vector with
+intensities $\lambda_n=(X\bm\theta)_n>0$, and let $\ell^\star$ be the maximum of the penalised
+log-likelihood $\ell(\bm\theta)=\sum_n\log\lambda_n-(\bm\Phi+\bm\gamma)^\top\bm\theta$. Define
 \[
-\ell^\star-\ell(\bm\theta)\;\le\;N\log s+\big(\bm\theta^\top(\bm\Phi+\bm\gamma)-N\big),
+s=\max_p\frac{\sum_n x_{np}/\lambda_n}{\Phi_p+\gamma_p}.
 \]
-and both terms vanish at the optimum.
+Then
+\[
+\ell^\star-\ell(\bm\theta)\;\le\;N\log s+\bigl(\bm\theta^\top(\bm\Phi+\bm\gamma)-N\bigr),
+\]
+and both terms on the right are zero at the optimum.
 \end{proposition}
-The proof (Appendix~\ref{app:proofs}) applies Fenchel's inequality $\log u\le vu-1-\log v$ to
-each $\lambda_n$. Every fit reported here carries this certificate.
+The proof, in Appendix~\ref{app:proofs}, applies Fenchel's inequality to each $\log\lambda_n$.
+Every fit reported in this paper comes with this bound.
 
-\paragraph{Markov embedding.} Stack the endogenous states into $\bm x$, let $F$ be the
-block-diagonal Erlang-chain generator, $G_{\rm in}$ inject $\beta_k$ into phase $r=0$ of a
-source, and $\Theta$ the endogenous weights. The \emph{mean} excess intensity caused by one
-shock with exogenous states $\bm y$ ($\dot{\bm y}=F_e\bm y$, $\bm y(0)=\bm y_0$) solves
-\begin{equation}
-\dot{\bm z}=\mathcal A\bm z,\quad
-\mathcal A=\begin{pmatrix}F+G_{\rm in}\Theta & G_{\rm in}\Theta_e\\ 0 & F_e\end{pmatrix},\quad
-r(t)=\begin{pmatrix}\Theta&\Theta_e\end{pmatrix}\bm z(t),\quad
-\bm z(0)=\begin{pmatrix}0\\ \bm y_0\end{pmatrix}.
+\paragraph{Markov embedding.} To study the response to a single release, we collect all
+endogenous Erlang states $s_{jkr}$ into one vector $\bm u(t)$ and the states of the release's
+news kernels into $\bm v(t)$. Let $F$ be the block-diagonal generator of the endogenous chains
+(one block $\beta_k(B-I)$ per source and rate, as in Lemma~\ref{lem:recursion}) and $F_e$ the
+generator of the news chains. Let $G_{\mathrm{in}}$ be the matrix that adds $\beta_k$ to the first
+phase of every chain of source $j$ when an event of type $j$ occurs. Finally, let $\Theta$ hold the
+endogenous weights $a_{ijkr}$ and $\Theta_e$ the news weights of this release, so that the excess
+intensity is $\Theta\bm u(t)+\Theta_e\bm v(t)$.
+
+Taking expectations, each event of type $j$ occurs at the mean rate $m_j(t)$ and adds
+$G_{\mathrm{in}}\bm e_j$ to $\bm u$. The mean excess intensity $\bm m(t)$ caused by the release
+therefore satisfies a linear system:
+\begin{equation}\label{eq:embedding}
+\dot{\bm z}=\mathcal A\bm z,\qquad
+\mathcal A=\begin{pmatrix}F+G_{\mathrm{in}}\Theta & G_{\mathrm{in}}\Theta_e\\ 0 & F_e\end{pmatrix},\qquad
+\bm m(t)=C\bm z(t),\qquad C=\begin{pmatrix}\Theta&\Theta_e\end{pmatrix},
 \end{equation}
+where $\bm z=(\bar{\bm u},\bm v)$ stacks the expected endogenous states and the news states, and
+$\bm z(0)=\bm z_0=(\bm 0,\bm v_0)$ with $\bm v_0$ the news states just after the release.
 
 \begin{theorem}[Stability]\label{thm:stab}
-Let $G_{ij}=\sum_{k,r}a_{ijkr}$ be the branching matrix. Then $F+G_{\rm in}\Theta$ is Hurwitz
-if and only if $\rho(G)<1$.
+Let $G$ be the $d\times d$ branching matrix with entries $G_{ij}=\sum_{k,r}a_{ijkr}$, the expected
+number of type-$i$ events triggered directly by one type-$j$ event, and let $\rho(G)$ be its
+spectral radius. Then the matrix $F+G_{\mathrm{in}}\Theta$ is Hurwitz (all eigenvalues have negative
+real part) if and only if $\rho(G)<1$.
 \end{theorem}
+
 \begin{proof}
-$-F$ is a nonsingular M-matrix and $G_{\rm in}\Theta\ge0$, so $F+G_{\rm in}\Theta$ is Hurwitz
-iff $\rho(-F^{-1}G_{\rm in}\Theta)<1$ (regular splitting; \citealp{varga2000matrix}, Thm.~3.29).
-Moreover $\rho(-F^{-1}G_{\rm in}\Theta)=\rho(\Theta(-F)^{-1}G_{\rm in})$ and
-$\big(\Theta(-F)^{-1}G_{\rm in}\big)_{ij}=\sum_{k,r}a_{ijkr}\int_0^\infty g_{kr}=G_{ij}$.
+\emph{Step 1.} Every block $\beta_k(B-I)$ of $F$ is lower triangular with diagonal $-\beta_k<0$
+and nonnegative off-diagonal entries. Hence $F$ is Hurwitz with nonnegative off-diagonal entries,
+and $-F$ is a nonsingular M-matrix. The matrix $P=G_{\mathrm{in}}\Theta$ is entrywise nonnegative.
+
+\emph{Step 2.} For such a pair, $F+P$ is Hurwitz if and only if $\rho\bigl((-F)^{-1}P\bigr)<1$. This
+is the regular-splitting theorem for M-matrices \citep[Thm.~3.29]{varga2000matrix}, applied to
+$-(F+P)=(-F)-P$.
+
+\emph{Step 3.} The products $AB$ and $BA$ have the same nonzero eigenvalues, so
+\[
+\rho\bigl((-F)^{-1}G_{\mathrm{in}}\Theta\bigr)=\rho\bigl(\Theta(-F)^{-1}G_{\mathrm{in}}\bigr).
+\]
+
+\emph{Step 4.} Column $j$ of $(-F)^{-1}G_{\mathrm{in}}=\int_0^\infty e^{Ft}G_{\mathrm{in}}\,\mathrm{d}t$
+contains, for every chain of source $j$, the integral over time of the state left by a single
+type-$j$ event. By Lemma~\ref{lem:recursion} this state is $g_{kr}(t)$, whose integral is one.
+Hence
+\[
+\bigl(\Theta(-F)^{-1}G_{\mathrm{in}}\bigr)_{ij}=\sum_{k,r}a_{ijkr}\int_0^\infty g_{kr}(t)\,\mathrm{d}t
+=\sum_{k,r}a_{ijkr}=G_{ij}.
+\]
+Combining Steps 2 to 4, $F+G_{\mathrm{in}}\Theta$ is Hurwitz if and only if $\rho(G)<1$.
 \end{proof}
 
 \begin{corollary}[Closed-form absorption]\label{cor:abs}
-If $\rho(G)<1$, the echo-corrected response is $r(t)=Ce^{\mathcal At}\bm z_0$ with total
-$-C\mathcal A^{-1}\bm z_0$; the fraction absorbed by time $t$ is
-$F(t)=C\mathcal A^{-1}(e^{\mathcal At}-I)\bm z_0/\big(C\mathcal A^{-1}(-\bm z_0)\big)$, its
-quantiles $t_q=F^{-1}(q)$ are the echo-corrected absorption times, and the amplification is
-$\int r/\int r_{\rm direct}$ with $r_{\rm direct}(t)=\Theta_e e^{F_et}\bm y_0$. For a price
-observed through up and down $\delta$-crossings $(u,v)$, the expected price-discovery curve is
-$\delta\int_0^t(r_u-r_v)$.
+Assume $\rho(G)<1$. Then $\mathcal A$ is Hurwitz, because it is block triangular and $F_e$ is
+Hurwitz, and the following quantities are available in closed form.
+\begin{enumerate}
+\item The mean excess intensity after a release, echoes included: $\bm m(t)=Ce^{\mathcal At}\bm z_0$.
+\item Its total, the expected number of extra events: $M=\int_0^\infty\bm m(t)\,\mathrm{d}t=-C\mathcal A^{-1}\bm z_0$.
+\item The fraction of the response absorbed by time $t$, summed over event types:
+\[
+\Pi(t)=\frac{\bm 1^\top C\mathcal A^{-1}\bigl(e^{\mathcal At}-I\bigr)\bm z_0}{-\bm 1^\top C\mathcal A^{-1}\bm z_0}.
+\]
+Its quantiles $t_q=\Pi^{-1}(q)$ are the echo-corrected absorption times; we report $t_{50}$ and $t_{90}$.
+\item The amplification $\kappa=M/M_{\mathrm{direct}}$, where $M_{\mathrm{direct}}=-\Theta_eF_e^{-1}\bm v_0$
+is the total of the direct news response $\bm m_{\mathrm{direct}}(t)=\Theta_e e^{F_et}\bm v_0$ alone.
+\item For an asset whose price is observed through upward and downward crossings of size $\delta$
+(types $u$ and $v$), the expected price change up to time $t$:
+$\delta\int_0^t\bigl(m_u(s)-m_v(s)\bigr)\,\mathrm{d}s$.
+\end{enumerate}
 \end{corollary}
 
-The usual ``news half-life'' $\ln2/\beta$ describes only $r_{\rm direct}$; when $\rho(G)$ is
-close to one the echoes dominate, and Section~\ref{sec:application} shows that the difference
-is one to two orders of magnitude.
+The usual ``news half-life'' $\ln 2/\beta$ describes only $\bm m_{\mathrm{direct}}$. When $\rho(G)$
+is close to one, the echoes dominate the response, and Section~\ref{sec:application} shows that
+the two can differ by one to two orders of magnitude.

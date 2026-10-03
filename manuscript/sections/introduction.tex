@@ -1,56 +1,68 @@
 \section{Introduction}\label{sec:intro}
 
-Scheduled macroeconomic releases are the cleanest natural experiments in finance: the
-time of the shock is known to the second, its content is unknown until release, and
-its surprise relative to expectations can be measured. How fast prices absorb such
-information, and how much of the post-release activity is information versus the
-market reacting to itself, are old questions
-\citep{andersen2003micro,rambaldi2015modeling}. Hawkes processes answer the second
-question elegantly---the branching structure separates exogenous (news-driven)
-events from endogenous (self-excited) ones---and Rambaldi, Pennesi and Lillo
-\citep{rambaldi2015modeling} showed that adding a news kernel to a Hawkes model of FX
-quote activity captures the post-announcement burst.
+Price changes, order-book messages and trades arrive as streams of events in continuous time,
+and temporal point processes are the standard way to model them. They are used for two rather
+different purposes. In econometrics, Hawkes processes \citep{hawkes1971spectra} are used to
+\emph{measure} market mechanisms. Their branching structure separates exogenous events, such as
+a reaction to news, from endogenous events triggered by earlier trading, and the fitted kernels
+describe how quickly information is absorbed
+\citep{hardiman2013critical,filimonov2012quantifying,rambaldi2015modeling}. In machine learning,
+neural temporal point processes are used to \emph{predict} the next event, and they are compared
+by their held-out likelihood on shared benchmarks
+\citep{du2016recurrent,mei2017neural,zuo2020transformer,shchur2020intensity,xue2024easytpp,chang2025deep}.
 
-Three gaps remain. \emph{First}, the absorption speed is usually read off the news
-kernel alone (the ``half-life'' $\ln 2/\beta$ of an exponential), which ignores the
-endogenous echoes triggered by the news; when the branching ratio is close to one
-\citep{hardiman2013critical,filimonov2012quantifying} the echoes dominate the total
-response. \emph{Second}, estimation is fragile: flexible kernels are fitted by local
-optimisation of a non-convex likelihood, and branching ratios are biased upward when
-seasonality is mis-specified \citep{filimonov2015apparent}. \emph{Third}, the
-information content of the release (its surprise) enters, if at all, as a post-hoc
-correlate rather than as part of the model, and cross-market propagation is rarely
-modelled jointly.
+Each use has a weakness. Measurement relies on non-convex fits whose optimality is unknown, and
+on summaries that ignore part of the response. A common example is the ``half-life''
+$\ln 2/\beta$ of an exponential news kernel with decay rate $\beta$, which describes the direct
+reaction to news but not the further trading that this reaction sets off. On the prediction
+side, most intensity-based neural models estimate the compensator $\int\lambda(t)\,\mathrm{d}t$
+by Monte Carlo \citep{mei2017neural,zuo2020transformer,yang2022transformer,chang2025deep}, so
+their reported likelihoods contain sampling error. Models with an exact likelihood do exist.
+FullyNN \citep{omi2019fully} models the cumulative hazard with a monotone network, and
+IntensityFree \citep{shchur2020intensity} models the density of the next gap directly. Both,
+however, give up the Hawkes structure that makes a model interpretable \citep{shchur2021neural}.
+We also find that reported likelihoods can depend on implementation details.
 
-\paragraph{Contributions.} Linear-in-parameters kernel dictionaries, EM for Hawkes
-processes and the Markov embedding of Erlang-kernel Hawkes processes are known
-individually; our contribution is to combine them into a measurement framework whose
-output---echo-corrected absorption times---is certified and falsifiable.
+In this paper we show that a single algebraic object serves both purposes with exact
+likelihoods. We call it a \emph{phase-type state space}: every kernel is a nonnegative
+combination of Erlang densities whose rates lie on a logarithmic grid of time scales. Between
+two events such a state evolves by an explicit matrix exponential, so intensities and their
+integrals are available in closed form. The class is also rich, since phase-type densities are
+dense in the set of densities on $\R_+$.
+
+\paragraph{Contributions.}
 \begin{enumerate}
-\item \textbf{A certified estimator.} We represent every kernel---endogenous, news,
-anticipatory---in a phase-type dictionary (exponential and Erlang phases on a log grid
-of time scales). All parameters enter the intensity linearly, the log-likelihood is
-concave, and we compute the global maximum with accelerated EM and a barrier-Newton
-polish, returning a Fenchel duality gap that certifies optimality
-(Proposition~\ref{prop:gap}).
-\item \textbf{Echo-corrected absorption in closed form.} A Markov embedding turns the
-mean response to a release into $Ce^{\mathcal At}\bm z_0$. We prove that the embedding is
-stable iff the spectral radius of the branching matrix is below one
-(Theorem~\ref{thm:stab}) and obtain absorption quantiles, echo amplification and---via
-$\delta$-crossing sampling---exact expected price-discovery curves
-(Corollary~\ref{cor:abs}).
-\item \textbf{Identification by design.} Per-window baselines, time-of-day hats
-identified by matched placebo windows, and a PLACEBO news type whose fitted kernel must
-vanish give a falsification test built into the likelihood.
-\item \textbf{Surprise as a mark.} Standardised surprises from real-time nowcasts
-(Cleveland Fed CPI nowcast, Atlanta Fed GDPNow) and real-time statistical expectations
-enter the news kernel linearly and separately by sign.
-\item \textbf{EPT-TPP.} A neural temporal point process whose latent state is a
-nonnegative phase-type system: exact compensator, Bayes-optimal predictions, and it
-nests both multivariate Hawkes processes and RMTPP (Section~\ref{sec:ept}). Its extension
-EPT-X superposes a history-conditioned hyper-Erlang renewal channel, which keeps the
-compensator exact while making the conditional gap law universal (Section~\ref{sec:eptx}).
-\item \textbf{Benchmarks.} Synthetic recovery against six classical estimators, public
-neural-TPP benchmarks under the S2P2 protocol, LOBSTER limit-order-book streams, and
-post-release forecasting on a 2022--2026 six-asset news panel.
+\item \textbf{Certified measurement (MSX).} We define a multiscale phase-type Hawkes process
+with marked news kernels in which every parameter enters the intensity linearly. Its
+log-likelihood is therefore concave. We compute the global maximum with accelerated EM followed
+by a barrier Newton step, and each fit comes with a Fenchel duality gap that bounds its distance
+from the optimum (Proposition~\ref{prop:gap}).
+\item \textbf{Echo-corrected responses in closed form.} Embedding the process in a linear
+system gives the mean response to a shock as $C e^{\mathcal A t}\bm z_0$. We prove that this
+system is stable exactly when the spectral radius of the branching matrix is below one
+(Theorem~\ref{thm:stab}), and we obtain absorption times, echo amplification and price-discovery
+curves without simulation.
+\item \textbf{Exact neural prediction (EPT-X).} We introduce a neural point process whose latent
+state is phase-type. It combines a linear Hawkes backbone with a history-dependent renewal
+channel, a mixture of Erlang distributions that also allows ``no event'', added as a competing
+risk. The likelihood remains exact, the model contains the Hawkes backbone as a special case,
+and the renewal channel can approximate any conditional distribution of the next gap
+(Proposition~\ref{prop:eptx}).
+\item \textbf{Benchmarks and a correction to one baseline.} EPT-X has the best likelihood on all
+five LOBSTER order-book streams and on Retweet, and it is within one standard deviation of the
+best published model on Taobao and StackOverflow. We also find that a widely used IntensityFree
+implementation replaces every inter-event time below $10^{-5}$\,s by $10^{-5}$\,s before scoring.
+Scored on the observed gaps, it loses its lead on two order-book streams.
+\item \textbf{Application.} We study six markets around 670 scheduled macroeconomic releases
+between 2022 and 2026, with a placebo test built into the likelihood. The direct reaction to
+CPI, payrolls, PPI and the FOMC statement is absorbed in about a second, but the market's
+subsequent trading stretches half of the response to \tEchoLo--\tEchoHi{}\,s and ninety percent
+of it to \tNinetyLo--\tNinetyHi{} minutes.
 \end{enumerate}
+
+The ingredients are not new on their own. Linear-in-parameters kernel dictionaries
+\citep{bacry2015hawkes}, EM algorithms for Hawkes processes
+\citep{veen2008estimation,zhou2013learning}, Erlang-chain embeddings and exact-likelihood neural
+point processes \citep{omi2019fully,shchur2020intensity} have all been studied. What we add is
+their combination: certified, closed-form measurement on one side, an exact neural model that
+contains the linear Hawkes process on the other, and experiments showing that both work.

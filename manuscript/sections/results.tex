@@ -4,14 +4,13 @@
 Table~\ref{tab:track-a} reports the held-out likelihood deficit (means and standard
 deviations over five seeds); branching-matrix, spectral-radius and kernel errors are in
 Table~\ref{tab:track-a-full} (Appendix).
-When the truth is a single exponential (S1) the correctly specified single-decay
-estimators (tick's exponential MLE and ADM4) are best, as they must be. Under a true
-power law (S2) the sum-of-exponentials estimators---tick's and MSX---are statistically
-tied (held-out deficit $0.2$ vs.\ $0.3\times10^{-3}$ nats/event; tick's solver failed on
-one of five seeds). Whenever the kernel has structure outside a single family---a
-delayed hump (S3), components ten milliseconds and thirty seconds apart (S4), or a sparse
-ten-dimensional power-law network (S5)---MSX-auto has the smallest held-out deficit, 7--10
-times smaller than the best competitor's. On the two network scenarios it also roughly halves
+When the truth is a single exponential (S1), the estimators that assume exactly this form
+(tick's exponential MLE and ADM4) are best, as one would expect. Under a true power law (S2),
+the sum-of-exponential estimators of tick and MSX perform about equally (held-out deficit $0.2$
+against $0.3\times10^{-3}$ nats per event; tick's solver failed on one of five seeds). When the
+kernel has structure that no single family captures, namely a delayed peak (S3), components ten
+milliseconds and thirty seconds apart (S4) or a sparse ten-dimensional power-law network (S5),
+MSX-auto has the smallest held-out deficit, 7 to 10 times smaller than the best competitor's. On the two network scenarios it also roughly halves
 the best competitor's branching-matrix error and recovers the causal graph perfectly (AUC
 $=1$, as do several competitors); on the hump the nonparametric EM estimates the branching
 matrix slightly better. The
@@ -29,11 +28,12 @@ underlined: second best; shaded: our estimators.}
 
 \FloatBarrier
 \subsection{Main study: how fast do markets absorb scheduled macro news?}
-The pooled 2022--2026 model (\nWindows{} windows---\nNewsWindows{} release and
-\nPlaceboWindows{} placebo---with \nEventsScored{} million scored $\delta$-crossing events,
-\nEventsAll{} million including burn-in history, in twelve dimensions) is certified optimal to within \gapMaxPooled{} nats per dimension. The
-spectral radius of the branching matrix is $\rho(G)=\rhoPooled$: roughly seven in every
-eight price events are endogenous echoes. Fitted year by year, $\rho(G)$ declines from 2022
+The pooled 2022--2026 model has \nWindows{} windows (\nNewsWindows{} release and
+\nPlaceboWindows{} placebo windows) and twelve event types. It scores \nEventsScored{} million
+$\delta$-crossing events, or \nEventsAll{} million including the burn-in history, and its
+certificate bounds the distance to the optimum by \gapMaxPooled{} nats per dimension. The spectral
+radius of the branching matrix is $\rho(G)=\rhoPooled$, so roughly seven in every eight price
+events are triggered by earlier price events rather than directly by news. Fitted year by year, $\rho(G)$ declines from 2022
 to 2026 (\rhoByYear), and the slowest echo mode relaxes in about \relaxPooled{} minutes.
 
 \paragraph{Falsification.} Figure~\ref{fig:placebo} compares, for every release type, the
@@ -43,11 +43,11 @@ US releases). With the exposure-weighted $\ell_1$ level selected on held-out win
 \nPassPlacebo{} of the \nKinds{} release types exceed their placebo by at least 50\%: CPI
 (\placeboCpi$\times$), payrolls (\placeboNfp$\times$), PPI (\placeboPpi$\times$), the FOMC
 statement (\placeboFomc$\times$) and retail sales (\placeboRetail$\times$). Jobless claims,
-ECB and BoJ decisions and the press conferences do not have a detectable \emph{direct}
-effect beyond their placebos---an honest negative that the unregularised fit would have
-hidden: without the penalty, nonnegative news kernels absorb as much mass on placebo days
-as on release days (boundary bias), and the first specification with long news kernels
-failed the test outright (Appendix).
+ECB and BoJ decisions and the press conferences show no detectable \emph{direct} effect beyond
+their placebos. Without the penalty this negative result would have been hidden: nonnegative
+news kernels then absorb as much mass on placebo days as on release days, because estimates
+cannot fall below zero. Our first specification, with long news kernels, failed the test
+outright (Appendix).
 
 \paragraph{Echo-corrected absorption.} For the releases that pass the placebo test, the
 direct news kernel is absorbed almost instantly (median $t_{50}$ of \tDirMed{}\,s), but the
@@ -134,9 +134,10 @@ shaded: our models.}
 \input{tables/track_b}
 \end{table}
 
-For next-event prediction (Table~\ref{tab:pred}), EPT-X's Bayes-optimal time prediction is the
-best or tied with the best on every dataset, while its mark accuracy trails S2P2 and NHP on
-four of the five---the same time-versus-mark split as in the likelihood decomposition.
+For next-event prediction (Table~\ref{tab:pred}), EPT-X predicts the time of the next event as
+well as or better than every published model on all five datasets. Its accuracy for the mark of
+the next event is lower than that of S2P2 and NHP on four of them. This is the same split between
+time and mark that the likelihood decomposition shows.
 
 \begin{table}[!htbp]\centering\small
 \caption{Next-event prediction on the public benchmarks: time RMSE (top, lower is better; Retweet

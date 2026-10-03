@@ -1,36 +1,45 @@
 \section{Application: how fast do markets absorb macroeconomic news?}\label{sec:application}
 
-\paragraph{Data.} The calendar covers January 2022--August 2026: 670 scheduled releases of
-CPI, nonfarm payrolls, PPI, retail sales, the GDP advance estimate and initial jobless
-claims (dated by their initial ALFRED vintage), FOMC statements and press conferences, ECB
-decisions and press conferences, and Bank of Japan decisions. Surprises are standardised,
-sign-split differences between the first print and a real-time expectation: the Cleveland
-Fed inflation nowcast (CPI), Atlanta Fed GDPNow (GDP) and real-time statistical expectations
-from earlier first prints otherwise. Prices are millisecond quotes for EUR/USD, USD/JPY,
-gold and an S\&P~500 CFD, and Binance futures trades for bitcoin and ether, converted to up
-and down $\delta$-crossing events ($\delta=0.25$--$3$ basis points per asset, chosen so that
-the median rate is about 0.2 events per second). Windows span 30 minutes before to 60 minutes
-after each release cluster, with 30 minutes of burn-in. Each window is matched with a placebo
-window at the same clock times on the same weekday one to six weeks away, with no modelled
-release and none of sixteen second-tier releases within three hours; placebo windows carry
-their own per-type pseudo-releases, so the test is part of the likelihood. The pooled model
-has \nWindows{} windows (\nNewsWindows{} release, \nPlaceboWindows{} placebo),
-\nEventsScored{} million scored events and twelve dimensions, and is certified optimal to
-within \gapMaxPooled{} nats per dimension.
+\paragraph{Releases.} Our calendar covers 670 scheduled releases between January 2022 and August
+2026. It contains CPI, nonfarm payrolls, PPI, retail sales, the GDP advance estimate and initial
+jobless claims, each dated by its first vintage in ALFRED, together with FOMC statements and press
+conferences, ECB decisions and press conferences, and Bank of Japan decisions. The surprise of a
+release is the difference between its first print and a real-time expectation, standardised and
+split into positive and negative parts. As expectations we use the Cleveland Fed inflation nowcast
+for CPI, the Atlanta Fed GDPNow forecast for GDP, and a statistical forecast from earlier first
+prints for the other releases.
 
-\paragraph{Endogeneity.} The spectral radius of the branching matrix is
-$\rho(G)=\rhoPooled$: roughly seven in every eight price events are echoes of earlier ones.
-Fitted year by year, $\rho(G)$ declines from 2022 to 2026 (\rhoByYear), and the slowest echo
-mode relaxes in about \relaxPooled{} minutes.
+\paragraph{Prices and events.} We use millisecond quotes for EUR/USD, USD/JPY, gold and an
+S\&P~500 contract for difference, and Binance futures trades for bitcoin and ether. Each price
+series is turned into events by $\delta$-crossing: an upward (downward) event is recorded whenever
+the log price has risen (fallen) by $\delta$ since the previous event. We choose $\delta$ per asset,
+between 0.25 and 3 basis points, so that the median rate is about 0.2 events per second. Each asset
+thus contributes two event types, and the twelve types together form the dimensions of the model.
+Windows run from 30 minutes before a release to 60 minutes after it, preceded by 30 minutes of
+history that is used for the states but not scored.
 
-\paragraph{Falsification.} Nonnegative news kernels have a positive expected mass even under
-the null (boundary bias), so a release-free placebo is essential. With an exposure-weighted
-$\ell_1$ level chosen by held-out likelihood, \nPassPlacebo{} of the \nKinds{} release types
-exceed their placebo by at least 50\% (Figure~\ref{fig:placebo}): CPI (\placeboCpi$\times$),
-payrolls (\placeboNfp$\times$), PPI (\placeboPpi$\times$), the FOMC statement
-(\placeboFomc$\times$) and retail sales (\placeboRetail$\times$). Jobless claims, ECB and BoJ
-decisions and the press conferences have no detectable direct effect beyond their placebos.
-Two earlier specifications failed this test and are reported in Appendix~\ref{app:history}.
+\paragraph{Placebo windows.} Each release window is paired with a placebo window at the same clock
+time on the same weekday, one to six weeks away, chosen so that no modelled release and none of
+sixteen second-tier US releases falls within three hours. Placebo windows contain pseudo-releases
+of their own type, so the placebo test is part of the likelihood rather than a separate
+regression. The pooled model has \nWindows{} windows (\nNewsWindows{} release and
+\nPlaceboWindows{} placebo) with \nEventsScored{} million scored events, and its certificate bounds
+the distance to the optimum by \gapMaxPooled{} nats per dimension.
+
+\paragraph{Endogeneity.} The spectral radius of the branching matrix is $\rho(G)=\rhoPooled$, so
+roughly seven in every eight price events are triggered by earlier price events rather than
+directly by news. Fitted year by year, $\rho(G)$ declines from 2022 to 2026 (\rhoByYear), and the
+slowest echo mode decays in about \relaxPooled{} minutes.
+
+\paragraph{Falsification.} Under the null hypothesis of no effect, a nonnegative news kernel still
+has a positive expected mass, because estimates cannot fall below zero. A comparison with
+release-free placebo windows is therefore essential. With the $\ell_1$ level chosen by held-out
+likelihood, \nPassPlacebo{} of the \nKinds{} release types exceed their placebo by at least 50\%
+(Figure~\ref{fig:placebo}): CPI (\placeboCpi$\times$), payrolls (\placeboNfp$\times$), PPI
+(\placeboPpi$\times$), the FOMC statement (\placeboFomc$\times$) and retail sales
+(\placeboRetail$\times$). Jobless claims, the ECB and BoJ decisions and the press conferences show
+no direct effect beyond their placebos. Two earlier specifications failed this test, and we report
+them in Appendix~\ref{app:history}.
 
 \begin{figure}[!htbp]\centering
 \includegraphics[width=0.72\linewidth]{figures/placebo_pooled.pdf}
@@ -38,14 +47,15 @@ Two earlier specifications failed this test and are reported in Appendix~\ref{ap
 assets) for each release type and for its matched placebo on release-free days.}\label{fig:placebo}
 \end{figure}
 
-\paragraph{Echo-corrected absorption.} For the releases that pass, the direct news kernel is
-absorbed almost instantly (median $t_{50}$ of \tDirMed{}\,s), but echoes stretch the response:
-half of the extra activity arrives within \tEchoLo--\tEchoHi{}\,s and ninety percent within
-\tNinetyLo--\tNinetyHi{} minutes (Figure~\ref{fig:absorption}, Table~\ref{tab:absorption}).
-The ``news half-life'' $\ln2/\beta$ therefore understates absorption time by one to two orders
-of magnitude. Because signed surprises enter the news kernel separately by sign, the model also
-gives price-discovery curves (Figure~\ref{fig:drift}); hotter inflation
-lowers bitcoin and ether, cooler inflation lifts them.
+\paragraph{Echo-corrected absorption.} For the releases that pass the placebo test, the direct
+news kernel is absorbed almost immediately: its median $t_{50}$ is \tDirMed{}\,s. The echoes
+stretch the response considerably. Half of the extra activity arrives within \tEchoLo{} to
+\tEchoHi{}\,s, and ninety percent within \tNinetyLo{} to \tNinetyHi{} minutes
+(Figure~\ref{fig:absorption} and Table~\ref{tab:absorption}). The ``news half-life'' $\ln 2/\beta$
+therefore understates absorption time by one to two orders of magnitude. Because positive and
+negative surprises enter the news kernels separately, the model also gives expected price paths
+after a release (Figure~\ref{fig:drift}). A higher-than-expected CPI print lowers bitcoin and
+ether, and a lower one lifts them.
 
 \begin{figure}[!htbp]\centering
 \includegraphics[width=\linewidth]{figures/absorption_CPI_pooled.pdf}

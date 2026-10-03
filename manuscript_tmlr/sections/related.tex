@@ -1,38 +1,40 @@
 \section{Related work}\label{sec:related}
 
-\paragraph{Hawkes estimation.} Exponential and sum-of-exponential kernels are fitted by
-maximum likelihood \citep{bacry2015hawkes}, for instance with the \texttt{tick} library
-\citep{bacry2018tick}; alternatives include EM algorithms that exploit the branching structure
-\citep{veen2008estimation}, ADM4 with low-rank and sparse penalties
+\paragraph{Estimating Hawkes processes.} Exponential and sum-of-exponential kernels are usually
+fitted by maximum likelihood \citep{bacry2015hawkes}, for instance with the \texttt{tick} library
+\citep{bacry2018tick}. Other approaches include EM algorithms that exploit the branching
+structure \citep{veen2008estimation}, ADM4 with low-rank and sparse penalties
 \citep{zhou2013learning}, the conditional-law (Wiener--Hopf) method \citep{bacry2016estimation},
 cumulant matching \citep{achab2017uncovering} and INAR approximations
-\citep{kirchner2017estimation}. None of these returns a certificate of global optimality for
-multiscale kernels with humps, and seasonality mis-specification is known to bias branching
-ratios upward \citep{filimonov2015apparent,omi2017hawkes}.
+\citep{kirchner2017estimation}. None of these methods returns a certificate of global optimality
+for multiscale kernels with delayed peaks. It is also known that a mis-specified intraday
+seasonality biases estimated branching ratios upward \citep{filimonov2015apparent,omi2017hawkes}.
 
 \paragraph{News in Hawkes models.} \citet{rambaldi2015modeling} add an exogenous kernel for
-macroeconomic announcements to an FX Hawkes model; \citet{andersen2003micro} document the
-price impact of announcement surprises. Absorption speed is typically read off the
-exogenous kernel alone. We give the echo-corrected response in closed form and test the news
-kernels against matched placebo windows inside the likelihood.
+macroeconomic announcements to a Hawkes model of FX quotes, and \citet{andersen2003micro} document
+how announcement surprises move prices. In this literature the speed of absorption is usually
+read off the exogenous kernel alone. We instead compute the full response, echoes included, in
+closed form, and we test the news kernels against matched placebo windows within the likelihood.
 
-\paragraph{Neural temporal point processes.} See \citet{shchur2021neural} for a review. RMTPP
+\paragraph{Neural temporal point processes.} \citet{shchur2021neural} give a review. RMTPP
 \citep{du2016recurrent} uses an exponential intensity between events, whose integral is closed
 form. NHP \citep{mei2017neural}, SAHP \citep{zhang2020self}, THP \citep{zuo2020transformer},
-AttNHP \citep{yang2022transformer} and the state-space S2P2 \citep{chang2025deep} parameterise
-the intensity with recurrent, attention or state-space encoders and estimate the compensator by
+AttNHP \citep{yang2022transformer} and the state-space model S2P2 \citep{chang2025deep} compute the
+intensity with recurrent, attention or state-space encoders, and they estimate the compensator by
 Monte Carlo or quadrature. FullyNN \citep{omi2019fully} models the cumulative hazard with a
-monotone network and IntensityFree \citep{shchur2020intensity} the next-gap density with a
-log-normal mixture; both have exact likelihoods but no Hawkes structure. Recent work explores Mamba-style encoders
-\citep{gao2024mamba} and interpretable latent Hawkes dynamics \citep{boyd2025hyper}.
-EasyTPP \citep{xue2024easytpp} provides shared implementations, and
-\citet{bosser2023predictive} study the predictive accuracy of neural TPPs. EPT-X differs in
-that its intensity between events is a read-out of an explicitly solvable phase-type system
-with bounded closed-form hazard terms, plus a renewal channel whose survival function is a closed-form mixture of Erlang
-survivals---so the likelihood we train and report is exact---and in that its backbone is the
-linear Hawkes process itself, so the fitted model retains branching ratios and excitation
+monotone network, and IntensityFree \citep{shchur2020intensity} models the density of the next gap
+with a mixture of log-normals. Both have exact likelihoods but no Hawkes structure. Recent work
+also explores Mamba-style encoders \citep{gao2024mamba} and interpretable latent Hawkes dynamics
+\citep{boyd2025hyper}. EasyTPP \citep{xue2024easytpp} provides shared implementations, and
+\citet{bosser2023predictive} study how accurately neural models predict the next event.
+
+EPT-X differs from these models in two ways. First, between events its intensity is a linear
+read-out of a phase-type system that can be solved exactly, plus bounded hazard terms and a
+renewal channel whose survival function is a mixture of Erlang survival functions. All of these
+integrate in closed form, so the likelihood we train on and report is exact. Second, its backbone
+is the linear Hawkes process itself, so a fitted model still has branching ratios and excitation
 kernels that can be read off.
 
-\paragraph{Phase-type distributions.} Mixtures of Erlang distributions are dense in the
-distributions on $(0,\infty)$ \citep{tijms1994stochastic,lee2010modeling}; we use this fact
-for the renewal channel and the Erlang-chain recursion for all states.
+\paragraph{Phase-type distributions.} Mixtures of Erlang distributions are dense in the set of
+distributions on $(0,\infty)$ \citep{tijms1994stochastic,lee2010modeling}. We use this fact for
+the renewal channel, and we use the Erlang-chain recursion for every state in the paper.

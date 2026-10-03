@@ -1,46 +1,66 @@
 \section{The MSX-Hawkes model}\label{sec:model}
 
-\paragraph{Events.}
-For each asset $a$ we record \emph{$\delta$-crossing} events: an up (down) event whenever
-the log mid-price moves $+\delta_a$ ($-\delta_a$) away from the level of the previous
-event, with a jump of $n\delta_a$ producing $n$ tied events. This intrinsic-time
-sampling filters bid--ask bounce, makes assets comparable in basis points and, crucially,
-turns intensities into prices: the log-price change over any interval equals
-$\delta_a(N^{\uparrow}_a-N^{\downarrow}_a)$ up to one $\delta_a$. Dimension $2a$ ($2a+1$)
-counts up (down) crossings of asset $a$; there are $d=2A$ dimensions.
+\paragraph{Events.} For each asset $a$ we record \emph{$\delta$-crossing} events. An upward
+(downward) event occurs whenever the log mid-price has risen (fallen) by $\delta_a$ since the
+previous event. If a single price change crosses several levels, we record one event at that time
+and keep the number of levels crossed as a size mark. This sampling in intrinsic time filters out
+bid--ask bounce and makes assets comparable in basis points. It also links intensities to prices:
+over any interval, the change in log price equals $\delta_a$ times the number of upward minus
+downward levels crossed. Event type $2a$ counts upward crossings of asset $a$ and type $2a+1$
+downward ones, so $A$ assets give $d=2A$ event types.
 
-\paragraph{Phase-type dictionary.}
-Fix rates $\beta_1,\dots,\beta_K$ on a logarithmic grid and Erlang orders $r=0,\dots,R-1$.
-The normalised basis densities
-\begin{equation}
-g_{kr}(t)=\beta_k\frac{(\beta_k t)^r}{r!}e^{-\beta_k t},\qquad \int_0^\infty g_{kr}=1,
+\paragraph{A dictionary of Erlang densities.} Fix a set of rates $\beta_1,\dots,\beta_K>0$ on a
+logarithmic grid, so that each rate corresponds to a time scale $1/\beta_k$, and an Erlang order
+$R\ge1$. For $k=1,\dots,K$ and $r=0,\dots,R-1$ we define the basis densities
+\begin{equation}\label{eq:basis}
+g_{kr}(t)=\beta_k\,\frac{(\beta_k t)^r}{r!}\,e^{-\beta_k t},\qquad t\ge0 .
 \end{equation}
-generate kernels $\phi(t)=\sum_{k,r}a_{kr}g_{kr}(t)$ with $a_{kr}\ge0$ and branching
-ratio $\sum_{k,r}a_{kr}$. Exponential mixtures ($R=1$) approximate every completely
-monotone kernel (Bernstein's theorem), including power laws; higher orders add humps
-($\phi(0)=0$), and phase-type densities are dense in the densities on $\R_+$.
+Each $g_{kr}$ is the density of a gamma (Erlang) distribution with shape $r+1$ and rate
+$\beta_k$, so $\int_0^\infty g_{kr}(t)\,\mathrm{d}t=1$ and its mean is $(r+1)/\beta_k$. A kernel is a
+nonnegative combination
+\begin{equation}\label{eq:kernel}
+\phi(t)=\sum_{k=1}^{K}\sum_{r=0}^{R-1}a_{kr}\,g_{kr}(t),\qquad a_{kr}\ge0 .
+\end{equation}
+Because each basis density integrates to one, the total mass of the kernel, which is its
+branching ratio, is simply $\sum_{k,r}a_{kr}$. With $R=1$ the dictionary contains only
+exponentials, and mixtures of exponentials can approximate any completely monotone kernel,
+power laws included (Bernstein's theorem). Orders $r\ge1$ add kernels that start at zero and peak
+later, which describe delayed reactions. More generally, phase-type densities are dense in the set
+of densities on $\R_+$.
 
-\paragraph{Intensity.}
-For target dimension $i$, window $w$ with likelihood interval $[t_0^w,t_1^w)$,
-releases $e$ at times $\tau_e$ of type $c_e$ with nonnegative mark features
-$\bm z_e=(1,z_e^+,z_e^-)$ (standardised surprise split by sign),
+\paragraph{Model.} We observe $d$ event types (for example upward and downward price moves of
+several assets) inside observation windows $w$, each with a likelihood interval
+$[t_0^w,t_1^w)$. Exogenous shocks $e$, here scheduled macroeconomic releases, occur at known times
+$\tau_e$. Each shock has a type $c_e$ (CPI, payrolls, and so on) and a nonnegative mark vector
+$\bm z_e=(1,z_e^+,z_e^-)$, where $z_e^+$ and $z_e^-$ are the positive and negative parts of the
+standardised surprise. The MSX intensity of event type $i$ is
 \begin{align}
-\lambda_i(t)={}&\underbrace{c_{iw}+\textstyle\sum_{m}\eta_{im}h_m(\mathrm{tod}(t))}_{\text{baseline}}
-+\underbrace{\sum_{j}\sum_{t_n^j<t}\sum_{k,r}a_{ijkr}\,g_{kr}(t-t_n^j)}_{\text{endogenous}}\nonumber\\
-&+\underbrace{\sum_{e:\tau_e<t}\sum_{k,r,m}b_{i c_e k r m}\,z_{em}\,g^{\rm exo}_{kr}(t-\tau_e)}_{\text{news}}
-+\underbrace{\sum_{e:\tau_e>t}\sum_{k}\alpha_{ic_ek}\,\beta^{\rm ant}_k e^{-\beta^{\rm ant}_k(\tau_e-t)}}_{\text{anticipation}},
+\lambda_i(t)={}&\underbrace{c_{iw}+\sum_{m}\eta_{im}\,h_m\bigl(\mathrm{tod}(t)\bigr)}_{\text{baseline}}
++\underbrace{\sum_{j=1}^{d}\sum_{n:\,t_n^j<t}\sum_{k,r}a_{ijkr}\,g_{kr}(t-t_n^j)}_{\text{endogenous}}\nonumber\\
+&+\underbrace{\sum_{e:\,\tau_e<t}\sum_{k,r,m}b_{i c_e k r m}\,z_{em}\,g^{\mathrm{exo}}_{kr}(t-\tau_e)}_{\text{response to news}}
++\underbrace{\sum_{e:\,\tau_e>t}\sum_{k}\alpha_{ic_ek}\,\beta^{\mathrm{ant}}_k e^{-\beta^{\mathrm{ant}}_k(\tau_e-t)}}_{\text{anticipation}} .
 \label{eq:intensity}
 \end{align}
-with per-window intercepts $c_{iw}$, periodic hat functions $h_m$ of local time of day
-(identified by matched placebo windows, Section~\ref{sec:data}), and all parameters
-nonnegative. Writing $\bm x(t)\ge0$ for the stacked features, $\lambda_i(t)=\bm x(t)^\top\bm\theta_i$.
-
-\paragraph{Likelihood.}
-The log-likelihood separates across targets,
-\begin{equation}
-\ell_i(\bm\theta_i)=\sum_{n:\,u_n=i}\log\big(\bm x(t_n)^\top\bm\theta_i\big)-\bm\Phi^\top\bm\theta_i,
-\qquad \bm\Phi=\sum_w\int_{t_0^w}^{t_1^w}\bm x(t)\dd t, \label{eq:ll}
+The terms are as follows.
+\begin{itemize}
+\item \emph{Baseline.} $c_{iw}$ is an intercept for window $w$, and $h_m$ are periodic hat
+functions of the local time of day $\mathrm{tod}(t)$ with weights $\eta_{im}$.
+\item \emph{Endogenous excitation.} $t_n^j$ is the $n$-th event of type $j$, the $g_{kr}$ are the
+basis densities~(\ref{eq:basis}), and $a_{ijkr}$ is the weight with which an event of type $j$
+excites type $i$ at time scale $k$ and order $r$.
+\item \emph{Response to news.} $g^{\mathrm{exo}}_{kr}$ is a second dictionary with its own rates,
+and $b_{ickrm}$ weights mark component $m$ of a release of type $c$.
+\item \emph{Anticipation.} $\alpha_{ick}$ captures activity that builds up before a release of type
+$c$, with rates $\beta^{\mathrm{ant}}_k$.
+\end{itemize}
+All parameters are nonnegative. Every term is linear in its parameters, so we can write
+$\lambda_i(t)=\bm x(t)^\top\bm\theta_i$, where $\bm\theta_i$ stacks the parameters of type $i$ and
+$\bm x(t)\ge0$ stacks the corresponding known functions of time. The log-likelihood then
+separates across event types:
+\begin{equation}\label{eq:ll}
+\ell_i(\bm\theta_i)=\sum_{n:\,u_n=i}\log\bigl(\bm x(t_n)^\top\bm\theta_i\bigr)-\bm\Phi^\top\bm\theta_i,
+\qquad \bm\Phi=\sum_w\int_{t_0^w}^{t_1^w}\bm x(t)\,\mathrm{d}t ,
 \end{equation}
-and every entry of $\bm\Phi$ and of $\bm x(t_n)$ is available in closed form: the
-endogenous features follow the exact Erlang-chain recursion of Lemma~\ref{lem:recursion}
-in $O(NdKR^2)$ time, and integrals are regularised incomplete gamma functions.
+where $u_n$ is the type of the $n$-th event. Every entry of $\bm x(t_n)$ and of $\bm\Phi$ follows
+from Lemma~\ref{lem:recursion}.
+

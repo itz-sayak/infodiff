@@ -379,7 +379,7 @@ def sparse_integrals(data: EventData, spec: DesignSpec, lay: dict) -> np.ndarray
 
 def sparse_cumulative_reference(data: EventData, spec: DesignSpec, lay: dict, theta_s: np.ndarray,
                       row_t: np.ndarray, row_w: np.ndarray) -> np.ndarray:
-    """theta_s . int_{t0}^{t} x_sparse(u) du for each (row time t, window) — used for residuals."""
+    """theta_s . int_{t0}^{t} x_sparse(u) du for each (row time t, window); used for residuals."""
     out = np.zeros(len(row_t))
     M = data.n_marks
     buf = np.zeros(lay["Ps"])

@@ -1,6 +1,6 @@
 # Copyright 2026 Sayak Dutta
 # SPDX-License-Identifier: Apache-2.0
-"""NPHC — Non-Parametric Hawkes Cumulant matching (Achab et al., JMLR 2017).
+"""NPHC: non-parametric Hawkes cumulant matching (Achab et al., JMLR 2017).
 
 tick 0.8 ships the PyTorch solver as an unimplemented stub, so the objective is
 implemented here (PyTorch, Adam) on top of tick's C++ cumulant estimators.

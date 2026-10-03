@@ -1,37 +1,74 @@
 \section{Proofs}\label{app:proofs}
 
 \begin{proof}[Proof of Proposition~\ref{prop:gap}]
-Fenchel's inequality $\log u\le vu-1-\log v$ for $u,v>0$, applied to $u=\lambda_n$ with
-$v=v_n$, gives $\sum_n\log\lambda_n\le\bm\theta^\top X^\top\bm v-N-\sum_n\log v_n$. If
-$X^\top\bm v\le\bm\Phi+\bm\gamma$ then $\bm\theta^\top X^\top\bm v\le\bm\theta^\top(\bm\Phi+\bm\gamma)$
-for every $\bm\theta\ge0$, hence $\ell(\bm\theta)\le D(\bm v):=-N-\sum_n\log v_n$ for every
-feasible $\bm\theta$, including the maximiser. The choice $v_n=1/(s\lambda_n)$ with $s$ as
-stated is dual feasible and gives $D(\bm v)-\ell(\bm\theta)=N\log s+\bm\theta^\top(\bm\Phi+\bm\gamma)-N$.
-At a KKT point $s=1$ and $\bm\theta^\top(\bm\Phi+\bm\gamma)=\sum_n\bm\theta^\top\bm x_n/\lambda_n=N$,
-so both terms vanish.
+We use the notation of the proposition: $X$ has rows $\bm x_n^\top=\bm x(t_n)^\top$,
+$\lambda_n=\bm x_n^\top\bm\theta$, and
+$\ell(\bm\theta)=\sum_{n=1}^{N}\log\lambda_n-(\bm\Phi+\bm\gamma)^\top\bm\theta$.
+
+\emph{Step 1 (an upper bound for every feasible point).} For $u,v>0$, Fenchel's inequality gives
+\[
+\log u\;\le\;v\,u-1-\log v .
+\]
+Take any vector $\bm v=(v_1,\dots,v_N)$ with positive entries such that
+$X^\top\bm v\le\bm\Phi+\bm\gamma$ componentwise. Applying the inequality with $u=\lambda_n$ and
+$v=v_n$ and summing over $n$,
+\[
+\sum_{n}\log\lambda_n\;\le\;\sum_n v_n\lambda_n-N-\sum_n\log v_n
+\;=\;\bm\theta^\top X^\top\bm v-N-\sum_n\log v_n .
+\]
+Since $\bm\theta\ge0$ and $X^\top\bm v\le\bm\Phi+\bm\gamma$, we have
+$\bm\theta^\top X^\top\bm v\le\bm\theta^\top(\bm\Phi+\bm\gamma)$. Subtracting
+$(\bm\Phi+\bm\gamma)^\top\bm\theta$ from both sides therefore gives
+\[
+\ell(\bm\theta)\;\le\;D(\bm v):=-N-\sum_n\log v_n .
+\]
+This holds for every feasible $\bm\theta$, in particular for the maximiser, so
+$\ell^\star\le D(\bm v)$.
+
+\emph{Step 2 (a computable choice of $\bm v$).} Let $\bm\theta$ be the current fit and set
+$v_n=1/(s\lambda_n)$, with $s=\max_p\bigl(\sum_n x_{np}/\lambda_n\bigr)/(\Phi_p+\gamma_p)$. Then
+$(X^\top\bm v)_p=\frac{1}{s}\sum_n x_{np}/\lambda_n\le\Phi_p+\gamma_p$ by the definition of $s$, so
+$\bm v$ is admissible in Step 1. For this choice,
+\[
+D(\bm v)=-N+N\log s+\sum_n\log\lambda_n ,
+\qquad\text{hence}\qquad
+\ell^\star-\ell(\bm\theta)\;\le\;D(\bm v)-\ell(\bm\theta)=N\log s+\bm\theta^\top(\bm\Phi+\bm\gamma)-N .
+\]
+
+\emph{Step 3 (the bound vanishes at the optimum).} The Karush--Kuhn--Tucker conditions of the
+maximisation state that $\sum_n x_{np}/\lambda_n=\Phi_p+\gamma_p$ when $\theta_p>0$ and
+$\sum_n x_{np}/\lambda_n\le\Phi_p+\gamma_p$ when $\theta_p=0$. Hence $s=1$, so $N\log s=0$. Moreover,
+\[
+\bm\theta^\top(\bm\Phi+\bm\gamma)=\sum_p\theta_p\sum_n\frac{x_{np}}{\lambda_n}
+=\sum_n\frac{\bm x_n^\top\bm\theta}{\lambda_n}=N ,
+\]
+so the second term is also zero.
 \end{proof}
 
 \section{Specification history of the application}\label{app:history}
-We report the specifications that failed the built-in falsification test, because the final
-specification was chosen by them rather than by the results we hoped for.
+We report the specifications that failed the built-in falsification test. The final
+specification was chosen because it passed this test, not because of the results it produced.
 
-\paragraph{Version 1.} News kernels with time scales up to 30 minutes and Erlang order 3, a
-constant baseline per window, time-of-day hats in UTC, and tied events (a trade sweeping
-several $\delta$ levels produced several events with the same timestamp). The single placebo
-type absorbed \vOnePlacebo{} extra events per pseudo-release, comparable to real releases,
-and crypto residuals had Kolmogorov--Smirnov statistics up to \vOneKSmax. News kernels longer
-than the post-release window acted as trend absorbers, and ties violated orderliness.
+\paragraph{Version 1.} This version used news kernels with time scales up to 30 minutes and Erlang
+order 3, a constant baseline in each window and time-of-day effects in UTC. It also allowed tied
+events: a trade that crossed several $\delta$ levels produced several events with the same
+timestamp. The single placebo type absorbed \vOnePlacebo{} extra events per pseudo-release, which
+is comparable to real releases, and the residuals of the crypto series had Kolmogorov--Smirnov
+statistics up to \vOneKSmax. Two causes explain this. News kernels longer than the post-release
+window absorbed slow trends within the window, and tied events violate the assumption that events
+occur one at a time.
 
-\paragraph{Version 2.} One event per timestamp with a size mark, news kernels restricted to
-0.1--300\,s, a per-window linear baseline and New-York-time seasonality. The placebo mass fell
-to \vTwoPlacebo{}, but remained significant; placebo mass appeared at every release slot,
-which ruled out unmodelled 08:30 releases as the whole explanation.
+\paragraph{Version 2.} This version kept one event per timestamp, with the number of crossed levels
+as a mark, restricted news kernels to time scales between 0.1 and 300\,s, used a linear baseline
+within each window and modelled seasonality in New York time. The placebo mass fell to
+\vTwoPlacebo{} but was still significant. Placebo mass appeared at every release time of day, so
+unmodelled 08:30 releases could not be the whole explanation.
 
-\paragraph{Version 3 (final).} Placebo days also avoid sixteen second-tier US releases, and
-nonnegative news kernels carry an exposure-weighted $\ell_1$ penalty chosen by held-out
-profile likelihood (Table~\ref{tab:l1}); without it, release and placebo masses are equally
-inflated by boundary bias. The held-out likelihood peaks at $\ell_1=\lOneSelected$, where
-release and placebo masses separate.
+\paragraph{Version 3 (final).} Placebo days now also avoid sixteen second-tier US releases. The
+news kernels carry an $\ell_1$ penalty, weighted by exposure, whose level is chosen by the
+likelihood of held-out windows (Table~\ref{tab:l1}). Without the penalty, nonnegative estimates
+inflate release and placebo masses equally. The held-out likelihood peaks at
+$\ell_1=\lOneSelected$, which is also where release and placebo masses separate.
 
 \begin{table}[!htbp]\centering\small
 \caption{Selection of the news-kernel penalty on held-out 2024 windows (profile
@@ -71,29 +108,43 @@ assets; lower is better). Bold: best; underlined: second best; shaded: our model
 
 \section{Experimental details}\label{app:details}
 
-\paragraph{MSX.} Endogenous dictionary: 10 rates from 5\,ms to 600\,s, Erlang order 2;
-exogenous: 8 rates from 0.1 to 300\,s, order 3, marks $(1,z^+,z^-)$; anticipation: 4 rates
-from 10 to 300\,s; 96 time-of-day hats; per-window linear baseline. On public and order-book
-benchmarks MSX uses a shared baseline and a 12-rate grid spanning the 1st percentile to five
-times the 99.9th percentile of training gaps, and MSX-auto selects the Erlang order in $\{1,2,3,4\}$ and the $\ell_1$ level
-in $\{0,0.01,0.05\}$ on the validation split.
+\paragraph{MSX in the application.}
+\begin{itemize}
+\item Endogenous kernels: 10 rates from 5\,ms to 600\,s, Erlang order 2.
+\item News kernels: 8 rates from 0.1 to 300\,s, Erlang order 3, marks $(1,z^+,z^-)$.
+\item Anticipation kernels: 4 rates from 10 to 300\,s.
+\item Baseline: a linear trend within each window plus 96 time-of-day hat functions.
+\end{itemize}
 
-\paragraph{EPT and EPT-X.} GRU with 64 units; 4 latent channels of 8 learnable rates; Erlang
-phases selected on validation from $\{2,4\}$ (with hidden size $\{64,128\}$) on Taxi, Taobao and
-StackOverflow; Hawkes backbone with 10 rates and 2 phases; AdamW \citep{loshchilov2019decoupled} with learning rate $10^{-2}$,
-1\% linear warm-up and cosine decay, gradient clipping at 1, batch size 64 (halved
-automatically on out-of-memory), early stopping on validation likelihood with patience 40 and
-a 300-epoch budget (25 epochs on Retweet, batch 32). The renewal channel uses 24 log-spaced
-mean gaps from half the 0.1\% to five times the 99.9\% quantile of training gaps with orders
-$\{1,4,16\}$. Selected on validation, the LOBSTER streams and Amazon add orders up to 1024 and a
-history-dependent shift, and Amazon uses a finer grid (single-seed validation log-likelihood
-0.604, 0.643, 0.653 and 0.649 with 24, 48, 96 and 192 scales; 96 is selected). Mark laws are initialised at empirical frequencies.
+\paragraph{MSX on the benchmarks.} MSX uses one baseline shared by all sequences and a grid of 12
+rates from the 1st percentile of the training gaps to five times their 99.9th percentile.
+MSX-auto chooses the Erlang order from $\{1,2,3,4\}$ and the $\ell_1$ level from
+$\{0,0.01,0.05\}$ on the validation split.
 
-\paragraph{Baselines.} Neural baselines run in EasyTPP with the authors' configuration files;
-classical Hawkes estimators use the \texttt{tick} library \citep{bacry2018tick} (positive-constrained
-accelerated gradient descent, tolerance $10^{-10}$, decay grids matched to MSX). The IntensityFree clamp is made configurable by a
-two-line patch included in the supplementary code.
+\paragraph{EPT and EPT-X.}
+\begin{itemize}
+\item Encoder: a GRU with 64 units. Latent state: 4 channels of 8 learnable rates. The number of
+Erlang phases was chosen on validation from $\{2,4\}$, together with the hidden size from
+$\{64,128\}$, on Taxi, Taobao and StackOverflow.
+\item Hawkes backbone: 10 rates with 2 phases each.
+\item Optimisation: AdamW \citep{loshchilov2019decoupled} with learning rate $10^{-2}$, 1\% linear
+warm-up and cosine decay, gradient clipping at 1, and batches of 64 that are halved automatically
+if the GPU runs out of memory. Training stops when the validation likelihood has not improved for
+40 epochs, within a budget of 300 epochs (25 epochs with batches of 32 on Retweet).
+\item Renewal channel: 24 mean gaps spaced logarithmically from half the 0.1\% quantile of the
+training gaps to five times their 99.9\% quantile, with orders $\{1,4,16\}$. The mark
+distributions start at the empirical mark frequencies.
+\item Selected on validation, the LOBSTER streams and Amazon add orders up to 1024 and a
+history-dependent shift of the atoms. Amazon also uses a finer grid: the single-seed validation
+log-likelihood was 0.604, 0.643, 0.653 and 0.649 with 24, 48, 96 and 192 scales, so we use 96.
+\end{itemize}
 
-\paragraph{Compute.} All experiments ran on one laptop with an 8\,GB GPU and a 28-core CPU;
-CPU jobs were limited to four threads each. EPT-X runs on the CPU at a speed comparable to the
-GPU, because its event recursion is sequential.
+\paragraph{Baselines.} The neural baselines run in EasyTPP with the authors' configuration files.
+The classical Hawkes estimators use the \texttt{tick} library \citep{bacry2018tick}, with
+positive-constrained accelerated gradient descent, tolerance $10^{-10}$ and decay grids matched to
+MSX. A short patch, included in the supplementary code, makes the IntensityFree clamp
+configurable.
+
+\paragraph{Compute.} All experiments ran on one laptop with an 8\,GB GPU and a 28-core CPU, with
+each CPU job limited to four threads. EPT-X runs about as fast on the CPU as on the GPU, because
+its event recursion is sequential.

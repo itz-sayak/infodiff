@@ -14,7 +14,7 @@ import requests
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "paper"
 
-# (filename stem, arXiv id) — titles are printed after download for verification.
+# (filename stem, arXiv id); titles are printed after download for verification.
 ARXIV = {
     "rambaldi2015_fx_macro_news_hawkes": "1405.6047",
     "bacry2015_hawkes_in_finance": "1502.04592",

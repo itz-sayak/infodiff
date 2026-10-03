@@ -6,7 +6,7 @@ If lambda is the true conditional intensity, the compensator increments
 tau_n = int_{t_{n-1}}^{t_n} lambda(s) ds are iid Exp(1).  We provide
 
 * KS and Anderson–Darling statistics against Exp(1),
-* the Excess-Dispersion (ED) test used by Rambaldi et al. (2015) — so rejection
+* the Excess-Dispersion (ED) test used by Rambaldi et al. (2015), so rejection
   rates are directly comparable with the literature,
 * a Ljung–Box test for serial dependence of the residuals,
 * parametric-bootstrap calibration (naive KS p-values are invalid once parameters
