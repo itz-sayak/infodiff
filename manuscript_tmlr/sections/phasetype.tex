@@ -52,7 +52,7 @@ where $P(a,y)$ is the regularised lower incomplete gamma function.
 \frac{\mathrm{d}}{\mathrm{d}t}g_r(t)=\beta\bigl(g_{r-1}(t)-g_r(t)\bigr)\quad(r\ge1).
 \]
 Summing over past events gives $\dot s_0=-\beta s_0$ and $\dot s_r=\beta(s_{r-1}-s_r)$, which is
-$\dot{\bm s}=\beta(B-I)\bm s$. Since $g_r(0)=\beta\,\mathbb{1}[r=0]$, a new event adds $\beta$ to
+$\dot{\bm s}=\beta(B-I)\bm s$. Since $g_0(0)=\beta$ and $g_r(0)=0$ for $r\ge1$, a new event adds $\beta$ to
 $s_0$ and leaves the other states unchanged.
 
 \emph{Step 2 (evolution over a gap).} The solution is $\bm s(t+\Delta)=e^{\beta(B-I)\Delta}\bm s(t)$.

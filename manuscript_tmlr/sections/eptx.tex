@@ -4,6 +4,14 @@ We now turn to prediction. Events arrive at times $t_1<t_2<\dots$ with marks
 $y_n\in\{1,\dots,M\}$, and we write $\Delta_n=t_n-t_{n-1}$ for the gaps. For a time $t$ after the
 $n$-th event, $s=t-t_n$ denotes the time elapsed since that event.
 
+\begin{figure}[t]\centering
+\input{figures/eptx_arch}
+\caption{EPT-X at one event. The GRU summary $\bm h_n$ sets the jump of the neural Erlang state,
+the hazard parameters and the renewal weights, while the Hawkes state is driven by the event mark
+alone. The grey boxes are the states carried from one event to the next. Until the next event,
+all four terms evolve in closed form, and their sum is the intensity $\lambda_y(t)$.}\label{fig:eptx}
+\end{figure}
+
 \paragraph{EPT: a neural phase-type state.} The latent state $\bm\xi(t)\in\R_{\ge0}^P$ consists of
 $L$ channels of Erlang chains of order $R$, each with its own learnable rate. Between events it
 evolves exactly as in Lemma~\ref{lem:recursion}. At each event, a recurrent network summarises the
@@ -61,15 +69,6 @@ EPT-X adds the corresponding hazard to EPT:
 \]
 Figure~\ref{fig:eptx} shows how the parts fit together. The network only acts at event times;
 between events every term evolves in closed form.
-
-\begin{figure}[!htbp]\centering
-\input{figures/eptx_arch}
-\caption{EPT-X at one event. The GRU summary $\bm h_n$ sets the jump of the neural Erlang state,
-the hazard parameters and the renewal weights, while the Hawkes state is driven by the event mark
-alone. The grey boxes are the states carried from one event to the next. Until the next event,
-all four terms evolve in closed form, and their sum is the intensity $\lambda_y(t)$.}\label{fig:eptx}
-\end{figure}
-
 \begin{proposition}\label{prop:eptx}
 Let $\Lambda^{\mathrm{EPT}}(\Delta)=\int_{t_n}^{t_n+\Delta}\sum_y\lambda^{\mathrm{EPT}}_y(t)\,\mathrm{d}t$
 be the compensator of EPT over a gap of length $\Delta$.

@@ -32,8 +32,9 @@ no effect, so release and placebo masses are inflated equally. The held-out like
 $\ell_1=\lOneSelected$, which is also where release and placebo masses separate.
 
 \begin{table}[!htbp]\centering\small
-\caption{Selection of the news-kernel penalty on held-out 2024 windows (profile
-log-likelihood relative to the best level).}\label{tab:l1}
+\caption{Choice of the $\ell_1$ penalty on the news kernels. Held-out log-likelihood on the
+2024 windows relative to the best level (bold), and the mean news-kernel mass of release and
+placebo windows.}\label{tab:l1}
 \input{tables/l1_selection}
 \end{table}
 
@@ -54,16 +55,15 @@ on INTC. Replacing the GRU by a causal Transformer encoder \citep{vaswani2017att
 validation likelihood on all five datasets we tested, and neither a three-layer residual encoder
 nor a 128-unit encoder improves any dataset (Section~\ref{sec:results}).
 
+\clearpage
 \section{Track A: all metrics}
-\begin{table}[!htbp]\centering\footnotesize
-\caption{Track A, all metrics (mean $\pm$ s.d.\ over five seeds): relative branching-matrix
-error, spectral-radius error, kernel $L^1$ error, held-out deficit dLL ($10^{-3}$
-nats/event; lower is better for these four) and edge AUC (higher is better). Bold: best;
-underlined: second best within each scenario; shaded: our estimators. AUC measures how well absent and present edges are separated, so
-it is defined only for scenarios whose true graph has absent edges (S4, S5); ``n/a'' marks
-S1--S3, whose graphs are complete. ``--'' marks a metric the method does not produce
-(NPHC estimates only the branching matrix, not kernels or a likelihood); rows absent for a
-scenario are fits that failed to converge.}\label{tab:track-a-full}
-\setlength{\tabcolsep}{5pt}
+\begin{center}\footnotesize
+\captionof{table}{Synthetic recovery, all metrics (mean $\pm$ s.d.\ over five seeds):
+relative error of the branching matrix and of its spectral radius, kernel $L^1$ error and held-out
+deficit dLL ($10^{-3}$ nats/event), all lower is better, and edge AUC (higher is better). AUC needs
+absent true edges, so it is defined only for S4 and S5 (n/a for the complete graphs S1--S3).
+``--'': not produced by the method; NPHC estimates only the branching matrix. Missing rows are fits
+that did not converge. Bold: best; underlined: second best within each scenario; shaded: ours.}\label{tab:track-a-full}\smallskip
+\scriptsize\setlength{\tabcolsep}{5pt}\renewcommand{\arraystretch}{1.0}
 \input{tables/track_a_full}
-\end{table}
+\end{center}

@@ -251,7 +251,7 @@ def table_b():
     mine = [m for m in OURS_ORDER if m in values]
     classical = sorted(nice(m) for m in ours if not is_ours(m) and nice(m) not in mine)
     tab = grouped_table([head[d] for d in DS_B],
-                        [("Neural TPPs, published (Chang et al., 2025)", pub, False),
+                        [(r"Neural TPPs, published (\pubsrc)", pub, False),
                          ("Classical Hawkes, our runs", classical, False), ("Ours", mine, True)], values)
     (OUT / "track_b.tex").write_text(tab)
     seeds = {nice(m): {head[d]: len(x) for d, x in dv.items()} for m, dv in ours.items()}
@@ -267,7 +267,7 @@ def table_pred():
         values = {m.replace("IFTPP", "IntensityFree"): {head[k]: (v[k], None) for k in DS_B} for m, v in published.items()}
         x = _PRED.get("EPT-X (ours)", {})
         values["EPT-X"] = {head[k]: mean_sd(x[k][idx]) for k in x if len(x[k][idx])}
-        tab = grouped_table([head[k] for k in DS_B], [("Published (Chang et al., 2025)", pub, False),
+        tab = grouped_table([head[k] for k in DS_B], [(r"Published (\pubsrc)", pub, False),
                                                       ("Ours", ["EPT-X"], True)], values, higher=higher, d=d)
         (OUT / f"track_b_{name}.tex").write_text(tab)
 
@@ -484,7 +484,7 @@ def table_main():
     grid(lambda e, a: t50_t90(e["z0"][a]) if a in e.get("z0", {}) else "--", "main_absorption.tex")
     def bp(x):
         x = round(float(x), 1)
-        return "0.0" if x == 0 else f"{x:+.1f}"
+        return "0.0" if x == 0 else f"{x:+.1f}".replace("-", "$-$").replace("+", "$+$")
 
     grid(lambda e, a: bp(e["zpos"][a]["drift_bps_final"]) if a in e.get("zpos", {}) else "--",
          "main_drift.tex")
@@ -549,7 +549,8 @@ def numbers():
             rel = np.mean([v for k, v in x["mass"].items() if not k.startswith("PLACEBO")])
             plc = np.mean([v for k, v in x["mass"].items() if k.startswith("PLACEBO")])
             mark = "\\textbf" if x is best else ""
-            lines.append(f"{x['l1']:.1f} & {mark}{{{x['val_ll'] - best['val_ll']:.1f}}} & {rel:.2f} & {plc:.2f} \\\\")
+            dll = f"{x['val_ll'] - best['val_ll']:.1f}".replace("-", "$-$")
+            lines.append(f"{x['l1']:.1f} & {mark}{{{dll}}} & {rel:.2f} & {plc:.2f} \\\\")
         lines += ["\\bottomrule", "\\end{tabular}"]
         (OUT / "l1_selection.tex").write_text("\n".join(lines))
     # Track C: how many tickers our models win, margin over the best neural baseline
@@ -589,7 +590,8 @@ def numbers():
     if sf.exists():  # seed counts quoted in the Track B caption
         s = json.loads(sf.read_text()).get("EPT-X", {})
         words = {1: "one", 2: "two", 3: "three", 4: "four", 5: "five"}
-        txt = "; ".join(f"{d} {words.get(n, n)}" for d, n in s.items())
+        lo, hi = min(s.values()), max(s.values())
+        txt = f"{words.get(lo, lo)} seeds" if lo == hi else f"{words.get(lo, lo)} to {words.get(hi, hi)} seeds"
         out.append(f"\\newcommand{{\\eptxSeeds}}{{{txt}}}")
     rhos = []
     for y in ("2022", "2023", "2024", "2025", "2026"):

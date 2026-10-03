@@ -53,8 +53,10 @@ them in Appendix~\ref{app:history}.
 
 \begin{figure}[!htbp]\centering
 \includegraphics[width=0.72\linewidth]{figures/placebo_pooled.pdf}
-\caption{Placebo test: direct news-kernel mass (expected extra events per release, all
-assets) for each release type and for its matched placebo on release-free days.}\label{fig:placebo}
+\caption{Placebo test. Direct news-kernel mass, the expected number of extra events per release
+summed over all assets, for each release type (blue) and for its matched placebo at the same clock
+time on a release-free day (grey). A type passes if its mass exceeds the placebo mass by at least
+50\%.}\label{fig:placebo}
 \end{figure}
 
 \paragraph{Echo-corrected absorption.} For the releases that pass the placebo test, the direct
@@ -69,20 +71,23 @@ ether, and a lower one lifts them.
 
 \begin{figure}[!htbp]\centering
 \includegraphics[width=\linewidth]{figures/absorption_CPI_pooled.pdf}
-\caption{Echo-corrected response to a CPI release (blue) versus the direct news kernel
-(orange), per asset; dotted lines mark $t_{50}$.}\label{fig:absorption}
+\caption{Response of each asset to a CPI release, in excess events per second (both axes
+logarithmic). Orange: direct news kernel. Blue: echo-corrected response $\bm m(t)$, which adds the
+events triggered by earlier events. Dotted lines and panel titles give $t_{50}$, direct / echo-corrected.}\label{fig:absorption}
 \end{figure}
 
 \begin{table}[!htbp]\centering\small
-\caption{Echo-corrected absorption by release and asset: $t_{50}$ in seconds / $t_{90}$ in
-minutes. $^\ast$Release types that do not exceed their placebo by 50\%.}\label{tab:absorption}
+\caption{Echo-corrected absorption times from the pooled model: $t_{50}$ in seconds / $t_{90}$
+in minutes after the release. $^\ast$Release types whose news-kernel mass does not exceed their
+placebo by 50\% (Figure~\ref{fig:placebo}).}\label{tab:absorption}
 \setlength{\tabcolsep}{4pt}
 \input{tables/main_absorption}
 \end{table}
 
 \begin{figure}[!htbp]\centering
 \includegraphics[width=\linewidth]{figures/drift_CPI_pooled.pdf}
-\caption{Expected price-discovery curves after a $\pm1$ standard-deviation CPI surprise.}\label{fig:drift}
+\caption{Expected cumulative price change, in basis points, after a CPI surprise of $+1$
+(blue) or $-1$ (orange) standard deviation, from the pooled model. Time axis logarithmic.}\label{fig:drift}
 \end{figure}
 
 \paragraph{Goodness of fit.} Time-rescaled residuals \citep{brown2002time} have

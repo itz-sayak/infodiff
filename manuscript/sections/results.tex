@@ -5,7 +5,7 @@ Table~\ref{tab:track-a} reports the held-out likelihood deficit (means and stand
 deviations over five seeds); branching-matrix, spectral-radius and kernel errors are in
 Table~\ref{tab:track-a-full} (Appendix).
 When the truth is a single exponential (S1), the estimators that assume exactly this form
-(tick's exponential MLE and ADM4) are best, as one would expect. Under a true power law (S2),
+(tick's exponential MLE and ADM4) are best. Under a true power law (S2),
 the sum-of-exponential estimators of tick and MSX perform about equally (held-out deficit $0.2$
 against $0.3\times10^{-3}$ nats per event; tick's solver failed on one of five seeds). When the
 kernel has structure that no single family captures, namely a delayed peak (S3), components ten
@@ -69,27 +69,29 @@ exponential) reported for EBS FX data by \citet{rambaldi2015modeling}.
 
 \begin{figure}[!htbp]\centering
 \includegraphics[width=0.75\linewidth]{figures/placebo_pooled.pdf}
-\caption{Placebo test. Direct news-kernel mass (expected extra events per release, all
-assets) for each release type and for a matched placebo at the same clock time on a
-release-free day.}\label{fig:placebo}
+\caption{Placebo test. Direct news-kernel mass, the expected number of extra events per release
+summed over all assets, for each release type (blue) and for its matched placebo at the same clock
+time on a release-free day (grey). A type passes if its mass exceeds the placebo mass by at least
+50\%.}\label{fig:placebo}
 \end{figure}
 
 \begin{figure}[!htbp]\centering
 \includegraphics[width=\linewidth]{figures/absorption_CPI_pooled.pdf}
-\caption{Echo-corrected response to a CPI release (blue) versus the direct news kernel
-(orange), per asset; dotted lines mark $t_{50}$.}\label{fig:absorption}
+\caption{Response of each asset to a CPI release, in excess events per second (both axes
+logarithmic). Orange: direct news kernel. Blue: echo-corrected response $\bm m(t)$, which adds the
+events triggered by earlier events. Dotted lines and panel titles give $t_{50}$, direct / echo-corrected.}\label{fig:absorption}
 \end{figure}
 
 \begin{figure}[!htbp]\centering
 \includegraphics[width=\linewidth]{figures/drift_CPI_pooled.pdf}
-\caption{Expected price-discovery curves after a $\pm1$ standard-deviation CPI surprise.}\label{fig:drift}
+\caption{Expected cumulative price change, in basis points, after a CPI surprise of $+1$
+(blue) or $-1$ (orange) standard deviation, from the pooled model. Time axis logarithmic.}\label{fig:drift}
 \end{figure}
 
 \begin{table}[!htbp]\centering\footnotesize
-\caption{Echo-corrected absorption by release and asset (pooled model): $t_{50}$ in seconds
-/ $t_{90}$ in minutes after the release. $^\ast$Release types that do not exceed their
-matched placebo by 50\%; their absorption times describe a statistically undetected
-effect.}\label{tab:absorption}
+\caption{Echo-corrected absorption times from the pooled model: $t_{50}$ in seconds / $t_{90}$
+in minutes after the release. $^\ast$Release types whose news-kernel mass does not exceed their
+placebo by 50\% (Figure~\ref{fig:placebo}).}\label{tab:absorption}
 \setlength{\tabcolsep}{4pt}
 \input{tables/main_absorption}
 \end{table}
@@ -154,23 +156,16 @@ Table~\ref{tab:track-c} reports test log-likelihood per event on the five LOBSTE
 stocks. EPT-X is the best model on every stock, ahead of MSX-auto, EPT and all seven
 neural baselines; among the stocks on which every baseline has finished, our models win
 \trackCwins{} of \trackCdone{}, by \trackCmarginLo--\trackCmarginHi{} nats per event over the
-best neural baseline. One baseline needs a correction. EasyTPP's IntensityFree clamps
-every inter-event time at $10^{-5}$\,s before evaluating its log-normal-mixture density,
-so all shorter gaps are scored as one common value on which the mixture can place an
-arbitrarily narrow component. This is not the likelihood of the observed gaps, and it
-matters most where short gaps are common: 29\% and 32\% of test gaps on INTC and MSFT lie
-below $10^{-5}$\,s, against 10--14\% on the other three stocks. As shipped, IntensityFree
-therefore reports the highest numbers on INTC and MSFT (row marked $\ast$); re-trained and
-scored on the unclamped gaps (clamp $10^{-12}$\,s, same 1500-epoch budget) it falls by
-1.1 and 0.7 nats per event, below EPT-X and on INTC below MSX. The patch is part of the
-replication package, and the as-shipped numbers are excluded from the best-model marks.
-Consistently, a denser MSX dictionary (40 instead of 12 rates) and sharper,
-history-shifted Erlang atoms in EPT-X change the validation likelihood on INTC by at most
-about 0.05 nats per event, an order of magnitude less than the clamp: the shipped margin
-came from the clamp, not from expressiveness.
-Among the remaining neural
-baselines, recurrent and
-attention models with Monte-Carlo compensators (NHP, THP, AttNHP) fall well behind the
+best neural baseline. One baseline needs a correction. EasyTPP's IntensityFree replaces every gap below
+$10^{-5}$\,s by $10^{-5}$\,s before evaluating its log-normal mixture, which can then put an
+arbitrarily narrow component on that value. The result is not the likelihood of the observed gaps.
+On INTC and MSFT, 29\% and 32\% of the test gaps are this short (10 to 14\% on the other stocks),
+and there the clamped model reports the highest numbers (row marked $\ast$). Retrained and scored
+on the actual gaps (clamp $10^{-12}$\,s, same 1500-epoch budget), it loses 1.1 and 0.7 nats per
+event and falls below EPT-X, on INTC also below MSX. For scale, a denser MSX dictionary (40 instead
+of 12 rates) or sharper EPT-X atoms change the INTC validation likelihood by at most about 0.05.
+The patch is in the replication package, and the clamped numbers are not ranked.
+Among the remaining neural baselines, recurrent and attention models with Monte-Carlo compensators (NHP, THP, AttNHP) fall well behind the
 exact-likelihood phase-type models. Two implementation notes matter for fairness. First,
 LOBSTER timestamps contain ties, which EasyTPP rejects; all models are trained and
 scored on the same files in which tied messages are displaced by $U(0,100\,\text{ns})$.
@@ -183,12 +178,11 @@ run, Appendix). The renewal channel of EPT-X adds \eptxGainLo--\eptxGainHi{} nat
 every stock.
 
 \begin{table}[!htbp]\centering\small
-\caption{Track C, LOBSTER order books: test log-likelihood per event (higher is better; six
-event types, 128-event sequences, chronological split; mean $\pm$ s.d.\ over seeds where
-several were run). Bold: best; underlined: second best; shaded: our models.
-$^\ast$As shipped by EasyTPP, IntensityFree clamps gaps at $10^{-5}$\,s before scoring, which
-is not the likelihood of the observed data; it is excluded from the ranking, and the
-IntensityFree row is re-trained and scored on the unclamped gaps.}\label{tab:track-c}
+\caption{LOBSTER order books: test log-likelihood per event (higher is better; mean $\pm$
+s.d.\ over seeds where several were run). Bold: best; underlined: second best; shaded: our models.
+$^\ast$As shipped, IntensityFree clamps gaps at $10^{-5}$\,s before scoring, so its score is not
+the likelihood of the observed data; it is greyed and not ranked. The IntensityFree row is
+retrained and scored on the actual gaps.}\label{tab:track-c}
 \setlength{\tabcolsep}{5pt}
 \input{tables/track_c}
 \end{table}
@@ -205,9 +199,10 @@ realised signed drift over the first minute is \driftCorrOursOne{}, against
 \driftCorrBaseOne{} for the best baseline (mean drift by release type and surprise sign).
 
 \begin{table}[!htbp]\centering\small
-\caption{Track D, post-release activity forecasts on the \nTestReleases{} test releases of
-2025--2026 (mean over assets; lower is better). Bold: best; underlined: second best;
-shaded: our model.}\label{tab:track-d}
+\caption{Post-release activity forecasts on the \nTestReleases{} test releases of
+2025--2026, from models fitted on 2022--2024. $N$ is the number of $\delta$-crossings after the
+release; QLIKE scores the forecast of realised variance. Mean over assets; lower is better. Bold:
+best; underlined: second best; shaded: our model.}\label{tab:track-d}
 \setlength{\tabcolsep}{5pt}
 \input{tables/track_d}
 \end{table}

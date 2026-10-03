@@ -56,11 +56,9 @@ def fig_absorption(tag, r, typ="CPI"):
         ax.axvline(row["t50_total"], color=BLUE, lw=0.8, ls=":")
         ax.axvline(row["t50_direct"], color=ORANGE, lw=0.8, ls=":")
         ax.set_ylim(bottom=max(1e-4, np.nanmax(tot) * 1e-4))
-        sec = lambda v: f"{v:.1f}s" if v < 10 else f"{v:.0f}s"
-        amp = row["amplification"]
-        amp_s = f"amplif. {amp:.1f}x" if np.isfinite(amp) else "amplif. n/a (direct < 0.5 events)"
-        ax.text(0.98, 0.95, f"$t_{{50}}$ echo {sec(row['t50_total'])}\n$t_{{50}}$ direct {sec(row['t50_direct'])}\n{amp_s}",
-                transform=ax.transAxes, ha="right", va="top", color=INK2, fontsize=6.5)
+        sec = lambda v: f"{v:.1f} s" if v < 10 else f"{v:.0f} s"
+        ax.set_title(f"$t_{{50}}$ {sec(row['t50_direct'])} / {sec(row['t50_total'])}", color=INK2, fontsize=6.5,
+                     loc="right")
     for ax in axes.ravel()[len(assets):]:
         ax.axis("off")
     for ax in axes[-1]:
@@ -156,9 +154,10 @@ def fig_placebo(tag, r):
     fig, ax = plt.subplots(figsize=(5.2, 2.6))
     ax.bar(x - 0.2, real, 0.38, color=BLUE, edgecolor="white", linewidth=1, label="release")
     ax.bar(x + 0.2, plc, 0.38, color=GRAY, edgecolor="white", linewidth=1, label="matched placebo (same clock time)")
-    ax.set_xticks(x, kinds, rotation=45, ha="right", fontsize=7)
+    names = {"RETAIL": "Retail", "CLAIMS": "Claims", "FOMCPC": "FOMC press", "ECBPC": "ECB press", "BOJ": "BoJ"}
+    ax.set_xticks(x, [names.get(k, k) for k in kinds], rotation=45, ha="right", fontsize=7)
     ax.set_ylabel("direct news-kernel mass\n(extra events per release)")
-    ax.legend(frameon=False, fontsize=7)
+    ax.legend(frameon=False, fontsize=7, loc="lower center", bbox_to_anchor=(0.5, 1.0), ncol=2)
     fig.savefig(OUT / f"placebo_{tag}.pdf")
     plt.close(fig)
 
