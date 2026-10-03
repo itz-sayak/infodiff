@@ -331,6 +331,7 @@ def table_ablation():
                 if ds.startswith("lob_"):  # LOBSTER EPT/EPT-X live in ept_lob_<tk>.json (+ per-run files)
                     want = "EPT-X" if tag == "eptx" else "EPT"
                     rows = [r for r in load_ept(ds) if r.get("model", "EPT") == want
+                            and r.get("tag", tag) == tag  # base configuration only (untagged = base)
                             and r.get("config", {}).get("epochs", 100) <= 300]
                 vals = [r["val_ll"] for r in rows]
             else:

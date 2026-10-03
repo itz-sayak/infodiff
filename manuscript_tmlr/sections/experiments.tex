@@ -128,7 +128,9 @@ IntensityFree row is re-trained and scored on the unclamped gaps.}\label{tab:tra
 Table~\ref{tab:ablation} isolates the components of EPT-X on validation data. The renewal
 channel improves EPT on every dataset. Sharp atoms help where the gap law has sharp modes---by
 1.1 nats per event on Amazon, where a finer grid helps further, and by 0.05 on INTC---and are
-neutral or slightly worse elsewhere. Neither a deeper
+neutral or slightly worse elsewhere. Replacing the GRU by a causal Transformer encoder
+\citep{vaswani2017attention}---which leaves the intensity and compensator between events
+unchanged---lowers the validation likelihood on all five datasets. Neither a deeper
 (three residual layers with LayerNorm and dropout) nor a wider (128 units) encoder improves any
 dataset, nor does S2P2's larger batch: S2P2's remaining edge on Taxi is not a matter of encoder
 capacity or optimisation protocol. Without the explicit Hawkes backbone, EPT reached
