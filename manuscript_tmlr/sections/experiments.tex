@@ -81,8 +81,9 @@ dataset on validation. Bold: best; underlined: second best; shaded: our models.}
 \end{table}
 
 \paragraph{Next-event prediction.} Table~\ref{tab:pred} reports the two prediction metrics used by
-\citet{chang2025deep}. For the time of the next event, EPT-X is best or tied with the best on every
-dataset; on Retweet its RMSE is 14{,}336\,s, against 15{,}911\,s for NHP. For the mark of the next
+\citet{chang2025deep}. For the time of the next event, EPT-X has the lowest RMSE on Retweet (14{,}336\,s
+against 15{,}911\,s for NHP) and StackOverflow (1.013 against 1.014 for S2P2), and equals the best
+published RMSE to three decimals on Amazon (0.327), Taxi (0.281) and Taobao (0.125). For the mark of the next
 event, its accuracy is below that of S2P2 and NHP on four of the five datasets. This is the same
 split between time and mark that the likelihood decomposition shows on Taxi.
 

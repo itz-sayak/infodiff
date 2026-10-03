@@ -110,9 +110,10 @@ Table~\ref{tab:track-b} compares our models with the published numbers of
 \citet{chang2025deep} under the same protocol; our re-run of S2P2 on Taxi (0.524 against
 the published 0.522) validates the harness. On Retweet, the largest dataset (2.2 million training
 events), EPT-X improves on the best published model by more than 0.6 nats per event, with
-a 25-epoch budget imposed by compute and the validation likelihood still rising. It is
-statistically tied with the best published model on Taobao and StackOverflow, and close on
-Taxi. There our time term equals
+a 25-epoch budget imposed by compute and the validation likelihood still rising. On Taobao
+($1.316\pm0.005$ against IntensityFree's published $1.318\pm0.017$) and StackOverflow
+($-2.166\pm0.001$ against S2P2's $-2.163\pm0.009$) the differences are within one published
+standard deviation. On Taxi, EPT-X is 0.02 nats per event behind S2P2. There our time term equals
 S2P2's (0.733 vs.\ 0.735 nats per event on the re-run) and the whole difference lies in the
 mark term. On Amazon, whose inter-event times concentrate in a narrow band (median
 0.73, 99th percentile 0.80), the Erlang orders used elsewhere (coefficient of variation
@@ -136,8 +137,9 @@ shaded: our models.}
 \input{tables/track_b}
 \end{table}
 
-For next-event prediction (Table~\ref{tab:pred}), EPT-X predicts the time of the next event as
-well as or better than every published model on all five datasets. Its accuracy for the mark of
+For next-event prediction (Table~\ref{tab:pred}), EPT-X has the lowest time RMSE on Retweet
+(14{,}336\,s against 15{,}911\,s for NHP) and StackOverflow (1.013 against 1.014 for S2P2), and
+equals the best published RMSE to three decimals on Amazon (0.327), Taxi (0.281) and Taobao (0.125). Its accuracy for the mark of
 the next event is lower than that of S2P2 and NHP on four of them. This is the same split between
 time and mark that the likelihood decomposition shows.
 
