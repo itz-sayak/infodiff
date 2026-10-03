@@ -11,9 +11,9 @@ S2 a true power law (Lomax, tail exponent $1.5$, as reported for FX and futures)
 gamma hump plus a fast exponential, S4 a sparse 4-dimensional multiscale network
 (10\,ms and 30\,s components), S5 a sparse 10-dimensional power-law network. Each
 scenario uses 10 windows per train and test set and five seeds. Competitors:
-tick's exponential-kernel MLE (decay chosen by training likelihood),
-sum-of-exponentials MLE on the same decay grid as MSX, the nonparametric EM of
-Lewis--Mohler type, ADM4 \citep{zhou2013learning}, the conditional-law estimator
+the exponential-kernel MLE of \texttt{tick} \citep{bacry2018tick} (decay chosen by training
+likelihood), sum-of-exponentials MLE on the same decay grid as MSX, \texttt{tick}'s
+nonparametric EM with histogram kernels, ADM4 \citep{zhou2013learning}, the conditional-law estimator
 \citep{bacry2016estimation} (quadrature chosen by training likelihood), and NPHC
 \citep{achab2017uncovering} (our PyTorch solver; tick~0.8 ships a stub). Metrics:
 relative Frobenius error of the branching matrix, spectral-radius error, relative $L^1$
