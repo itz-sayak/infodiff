@@ -161,10 +161,7 @@ and StackOverflow. It is neutral on Amazon and INTC and slightly worse on Taobao
 \item \emph{Data-adaptive atoms.} They help only on Amazon, whose gaps fill two narrow intervals.
 \item \emph{Certified warm start.} It helps most on Taobao and Amazon, and on Retweet it raises the
 validation likelihood by 0.03 nats per event. It does not help on Taxi, StackOverflow or the order
-books. On Retweet, whose gaps reach $6\times10^4$\,s, the small initial read-outs integrate to a
-visible compensator; shrinking them until the start matches MSX also stalls their training within
-the 25-epoch budget. Our Retweet result therefore uses the warm start without the guarantee of
-Proposition~\ref{prop:floor}.
+books.
 \end{itemize}
 
 \paragraph{Where the events come from.} Because every channel has a closed-form compensator, the

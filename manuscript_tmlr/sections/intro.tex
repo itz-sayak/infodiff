@@ -63,10 +63,8 @@ subsequent trading stretches half of the response to \tEchoLo--\tEchoHi{}\,s and
 of it to \tNinetyLo--\tNinetyHi{} minutes.
 \end{enumerate}
 
-The ingredients are not new on their own. Linear-in-parameters kernel dictionaries
-\citep{bacry2015hawkes}, EM algorithms for Hawkes processes
-\citep{veen2008estimation,zhou2013learning}, Erlang-chain embeddings and exact-likelihood neural
-point processes \citep{omi2019fully,shchur2020intensity} have all been studied. What we add is
-their combination: certified, closed-form measurement on one side, an exact neural model that
-contains the linear Hawkes process and starts from it on the other, and experiments showing that
-both work.
+Our work builds on linear-in-parameters kernel dictionaries \citep{bacry2015hawkes}, EM algorithms
+for Hawkes processes \citep{veen2008estimation,zhou2013learning} and exact-likelihood neural point
+processes \citep{omi2019fully,shchur2020intensity}. A single phase-type state space lets us connect
+them: certified, closed-form measurement on one side, and on the other an exact neural model that
+contains the linear Hawkes process and starts from it.
