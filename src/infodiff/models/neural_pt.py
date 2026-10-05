@@ -60,6 +60,7 @@ class EPTConfig:
     hawkes_backbone: bool = True  # explicit linear multivariate phase-type Hawkes state
     hb_rates: int = 10
     hb_phases: int = 2
+    hb_betas: tuple = ()  # explicit backbone rates (e.g. an MSX dictionary); default: log grid
     # EPT-X: history-conditioned defective hyper-Erlang renewal channel (competing risks)
     renewal: bool = False
     ept_channel: bool = True  # False: renewal channel only (ablation)
@@ -68,6 +69,18 @@ class EPTConfig:
     rn_orders: tuple = field(default_factory=lambda: (1, 4, 16))  # Erlang orders per scale
     rn_lo: float = 1e-10
     rn_hi: float = 1e3
+    # quantile-adaptive atoms: extra Erlang atoms whose means sit at equal-mass quantiles of the
+    # training gaps, each with its own order (sharper where the data are dense) and shift range
+    rn_q_means: tuple = ()
+    rn_q_orders: tuple = ()
+    rn_q_delta: tuple = ()
+    # mark law: "intensity" (marks from the ratio of marked intensities) or "residual"
+    # (softmax of log lambda_y plus a learned correction from h_n and the elapsed time; the total
+    # intensity, hence the compensator, is unchanged, so the likelihood stays exact)
+    mark_head: str = "intensity"
+    # parallel-in-time forward pass: one encoder call over the sequence and a prefix scan over the
+    # affine state updates; the same model and likelihood as the event loop (kept as reference)
+    parallel: bool = True
     # input encoding v2: standardised log-gap + tie flag (v1 saturates below ~1e-7 t_scale)
     input_v2: bool = False
     gap_eps: float = 1e-12
@@ -115,7 +128,9 @@ class EPTTPP(nn.Module):
             nn.init.zeros_(self.mix.weight)
         if cfg.hawkes_backbone:
             taus_h = torch.logspace(math.log10(cfg.tau_min), math.log10(cfg.tau_max), cfg.hb_rates)
-            self.register_buffer("hb_betas", 1.0 / taus_h)
+            hb = torch.tensor(cfg.hb_betas, dtype=torch.float32) if cfg.hb_betas else 1.0 / taus_h
+            assert len(hb) == cfg.hb_rates, "hb_betas must have hb_rates entries"
+            self.register_buffer("hb_betas", hb)
             self.Ph = cfg.n_marks * cfg.hb_rates * cfg.hb_phases
             self.Ch_raw = nn.Parameter(torch.full((cfg.n_marks, self.Ph), -5.0))
         else:
@@ -124,20 +139,28 @@ class EPTTPP(nn.Module):
             S, O = cfg.rn_scales, len(cfg.rn_orders)
             taus = torch.logspace(math.log10(cfg.rn_lo), math.log10(cfg.rn_hi), S)
             R = torch.tensor(cfg.rn_orders, dtype=torch.float32)
-            # atom j = s * O + o: Erlang(R_o, beta = R_o / tau_s), mean tau_s
-            self.register_buffer("rn_R", R.repeat(S))
-            self.register_buffer("rn_beta", (R[None, :] / taus[:, None]).flatten())
-            self.J = S * O
+            # log-grid atom j = s * O + o: Erlang(R_o, beta = R_o / tau_s), mean tau_s
+            Rq = torch.tensor(cfg.rn_q_orders, dtype=torch.float32)
+            mq = torch.tensor(cfg.rn_q_means, dtype=torch.float32)
+            Sq = len(cfg.rn_q_means)
+            self.S_tot = S + Sq  # time scales that carry their own mark law and shift
+            self.register_buffer("rn_R", torch.cat([R.repeat(S), Rq]))
+            self.register_buffer("rn_beta", torch.cat([(R[None, :] / taus[:, None]).flatten(), Rq / mq]))
+            self.register_buffer("rn_sidx", torch.cat([torch.arange(S).repeat_interleave(O),
+                                                       torch.arange(S, S + Sq)]))  # atom -> scale
+            self.J = S * O + Sq
             self.rn_w = nn.Linear(cfg.hidden, self.J + 1)  # last logit: defect ("no renewal event")
-            self.rn_q = nn.Linear(cfg.hidden, S * cfg.n_marks)  # mark law per time scale
-            self.rn_qb = nn.Parameter(torch.zeros(S, cfg.n_marks))
+            self.rn_q = nn.Linear(cfg.hidden, self.S_tot * cfg.n_marks)  # mark law per time scale
+            self.rn_qb = nn.Parameter(torch.zeros(self.S_tot, cfg.n_marks))
             nn.init.zeros_(self.rn_q.weight)
             nn.init.zeros_(self.rn_q.bias)
-            if cfg.rn_shift:  # c_s(h) in (-delta, delta): atoms slide continuously within their cell
-                self.rn_c = nn.Linear(cfg.hidden, S)
+            if cfg.rn_shift:  # c_s(h) in (-delta_s, delta_s): atoms slide continuously within their cell
+                self.rn_c = nn.Linear(cfg.hidden, self.S_tot)
                 nn.init.zeros_(self.rn_c.weight)
                 nn.init.zeros_(self.rn_c.bias)
-                self.rn_delta = 0.5 * math.log(cfg.rn_hi / cfg.rn_lo) / max(S - 1, 1)
+                d_grid = 0.5 * math.log(cfg.rn_hi / cfg.rn_lo) / max(S - 1, 1)
+                self.register_buffer("rn_dvec", torch.cat([torch.full((S,), d_grid),
+                                                           torch.tensor(cfg.rn_q_delta, dtype=torch.float32)]))
         nn.init.constant_(self.gate.bias, 2.0)  # start close to additive (Hawkes-like) updates
         nn.init.constant_(self.jump.bias, -1.0)
         nn.init.constant_(self.mu.bias, -2.0)
@@ -154,6 +177,12 @@ class EPTTPP(nn.Module):
                                                batch_first=True, norm_first=True)
             self.tf = nn.TransformerEncoder(layer, cfg.tf_layers, enable_nested_tensor=False)
             self.tf_out = nn.LayerNorm(cfg.hidden)
+        if cfg.mark_head == "residual":  # created last; zero output layer, so it starts at "intensity"
+            n_f = 3 if cfg.input_v2 else 2
+            self.mk_head = nn.Sequential(nn.Linear(cfg.hidden + n_f, cfg.hidden), nn.GELU(),
+                                         nn.Linear(cfg.hidden, cfg.n_marks))
+            nn.init.zeros_(self.mk_head[2].weight)
+            nn.init.zeros_(self.mk_head[2].bias)
 
     def _encode_all(self, dts, marks, mask):
         """Causal Transformer summaries h_n of events 0..n for every position (B, L, hidden)."""
@@ -262,12 +291,12 @@ class EPTTPP(nn.Module):
     def _rn_heads(self, h):
         """log atom weights (B, J+1; last = defect), log mark law per scale (B, S, M) and the
         log-rate shift of every atom (B, J) or None."""
-        S, M = self.cfg.rn_scales, self.cfg.n_marks
+        S, M = self.S_tot, self.cfg.n_marks
         logw = torch.log_softmax(self.rn_w(h), -1)
-        logq = torch.log_softmax(self.rn_q(h).view(-1, S, M) + self.rn_qb[None], -1)
+        logq = torch.log_softmax(self.rn_q(h).view(*h.shape[:-1], S, M) + self.rn_qb, -1)
         logb = None
         if self.cfg.rn_shift:
-            logb = (self.rn_delta * torch.tanh(self.rn_c(h))).repeat_interleave(len(self.cfg.rn_orders), -1)
+            logb = (self.rn_dvec * torch.tanh(self.rn_c(h))).index_select(-1, self.rn_sidx)
         return logw, logq, logb
 
     def _rn_logf_logQ(self, dt, logb=None):
@@ -278,19 +307,32 @@ class EPTTPP(nn.Module):
         logy = torch.log(y.clamp_min(1e-30))
         R = self.rn_R
         logf = log_beta + (R - 1) * logy - y - torch.lgamma(R)
-        n_exact = int(min(R.max().item(), 16))
-        i = torch.arange(n_exact, device=dt.device, dtype=dt.dtype)
+        small = R <= 16
+        if bool(small.all()):
+            return logf, self._logQ_exact(y, logy, R)
+        # sharp atoms (CV = R^-1/2 <= 1/4): regularised upper incomplete gamma; the exact sum is
+        # only formed for the low-order atoms, so memory does not grow with the number of sharp ones
+        ib, isml = torch.nonzero(~small)[:, 0], torch.nonzero(small)[:, 0]
+        yb = y.index_select(-1, ib)
+        # gradient of gammaincc at y = 0 is 0 * log 0 = NaN: evaluate at y > 0 only
+        qb = torch.special.gammaincc(R[ib].double().expand_as(yb), yb.double().clamp_min(1e-30)).clamp_min(1e-300)
+        parts = [torch.log(qb).to(dt.dtype)]
+        idx = [ib]
+        if len(isml):
+            parts.append(self._logQ_exact(y.index_select(-1, isml), logy.index_select(-1, isml), R[isml]))
+            idx.append(isml)
+        logQ = torch.cat(parts, -1)
+        order = torch.argsort(torch.cat(idx))
+        return logf, logQ.index_select(-1, order)
+
+    @staticmethod
+    def _logQ_exact(y, logy, R):
+        """log Q(R, y) = -y + log sum_{i<R} y^i / i! for integer orders R <= 16."""
+        n = int(R.max().item())
+        i = torch.arange(n, device=y.device, dtype=y.dtype)
         terms = i * logy.unsqueeze(-1) - torch.lgamma(i + 1)
         terms = torch.where(i < R.unsqueeze(-1), terms, torch.full_like(terms, -math.inf))
-        logQ = -y + torch.logsumexp(terms, -1)
-        if R.max() > 16:  # sharp atoms (CV = R^-1/2 <= 1/4): regularised upper incomplete gamma
-            big = R > 16
-            # evaluate only where used, at y > 0: the gradient of gammaincc at y = 0 is 0 * log 0 = NaN
-            a = torch.where(big, R, torch.full_like(R, 17.0)).double().expand_as(y)
-            yb = torch.where(big, y, torch.ones_like(y)).double().clamp_min(1e-30)
-            qb = torch.special.gammaincc(a, yb).clamp_min(1e-300)
-            logQ = torch.where(big, torch.log(qb).to(dt.dtype), logQ)
-        return logf, logQ
+        return -y + torch.logsumexp(terms, -1)
 
     def _rn_logS(self, logw, logQ):
         """log survival of the defective mixture: defect atom has Q = 1."""
@@ -300,19 +342,29 @@ class EPTTPP(nn.Module):
     def _rn_log_lam(self, logw, logq, dt, marks=None, logb=None, want_total=False):
         """log renewal intensity of each mark (..., M), or of the given marks (...,), and the
         compensator -log S(dt); with want_total also the log total renewal intensity."""
-        O = len(self.cfg.rn_orders)
         logf, logQ = self._rn_logf_logQ(dt, logb)
         logS = self._rn_logS(logw, logQ)
         base = logw[..., :-1] + logf  # (..., J)
         if marks is not None:
             lq = logq.gather(-1, marks[:, None, None].expand(-1, logq.shape[1], 1))[..., 0]  # (B, S)
-            lp = torch.logsumexp(base + lq.repeat_interleave(O, -1), -1)
+            lp = torch.logsumexp(base + lq.index_select(-1, self.rn_sidx), -1)
             if want_total:
                 return lp - logS, -logS, torch.logsumexp(base, -1) - logS
             return lp - logS, -logS
-        lq = logq.repeat_interleave(O, -2)  # (..., J, M)
+        lq = logq.index_select(-2, self.rn_sidx)  # (..., J, M)
         lp = torch.logsumexp(base.unsqueeze(-1) + lq, -2)
+        if want_total:
+            return lp - logS.unsqueeze(-1), -logS, torch.logsumexp(base, -1) - logS
         return lp - logS.unsqueeze(-1), -logS
+
+    def _mark_logp(self, log_my, h, s):
+        """Residual mark law log p(y | h_n, s) = log_softmax(log lambda_y + m(h_n, s)).
+        log_my (..., M), h (..., hidden), s (...,). Only the split of the total intensity across
+        marks changes, so the compensator is untouched."""
+        shp = s.shape
+        f = torch.cat(self._gap_features(s.reshape(-1)), -1).view(*shp, -1)
+        corr = self.mk_head(torch.cat([h.expand(*shp, h.shape[-1]), f], -1))
+        return torch.log_softmax(log_my + corr, -1)
 
     def _gap_features(self, gap):
         if not self.cfg.input_v2:
@@ -327,6 +379,8 @@ class EPTTPP(nn.Module):
         Returns per-position quantities for positions 1..L-1:
           log_lam_mark (B, L-1), comp (B, L-1) compensator over (t_{n-1}, t_n],
           and the post-event states needed for prediction."""
+        if self.cfg.parallel and marks.shape[1] > 1:
+            return self._forward_parallel(dts, marks, mask)
         B, L = marks.shape
         dev = dts.device
         h = torch.zeros(B, self.cfg.hidden, device=dev, dtype=dts.dtype)
@@ -357,14 +411,24 @@ class EPTTPP(nn.Module):
                     lam_all = lam_all + xh_left @ Chb.T
                     c_n = c_n + integ_h @ Chb.sum(0)
                 m = marks[:, n].clamp(max=self.cfg.n_marks - 1)
-                ll_n = torch.log(lam_all.gather(1, m[:, None])[:, 0] + 1e-12)
                 lt_n = torch.log(lam_all.sum(-1) + 1e-12 * self.cfg.n_marks)  # total (time term)
-                if rn:
-                    lr, cr, lrt = self._rn_log_lam(rn_w, rn_q, dt, m, rn_b, want_total=True)
-                    if self.cfg.ept_channel:
-                        ll_n, c_n, lt_n = torch.logaddexp(ll_n, lr), c_n + cr, torch.logaddexp(lt_n, lrt)
-                    else:
-                        ll_n, c_n, lt_n = lr, cr, lrt
+                if self.cfg.mark_head == "residual":
+                    log_my = torch.log(lam_all + 1e-12)  # (B, M)
+                    if rn:
+                        lr_all, cr, lrt = self._rn_log_lam(rn_w, rn_q, dt, None, rn_b, want_total=True)
+                        if self.cfg.ept_channel:
+                            log_my, c_n, lt_n = torch.logaddexp(log_my, lr_all), c_n + cr, torch.logaddexp(lt_n, lrt)
+                        else:
+                            log_my, c_n, lt_n = lr_all, cr, lrt
+                    ll_n = lt_n + self._mark_logp(log_my, h, dt).gather(1, m[:, None])[:, 0]
+                else:
+                    ll_n = torch.log(lam_all.gather(1, m[:, None])[:, 0] + 1e-12)
+                    if rn:
+                        lr, cr, lrt = self._rn_log_lam(rn_w, rn_q, dt, m, rn_b, want_total=True)
+                        if self.cfg.ept_channel:
+                            ll_n, c_n, lt_n = torch.logaddexp(ll_n, lr), c_n + cr, torch.logaddexp(lt_n, lrt)
+                        else:
+                            ll_n, c_n, lt_n = lr, cr, lrt
                 log_lam.append(ll_n)
                 log_tot.append(lt_n)
                 comp.append(c_n)
@@ -400,6 +464,177 @@ class EPTTPP(nn.Module):
         self._last_h = torch.stack(hs, 1)
         self._last_log_tot = torch.stack(log_tot, 1) if log_tot else None  # log total intensity at events  # post-event GRU states, used by prediction
         return torch.stack(log_lam, 1), torch.stack(comp, 1), torch.stack(states, 1), torch.stack(mus, 1)
+
+    @torch.no_grad()
+    def init_from_hawkes(self, A, mu, eps_logit: float = -7.0):
+        """Start at a fitted linear phase-type Hawkes process (e.g. the certified MSX optimum).
+
+        A (M, M, K, R) excitation weights on the backbone dictionary, mu (M,) baselines. The neural
+        read-outs, hazard terms and renewal channel are set to ~e^{eps_logit} of their scale rather
+        than exactly zero, so that they stay trainable; Proposition (certified floor) bounds the
+        resulting gap to the Hawkes likelihood, which `train_one` reports as val_ll_init."""
+        cfg = self.cfg
+        A = torch.as_tensor(A, dtype=self.Ch_raw.dtype, device=self.Ch_raw.device)
+        assert A.shape == (cfg.n_marks, cfg.n_marks, cfg.hb_rates, cfg.hb_phases)
+        theta = A.reshape(cfg.n_marks, -1).clamp_min(1e-12)
+        self.Ch_raw.copy_(theta + torch.log(-torch.expm1(-theta)))  # inverse softplus
+        mu = torch.as_tensor(mu, dtype=self.Ch_raw.dtype, device=self.Ch_raw.device).clamp_min(2e-6) - 1e-6
+        self.mu.weight.zero_()
+        self.mu.bias.copy_(mu + torch.log(-torch.expm1(-mu)))
+        self.jump.weight.zero_()
+        self.jump.bias.fill_(eps_logit)  # neural Erlang state ~ softplus(eps) per event
+        if cfg.mark_mixing:
+            self.c_tot.fill_(eps_logit)
+        else:
+            self.C_raw.fill_(eps_logit)
+        if cfg.gompertz:
+            self.g_head.weight.zero_()
+            self.g_head.bias.fill_(eps_logit)
+        if cfg.renewal:  # defect weight 1 - O(e^eps): the renewal channel is (almost) silent
+            self.rn_w.weight.zero_()
+            self.rn_w.bias.zero_()
+            self.rn_w.bias[-1] = math.log(self.J) - eps_logit
+
+    @torch.no_grad()
+    def backbone_branching(self):
+        """Branching matrix G (M, M) of the linear Hawkes backbone: G[y, j] = sum_{k,r} Theta[y, (j,k,r)]."""
+        cfg = self.cfg
+        return F.softplus(self.Ch_raw).view(cfg.n_marks, cfg.n_marks, -1).sum(-1)
+
+    # ------------------------------------------------------------ parallel-in-time forward pass
+    def _gru_seq(self, cell, x):
+        """Run a GRUCell over a whole sequence x (B, L, d) in one fused call (same equations)."""
+        h0 = torch.zeros(1, x.shape[0], cell.hidden_size, device=x.device, dtype=x.dtype)
+        out, _ = torch._VF.gru(x, h0, [cell.weight_ih, cell.weight_hh, cell.bias_ih, cell.bias_hh],
+                               True, 1, 0.0, self.training, False, True)
+        return out
+
+    def _encode_seq(self, dts, marks, mask):
+        """Encoder summaries h_n for every position (B, L, hidden). The encoder only sees observed
+        gaps and marks, never the latent state, so it can run over the sequence at once."""
+        if self.cfg.encoder == "transformer":
+            return self._encode_all(dts, marks, mask)
+        B, L = marks.shape
+        gap = dts.clone()
+        gap[:, 0] = 0.0
+        inp = torch.cat([self.emb(marks.clamp(max=self.cfg.n_marks))]
+                        + [f.view(B, L, 1) for f in self._gap_features(gap.reshape(-1))], -1)
+        x = self._gru_seq(self.gru, self.drop(inp))
+        if self.cfg.layer_norm:
+            x = self.lns[0](x)
+        for l in range(1, self.cfg.n_layers):
+            x = x + self.drop(self._gru_seq(self.gru_up[l - 1], x))
+            if self.cfg.layer_norm:
+                x = self.lns[l](x)
+        return x
+
+    @staticmethod
+    def _erlang_transfer(dt, b, R):
+        """Transfer matrices of the Erlang chains over a lag dt: (..., n_blocks, R, R) with
+        E[r, c] = w_{r-c}(b dt) for r >= c (Lemma 1), and the identity at dt = 0."""
+        y = b * dt.unsqueeze(-1)
+        j = torch.arange(R, device=dt.device, dtype=dt.dtype)
+        w = torch.exp(-y.unsqueeze(-1) + j * torch.log(y.clamp_min(1e-30)).unsqueeze(-1) - torch.lgamma(j + 1))
+        if R > 1:
+            w = torch.where(y.unsqueeze(-1) > 0, w, (j == 0).to(dt.dtype).expand_as(w))
+        r = torch.arange(R, device=dt.device)
+        T = r[:, None] - r[None, :]
+        return w[..., T.clamp_min(0)] * (T >= 0).to(dt.dtype)
+
+    @staticmethod
+    def _affine_scan(D, b):
+        """All prefix states of x_n = D_n x_{n-1} + b_n, x_{-1} = 0, by a Hillis-Steele scan over
+        the affine maps (D, b) composed as (D2 D1, D2 b1 + b2). D (B, L, nb, R, R), b (B, L, nb, R).
+        Every D has entries in [0, 1] (gates times Poisson weights), so the scan is stable."""
+        L, k = D.shape[1], 1
+        while k < L:
+            Dn = D[:, k:] @ D[:, :-k]
+            bn = (D[:, k:] @ b[:, :-k].unsqueeze(-1)).squeeze(-1) + b[:, k:]
+            D = torch.cat([D[:, :k], Dn], 1)
+            b = torch.cat([b[:, :k], bn], 1)
+            k *= 2
+        return b
+
+    def _forward_parallel(self, dts, marks, mask):
+        """Same outputs as the event loop in `forward`, computed for all positions at once."""
+        cfg = self.cfg
+        B, L = marks.shape
+        M, R = cfg.n_marks, self.R
+        H = self._encode_seq(dts, marks, mask)  # (B, L, hidden): h_n after event n
+        a = torch.sigmoid(self.gate(H))
+        jmp = F.softplus(self.jump(H))
+        # post-event neural state: x_n = sigma(gate h_n) * E(dt_n) x_{n-1} + softplus(jump h_n)
+        E = self._erlang_transfer(dts, self._betas(), R)  # (B, L, nb, R, R); dts[:, 0] = 0 -> I
+        D = a.view(B, L, -1, R).unsqueeze(-1) * E
+        xpost = self._affine_scan(D, jmp.view(B, L, -1, R)).flatten(-2)  # (B, L, P)
+        dt = dts[:, 1:]
+        x_left, integ = self.evolve(xpost[:, :-1], dt)  # (B, L-1, P)
+        mu_all = F.softplus(self.mu(H)) + 1e-6
+        g_all, w_all = self._gomp(H)
+        Hp = H[:, :-1]
+        N = B * (L - 1)
+        mu = mu_all[:, :-1]
+        parts = dict(baseline=mu.sum(-1) * dt)  # exact split of the compensator by channel
+        if cfg.mark_mixing:
+            lam_all = mu.reshape(N, M) + self._readout(self.C(Hp.reshape(N, -1)), x_left.reshape(N, -1))
+            parts["neural_state"] = integ @ F.softplus(self.c_tot)
+        else:
+            Cm = self.C()
+            lam_all = mu.reshape(N, M) + self._readout(Cm, x_left.reshape(N, -1))
+            parts["neural_state"] = integ @ Cm.sum(0)
+        c_n = parts["baseline"] + parts["neural_state"]
+        if g_all is not None:
+            gv, gi = self._gomp_terms(g_all[:, :-1], w_all[:, :-1], dt)
+            lam_all = lam_all + gv.reshape(N, M)
+            parts["hazard"] = gi.sum(-1)
+            c_n = c_n + parts["hazard"]
+        xhpost = None
+        if cfg.hawkes_backbone:
+            Kh, Rh = cfg.hb_rates, cfg.hb_phases
+            Chb = F.softplus(self.Ch_raw)
+            onehot = F.one_hot(marks.clamp(max=M - 1), M).to(dts.dtype)  # (B, L, M)
+            jh = torch.zeros(B, L, M, Kh, Rh, device=dts.device, dtype=dts.dtype)
+            jh[..., 0] = onehot[..., None] * self.hb_betas
+            Eh = self._erlang_transfer(dts, self.hb_betas.repeat(M), Rh)  # (B, L, M*Kh, Rh, Rh)
+            xhpost = self._affine_scan(Eh, jh.view(B, L, M * Kh, Rh)).flatten(-2)  # (B, L, Ph)
+            xh_left, integ_h = self._evolve_hb(xhpost[:, :-1], dt)
+            lam_all = lam_all + (xh_left @ Chb.T).reshape(N, M)
+            parts["hawkes"] = integ_h @ Chb.sum(0)
+            c_n = c_n + parts["hawkes"]
+        # per-position likelihood terms: the loop body applied to all N = B (L-1) positions at once
+        c_n, dtf = c_n.reshape(N), dt.reshape(N)
+        m = marks[:, 1:].clamp(max=M - 1).reshape(N)
+        hf = Hp.reshape(N, -1)
+        lt_n = torch.log(lam_all.sum(-1) + 1e-12 * M)
+        if cfg.renewal:
+            rn_w, rn_q, rn_b = self._rn_heads(hf)
+        if cfg.mark_head == "residual":
+            log_my = torch.log(lam_all + 1e-12)
+            if cfg.renewal:
+                lr_all, cr, lrt = self._rn_log_lam(rn_w, rn_q, dtf, None, rn_b, want_total=True)
+                if cfg.ept_channel:
+                    log_my, c_n, lt_n = torch.logaddexp(log_my, lr_all), c_n + cr, torch.logaddexp(lt_n, lrt)
+                else:
+                    log_my, c_n, lt_n = lr_all, cr, lrt
+            ll_n = lt_n + self._mark_logp(log_my, hf, dtf).gather(1, m[:, None])[:, 0]
+        else:
+            ll_n = torch.log(lam_all.gather(1, m[:, None])[:, 0] + 1e-12)
+            if cfg.renewal:
+                lr, cr, lrt = self._rn_log_lam(rn_w, rn_q, dtf, m, rn_b, want_total=True)
+                if cfg.ept_channel:
+                    ll_n, c_n, lt_n = torch.logaddexp(ll_n, lr), c_n + cr, torch.logaddexp(lt_n, lrt)
+                else:
+                    ll_n, c_n, lt_n = lr, cr, lrt
+        if cfg.renewal:
+            parts["renewal"] = cr.view(B, L - 1)
+            if not cfg.ept_channel:
+                parts = dict(renewal=parts["renewal"])
+        self._last_comp_parts = parts
+        self._last_h = H
+        self._last_log_tot = lt_n.view(B, L - 1)
+        states = torch.cat([xpost, xhpost], -1) if xhpost is not None else xpost
+        mus = mu_all if g_all is None else torch.cat([mu_all, g_all, w_all], -1)
+        return ll_n.view(B, L - 1), c_n.view(B, L - 1), states, mus
 
     def loglik(self, dts, marks, mask):
         """Exact LL summed over scored events (positions 1..L-1 with mask) and their count."""
@@ -440,6 +675,9 @@ class EPTTPP(nn.Module):
                 lam, Lam = lam + torch.exp(lr), Lam + cr
             else:
                 lam, Lam = torch.exp(lr), cr
+        if self.cfg.mark_head == "residual":
+            tot = lam.sum(-1, keepdim=True)
+            lam = tot * torch.exp(self._mark_logp(torch.log(lam + 1e-12), h[:, None, :], grid))
         return lam, Lam
 
     @torch.no_grad()

@@ -55,6 +55,57 @@ on INTC. Replacing the GRU by a causal Transformer encoder \citep{vaswani2017att
 validation likelihood on all five datasets we tested, and neither a three-layer residual encoder
 nor a 128-unit encoder improves any dataset (Section~\ref{sec:results}).
 
+\paragraph{New components.} Table~\ref{tab:ablation} adds each new component to the selected
+configuration of every dataset.
+\begin{itemize}
+\item \emph{Residual mark law.} It helps where the marks follow the elapsed time closely: on Taxi
+and StackOverflow. It is neutral on Amazon and INTC and slightly worse on Taobao.
+\item \emph{Data-adaptive atoms.} They help only on Amazon, whose gaps fill two narrow intervals.
+\item \emph{Certified warm start.} It helps most on Taobao and Amazon, and on Retweet it raises the
+validation likelihood by 0.03 nats per event. It does not help on Taxi, StackOverflow or the order
+books. On Retweet, whose gaps reach $6\times10^4$\,s, the small initial read-outs integrate to a
+visible compensator; shrinking them until the start matches MSX also stalls their training within
+the 25-epoch budget. Our Retweet result therefore uses the warm start without the guarantee of
+Proposition~\ref{prop:floor}.
+\end{itemize}
+
+\begin{table}[!htbp]\centering\footnotesize
+\caption{EPT-X ablations: validation log-likelihood per event (higher is better). The EPT and
+EPT-X rows are the final runs (mean $\pm$ s.d.\ over seeds); each variant is one seed. Encoder and
+atom variants use a 100-epoch budget. The last three rows add one new component each, with the
+final budget on Taxi, Taobao and StackOverflow and 100 epochs on Amazon and INTC, where they are
+added to the sharp-atom configuration. Bold: best; underlined: second best.}\label{tab:ablation}
+\setlength{\tabcolsep}{4pt}
+\input{tables/ablation}
+\end{table}
+
+\paragraph{Where the events come from.} Because every channel has a closed-form compensator, the
+expected number of events splits exactly by channel (Table~\ref{tab:attribution}). The split differs
+across data. On Taxi, four in five events come from the renewal channel, and on Retweet four in five
+come from the neural state. On Taobao and StackOverflow, about half come from the Hawkes backbone,
+and on the order books the renewal channel carries 41 to 58\%, with the backbone and the neural state
+sharing the rest. The backbone is not constrained to be stationary, so its weights
+describe excitation within a sequence rather than a long-run branching ratio.
+
+\begin{table}[!htbp]\centering\small
+\caption{Exact share (\%) of the expected number of test events contributed by each channel of the
+selected EPT-X model (seed 0).}\label{tab:attribution}
+\input{tables/attribution}
+\end{table}
+
+\paragraph{Cost.} Exactness does not have to cost time (Table~\ref{tab:cost}). Evaluated with the
+parallel scan of Lemma~\ref{lem:scan}, an EPT-X epoch, including validation, is \scanSpeedTaxi{}
+times faster than with the event loop on Taxi and \scanSpeedAAPL{} times faster on LOBSTER AAPL,
+where it takes \scanSecAAPL{}\,s against 5.8\,s for S2P2 on the same GPU. The two evaluations give
+the same likelihood and gradients up to floating-point rounding.
+
+\begin{table}[!htbp]\centering\small
+\caption{Training cost per epoch (including validation) and model size. EPT-X: one epoch of the
+same model timed with the event loop and with the parallel scan. EasyTPP baselines: average over
+their full epoch budget.}\label{tab:cost}
+\input{tables/cost}
+\end{table}
+
 \clearpage
 \section{Track A: all metrics}
 \begin{center}\footnotesize

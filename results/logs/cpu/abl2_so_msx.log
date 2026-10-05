@@ -1,0 +1,14 @@
+
+=== Sat Oct  3 23:06:08 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_ablation.py stackoverflow 0 v2_msx "{\"hidden\": 64, \"n_rates\": 8, \"phases\": 4, \"epochs\": 300, \"patience\": 40, \"renewal\": true, \"init_from_msx\": true}"
+  stackoverflow seed=0 ep=0 val_ll=-2.2521 best=-2.2521
+  stackoverflow seed=0 ep=5 val_ll=-2.1992 best=-2.1944
+  stackoverflow seed=0 ep=10 val_ll=-2.1706 best=-2.1672
+  stackoverflow seed=0 ep=15 val_ll=-2.1662 best=-2.1617
+  stackoverflow seed=0 ep=20 val_ll=-2.1722 best=-2.1617
+  stackoverflow seed=0 ep=25 val_ll=-2.1806 best=-2.1617
+  stackoverflow seed=0 ep=30 val_ll=-2.1961 best=-2.1617
+  stackoverflow seed=0 ep=35 val_ll=-2.2123 best=-2.1617
+  stackoverflow seed=0 ep=40 val_ll=-2.2248 best=-2.1617
+  stackoverflow seed=0 ep=45 val_ll=-2.2345 best=-2.1617
+  stackoverflow seed=0 ep=50 val_ll=-2.2481 best=-2.1617
+RESULT {"ll_per_event": -2.16780198242524, "n_events": 26117.0, "time_ll": -0.6541306122149845, "mark_ll": -1.5136713702102558, "channel_share": {"baseline": 0.23009364504320456, "neural_state": 0.00013890447063284161, "hazard": 0.059347117472746146, "hawkes": 0.6820504374981644, "renewal": 0.028369895515252062}, "backbone_rho": 5.886838912963867, "rmse": 1.013293743133545, "acc": 0.45326799154281616, "dataset": "stackoverflow", "seed": 0, "val_ll": -2.161723617217381, "epochs": 54, "seconds": 6555.725569009781, "hidden": 64, "n_rates": 8, "n_channels": 4, "phases": 4, "lr": 0.01, "gompertz": true, "model": "EPT-X", "renewal": true, "input_v2": true, "ept_channel": true, "rn_shift": false, "rn_scales": 24, "rn_orders": [1, 4, 16], "n_layers": 1, "layer_norm": false, "dropout": 0.0, "weight_decay": 0.0, "encoder": "gru", "rn_quantile": 0, "mark_head": "intensity", "init_from_msx": true, "val_ll_init": -2.2640135813848032, "msx_val_ll": -2.291650795415206, "msx_test_ll": -2.292480121576371, "n_params": 290029, "batch_size": 64, "config": {"hidden": 64, "n_rates": 8, "phases": 4, "epochs": 300, "patience": 40, "renewal": true, "init_from_msx": true}, "tag": "v2_msx"}

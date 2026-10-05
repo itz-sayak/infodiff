@@ -2,10 +2,12 @@
 \toprule
 Data & Model & Compensator & Device & s / epoch & Parameters \\
 \midrule
-\rowcolor{oursbg} Taxi & EPT-X & exact & CPU (4 thr.) & 15.4 & 146k \\
+\rowcolor{oursbg} Taxi & EPT-X, event loop & exact & GPU & 9.1 & 146k \\
+\rowcolor{oursbg}  & EPT-X, parallel scan & exact & GPU & 3.2 & 146k \\
  & S2P2 & Monte Carlo & GPU & 7.7 & 35k \\
 \midrule
-\rowcolor{oursbg} LOBSTER AAPL & EPT-X & exact & GPU & 22.0 & 76k \\
+\rowcolor{oursbg} LOBSTER AAPL & EPT-X, event loop & exact & GPU & 13.0 & 76k \\
+\rowcolor{oursbg}  & EPT-X, parallel scan & exact & GPU & 4.5 & 76k \\
  & S2P2 & Monte Carlo & GPU & 5.8 & 34k \\
  & NHP & Monte Carlo & GPU & 1.6 & 232k \\
  & AttNHP & Monte Carlo & GPU & 7.5 & 20k \\

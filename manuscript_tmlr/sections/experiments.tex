@@ -41,38 +41,48 @@ second best; shaded: our estimators.}\label{tab:track-a}
 We use the EasyTPP splits of Amazon, Retweet, Taxi, Taobao and StackOverflow and follow the
 protocol of \citet{chang2025deep}. The metric is the log-likelihood per scored event, with the
 first event of each sequence used only for conditioning, and models are selected on validation
-likelihood. Published numbers are taken from \citet{chang2025deep}. To check our evaluation code,
-we re-ran S2P2 on Taxi and obtained 0.524, against 0.522 in the paper. EPT-X reports the exact
-likelihood.
+likelihood. Published numbers are taken from \citet{chang2025deep} and \citet{boyd2025hyper}, who
+use the same splits and protocol. To check our evaluation code, we re-ran S2P2 on Taxi and obtained
+0.524, against 0.522 in the paper. EPT-X reports the exact likelihood.
 
-On Retweet, the largest dataset with 2.2 million training events, EPT-X improves on the best
-published model by more than 0.6 nats per event (Table~\ref{tab:track-b}). This result uses a
-25-epoch budget imposed by compute, and the validation likelihood was still rising when training
-stopped. On Taobao (our $1.316\pm0.005$ against IntensityFree's published $1.318\pm0.017$) and on
-StackOverflow ($-2.166\pm0.001$ against S2P2's $-2.163\pm0.009$), the differences are within one
-published standard deviation.
+EPT-X has the best likelihood on three of the five datasets (Table~\ref{tab:track-b}). On Retweet,
+the largest dataset with 2.2 million training events, it reaches $\eptxLLRetweet\pm\eptxSDRetweet$
+against $-6.348$ for the best published model, with a 25-epoch budget imposed by compute. On Taobao,
+starting from the certified MSX fit (Proposition~\ref{prop:floor}) raises EPT-X to
+$\eptxLLTaobao\pm\eptxSDTaobao$, against IntensityFree's published $1.318\pm0.017$. On
+StackOverflow, the residual mark law gives $\eptxLLStackOverflow\pm\eptxSDStackOverflow$ against
+S2P2's $-2.163\pm0.009$, so the two are within one published standard deviation.
 
-On Taxi, EPT-X is 0.02 nats per event behind S2P2. A single-seed diagnostic run with the same test
-likelihood (0.502) has the same time term as our S2P2 re-run (0.733 against 0.735 nats per event),
-so the difference lies in the mark term. Amazon is different. Its gaps are concentrated in a narrow
-band (median 0.73, 99th percentile 0.80), and Erlang atoms of order at most 16 are too wide to fit
-this peak. With atoms of order up to 1024 on a finer grid, EPT-X gains more than 1.1 nats per event
-and moves into second place. Here our mark term is slightly better than S2P2's ($-1.89$ against
-$-1.90$ on the re-run), and the remaining gap is in the time term. The linear MSX model comes close
-to the neural models on Taobao and Retweet, but it is far behind on Amazon and Taxi, whose
-dynamics are not self-exciting.
+On Taxi, EPT-X reaches $\eptxLLTaxi\pm\eptxSDTaxi$ against $0.522\pm0.004$ for S2P2 and HHP. The
+residual mark law closed most of the earlier gap: our mark term now equals that of our S2P2 re-run
+($-0.210$ against $-0.211$), and the remaining difference lies in the time term ($0.726$ against
+$0.735$).
+
+Amazon needs a separate comment. In the EasyTPP release every gap lies in one of two intervals,
+$[0.010,0.015]$ (\amzShortShare\% of the test gaps) or $[0.70,0.80]$, and within each interval the
+gaps are uniform; Kolmogorov--Smirnov tests do not reject uniformity at the 1\% level on any split.
+The timestamps were evidently resampled during preprocessing. A history-free density made of the
+two boxes already reaches a time log-likelihood of \amzBoxLL{} nats per event, so on Amazon the
+time term mostly measures how sharply a model resolves two hard edges and how well it predicts
+which interval comes next. Smooth densities, such as Erlang or log-normal mixtures, lose at the
+edges. Data-adaptive atoms and the certified start raise EPT-X to
+$\eptxLLAmazon\pm\eptxSDAmazon$, second behind S2P2. We did not add box-shaped components, because
+they would fit a preprocessing artefact rather than event dynamics.
+
+The linear MSX model comes close to the neural models on Taobao and Retweet, but it is far behind on
+Amazon and Taxi, whose dynamics are not self-exciting.
 
 \paragraph{Tuning budgets.} We selected the EPT-X configuration on validation data from a search
-over Erlang orders, grid size, encoder depth and width, an attention encoder, batch size and weight
-decay, with one seed per variant (Table~\ref{tab:ablation} and Appendix~\ref{app:details}). The
-published baselines, in contrast, carry their authors' own tuning, and our order-book baselines
-use the authors' EasyTPP configurations with one seed each. The small margins on Taobao and
-StackOverflow should be read with this in mind. The margins on Retweet and on the order books are
-large compared with any seed-to-seed variation we observed.
+over Erlang orders, grid size, encoder depth and width, an attention encoder, batch size, weight
+decay and the three new components, with one seed per variant (Table~\ref{tab:ablation} and
+Appendix~\ref{app:details}). The published baselines, in contrast, carry their authors' own tuning,
+and our order-book baselines use the authors' EasyTPP configurations with one seed each. The small
+margin on StackOverflow should be read with this in mind. The margins on Retweet, Taobao and the
+order books are large compared with any seed-to-seed variation we observed.
 
 \begin{table}[!htbp]\centering\small
 \caption{Public benchmarks: test log-likelihood per event (higher is better). Published
-numbers are from \citet{chang2025deep} (five seeds each). Our rows give the mean $\pm$ s.d.\ over
+numbers are from \citet{chang2025deep} and \citet{boyd2025hyper}. Our rows give the mean $\pm$ s.d.\ over
 seeds (EPT-X: \eptxSeeds; other rows one seed), and the EPT-X configuration is selected per
 dataset on validation. Bold: best; underlined: second best; shaded: our models.}
 \label{tab:track-b}
@@ -81,16 +91,16 @@ dataset on validation. Bold: best; underlined: second best; shaded: our models.}
 \end{table}
 
 \paragraph{Next-event prediction.} Table~\ref{tab:pred} reports the two prediction metrics used by
-\citet{chang2025deep}. For the time of the next event, EPT-X has the lowest RMSE on Retweet (14{,}336\,s
-against 15{,}911\,s for NHP) and StackOverflow (1.013 against 1.014 for S2P2), and equals the best
-published RMSE to three decimals on Amazon (0.327), Taxi (0.281) and Taobao (0.125). For the mark of the next
-event, its accuracy is below that of S2P2 and NHP on four of the five datasets. This is the same
-split between time and mark that the likelihood decomposition shows on Taxi.
+\citet{chang2025deep}. For the time of the next event, EPT-X has the lowest RMSE on Retweet and
+StackOverflow, ties the best published value to three decimals on Taxi and Taobao, and is second on
+Amazon (0.327 against 0.324 for HHP). Its mark accuracy is below that of the best published models
+on four of the five datasets. The residual mark law raised the mark likelihood, but not the
+accuracy of the most likely mark.
 
 \begin{table}[!htbp]\centering\small
 \caption{Next-event prediction on the public benchmarks: time RMSE (top, lower is better; Retweet
 in seconds) and mark accuracy (bottom, \%, higher is better). Published numbers from
-\citet{chang2025deep}, Table~2(b,c). EPT-X: mean $\pm$ s.d.\ over seeds of the
+\citet{chang2025deep} and \citet{boyd2025hyper}, Table~2(b,c) of each. EPT-X: mean $\pm$ s.d.\ over seeds of the
 validation-selected configuration. Bold: best; underlined: second best; shaded: ours.}\label{tab:pred}
 \setlength{\tabcolsep}{5pt}
 \input{tables/track_b_rmse}\\[6pt]
@@ -146,24 +156,50 @@ with LayerNorm and dropout), a wider one (128 units) and S2P2's larger batch do 
 so S2P2's edge on Taxi is not a matter of encoder capacity or optimisation.
 \item \emph{Hawkes backbone.} Without it, EPT reaches \eptNoBackbone{} nats per event on LOBSTER
 AAPL, below the classical MSX estimator.
+\item \emph{Residual mark law.} It helps where the marks follow the elapsed time closely: on Taxi
+and StackOverflow. It is neutral on Amazon and INTC and slightly worse on Taobao.
+\item \emph{Data-adaptive atoms.} They help only on Amazon, whose gaps fill two narrow intervals.
+\item \emph{Certified warm start.} It helps most on Taobao and Amazon, and on Retweet it raises the
+validation likelihood by 0.03 nats per event. It does not help on Taxi, StackOverflow or the order
+books. On Retweet, whose gaps reach $6\times10^4$\,s, the small initial read-outs integrate to a
+visible compensator; shrinking them until the start matches MSX also stalls their training within
+the 25-epoch budget. Our Retweet result therefore uses the warm start without the guarantee of
+Proposition~\ref{prop:floor}.
 \end{itemize}
 
-\paragraph{Cost.} Exactness is not free in our implementation (Table~\ref{tab:cost}). On the same
-GPU, an EPT-X epoch on LOBSTER AAPL takes about four times as long as an S2P2 epoch, because our
-event recursion is a sequential loop while the Monte Carlo baselines vectorise over events. The
-exact compensator adds only a few closed-form terms per event, so a parallel-scan implementation
-of the Erlang recursion should remove most of this overhead.
+\paragraph{Where the events come from.} Because every channel has a closed-form compensator, the
+expected number of events splits exactly by channel (Table~\ref{tab:attribution}). The split differs
+across data. On Taxi, four in five events come from the renewal channel, and on Retweet four in five
+come from the neural state. On Taobao and StackOverflow, about half come from the Hawkes backbone,
+and on the order books the renewal channel carries 41 to 58\%, with the backbone and the neural state
+sharing the rest. The backbone is not constrained to be stationary, so its weights
+describe excitation within a sequence rather than a long-run branching ratio.
 
 \begin{table}[!htbp]\centering\small
-\caption{Training cost per epoch (including validation) and model size. EasyTPP baselines are
-timed over their full epoch budget; EPT-X stops early on validation.}\label{tab:cost}
+\caption{Exact share (\%) of the expected number of test events contributed by each channel of the
+selected EPT-X model (seed 0).}\label{tab:attribution}
+\input{tables/attribution}
+\end{table}
+
+\paragraph{Cost.} Exactness does not have to cost time (Table~\ref{tab:cost}). Evaluated with the
+parallel scan of Lemma~\ref{lem:scan}, an EPT-X epoch, including validation, is \scanSpeedTaxi{}
+times faster than with the event loop on Taxi and \scanSpeedAAPL{} times faster on LOBSTER AAPL,
+where it takes \scanSecAAPL{}\,s against 5.8\,s for S2P2 on the same GPU. The two evaluations give
+the same likelihood and gradients up to floating-point rounding.
+
+\begin{table}[!htbp]\centering\small
+\caption{Training cost per epoch (including validation) and model size. EPT-X: one epoch of the
+same model timed with the event loop and with the parallel scan. EasyTPP baselines: average over
+their full epoch budget.}\label{tab:cost}
 \input{tables/cost}
 \end{table}
 
 \begin{table}[!htbp]\centering\footnotesize
 \caption{EPT-X ablations: validation log-likelihood per event (higher is better). The EPT and
-EPT-X rows are the final runs (mean $\pm$ s.d.\ over seeds); the variants are single-seed selection
-runs with a 100-epoch budget. Bold: best; underlined: second best.}\label{tab:ablation}
+EPT-X rows are the final runs (mean $\pm$ s.d.\ over seeds); each variant is one seed. Encoder and
+atom variants use a 100-epoch budget. The last three rows add one new component each, with the
+final budget on Taxi, Taobao and StackOverflow and 100 epochs on Amazon and INTC, where they are
+added to the sharp-atom configuration. Bold: best; underlined: second best.}\label{tab:ablation}
 \setlength{\tabcolsep}{4pt}
 \input{tables/ablation}
 \end{table}

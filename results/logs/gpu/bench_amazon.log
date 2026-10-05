@@ -1,0 +1,5 @@
+
+=== Sat Oct  3 21:36:01 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/bench_parallel.py amazon "{\"hidden\": 64, \"n_rates\": 8, \"phases\": 4, \"renewal\": true, \"rn_shift\": true, \"rn_scales\": 96, \"rn_orders\": [1, 4, 16, 64, 256, 1024]}" cuda
+amazon event loop 209.8s
+amazon parallel 57.3s
+{"event_loop": 209.79664635658264, "parallel": 57.26839804649353, "dataset": "amazon", "device": "cuda", "config": {"hidden": 64, "n_rates": 8, "phases": 4, "renewal": true, "rn_shift": true, "rn_scales": 96, "rn_orders": [1, 4, 16, 64, 256, 1024]}, "speedup": 3.663392962140456}

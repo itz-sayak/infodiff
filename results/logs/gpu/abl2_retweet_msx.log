@@ -1,0 +1,8 @@
+
+=== Sun Oct  4 06:29:30 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_ablation.py retweet 0 v2_msx "{\"hidden\": 64, \"n_rates\": 8, \"phases\": 4, \"epochs\": 25, \"patience\": 5, \"renewal\": true, \"bs\": 32, \"init_from_msx\": true}"
+  retweet seed=0 ep=0 val_ll=-6.1045 best=-6.1045
+  retweet seed=0 ep=5 val_ll=-5.8349 best=-5.8349
+  retweet seed=0 ep=10 val_ll=-5.7822 best=-5.7822
+  retweet seed=0 ep=15 val_ll=-5.7518 best=-5.7518
+  retweet seed=0 ep=20 val_ll=-5.7399 best=-5.7399
+RESULT {"ll_per_event": -5.684025780726676, "n_events": 216465.0, "time_ll": -4.913058656999977, "mark_ll": -0.7709671237266995, "channel_share": {"baseline": 0.008206022481687024, "neural_state": 0.7966142444615439, "hazard": 0.016107460252561635, "hawkes": 0.1156955614185971, "renewal": 0.06337671138561027}, "backbone_rho": 16.189634323120117, "rmse": 14418.646484375, "acc": 0.6054743528366089, "dataset": "retweet", "seed": 0, "val_ll": -5.738090054666754, "epochs": 25, "seconds": 9180.918357849121, "hidden": 64, "n_rates": 8, "n_channels": 4, "phases": 4, "lr": 0.01, "gompertz": true, "model": "EPT-X", "renewal": true, "input_v2": true, "ept_channel": true, "rn_shift": false, "rn_scales": 24, "rn_orders": [1, 4, 16], "n_layers": 1, "layer_norm": false, "dropout": 0.0, "weight_decay": 0.0, "encoder": "gru", "rn_quantile": 0, "mark_head": "intensity", "init_from_msx": true, "val_ll_init": -13.355767699664202, "msx_val_ll": -6.591427059394308, "msx_test_ll": -6.5675139858665945, "n_params": 72308, "batch_size": 32, "config": {"hidden": 64, "n_rates": 8, "phases": 4, "epochs": 25, "patience": 5, "renewal": true, "bs": 32, "init_from_msx": true}, "tag": "v2_msx"}

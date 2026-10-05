@@ -1,0 +1,5 @@
+
+=== Sun Oct  4 09:06:50 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/bench_parallel.py lob_aapl "{\"hidden\": 64, \"n_rates\": 8, \"phases\": 2, \"renewal\": true, \"rn_shift\": true, \"rn_orders\": [1, 4, 16, 64, 256, 1024]}" cuda
+lob_aapl event loop 13.0s
+lob_aapl parallel 4.5s
+{"event_loop": 13.005182981491089, "parallel": 4.459271192550659, "dataset": "lob_aapl", "device": "cuda", "config": {"hidden": 64, "n_rates": 8, "phases": 2, "renewal": true, "rn_shift": true, "rn_orders": [1, 4, 16, 64, 256, 1024]}, "speedup": 2.916436883950144}

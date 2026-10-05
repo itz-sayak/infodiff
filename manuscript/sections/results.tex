@@ -107,29 +107,40 @@ surprise, by release and asset (pooled model). $^\ast$As in Table~\ref{tab:absor
 
 \FloatBarrier
 \subsection{Track B: public marked-TPP benchmarks}
-Table~\ref{tab:track-b} compares our models with the published numbers of
-\citet{chang2025deep} under the same protocol; our re-run of S2P2 on Taxi (0.524 against
-the published 0.522) validates the harness. On Retweet, the largest dataset (2.2 million training
-events), EPT-X improves on the best published model by more than 0.6 nats per event, with
-a 25-epoch budget imposed by compute and the validation likelihood still rising. On Taobao
-($1.316\pm0.005$ against IntensityFree's published $1.318\pm0.017$) and StackOverflow
-($-2.166\pm0.001$ against S2P2's $-2.163\pm0.009$) the differences are within one published
-standard deviation. On Taxi, EPT-X is 0.02 nats per event behind S2P2. There our time term equals
-S2P2's (0.733 vs.\ 0.735 nats per event on the re-run) and the whole difference lies in the
-mark term. On Amazon, whose inter-event times concentrate in a narrow band (median
-0.73, 99th percentile 0.80), the Erlang orders used elsewhere (coefficient of variation
-$\ge 1/4$) cannot represent the mode; adding atoms of order up to 1024 (coefficient of
-variation $1/32$), evaluated through the regularised incomplete gamma function, raises
-EPT-X by 1.1 nats per event on both validation and test, into second place behind S2P2.
-Neither a deeper (three residual layers) nor a wider (128 units) encoder improved the
-validation likelihood on any dataset. The renewal channel adds 0.07 nats per event over
-EPT on Taxi and 0.02 on StackOverflow. The linear MSX model is close to the neural models
-on Taobao (1.305) and Retweet, and far behind on Amazon and Taxi, where the dynamics are
-not self-exciting.
+Table~\ref{tab:track-b} compares our models with the published numbers of \citet{chang2025deep}
+and \citet{boyd2025hyper} under the same protocol; our re-run of S2P2 on Taxi (0.524 against the
+published 0.522) validates the harness.
+
+EPT-X has the best likelihood on three of the five datasets (Table~\ref{tab:track-b}). On Retweet,
+the largest dataset with 2.2 million training events, it reaches $\eptxLLRetweet\pm\eptxSDRetweet$
+against $-6.348$ for the best published model, with a 25-epoch budget imposed by compute. On Taobao,
+starting from the certified MSX fit (Proposition~\ref{prop:floor}) raises EPT-X to
+$\eptxLLTaobao\pm\eptxSDTaobao$, against IntensityFree's published $1.318\pm0.017$. On
+StackOverflow, the residual mark law gives $\eptxLLStackOverflow\pm\eptxSDStackOverflow$ against
+S2P2's $-2.163\pm0.009$, so the two are within one published standard deviation.
+
+On Taxi, EPT-X reaches $\eptxLLTaxi\pm\eptxSDTaxi$ against $0.522\pm0.004$ for S2P2 and HHP. The
+residual mark law closed most of the earlier gap: our mark term now equals that of our S2P2 re-run
+($-0.210$ against $-0.211$), and the remaining difference lies in the time term ($0.726$ against
+$0.735$).
+
+Amazon needs a separate comment. In the EasyTPP release every gap lies in one of two intervals,
+$[0.010,0.015]$ (\amzShortShare\% of the test gaps) or $[0.70,0.80]$, and within each interval the
+gaps are uniform; Kolmogorov--Smirnov tests do not reject uniformity at the 1\% level on any split.
+The timestamps were evidently resampled during preprocessing. A history-free density made of the
+two boxes already reaches a time log-likelihood of \amzBoxLL{} nats per event, so on Amazon the
+time term mostly measures how sharply a model resolves two hard edges and how well it predicts
+which interval comes next. Smooth densities, such as Erlang or log-normal mixtures, lose at the
+edges. Data-adaptive atoms and the certified start raise EPT-X to
+$\eptxLLAmazon\pm\eptxSDAmazon$, second behind S2P2. We did not add box-shaped components, because
+they would fit a preprocessing artefact rather than event dynamics.
+
+The linear MSX model comes close to the neural models on Taobao and Retweet, but it is far behind on
+Amazon and Taxi, whose dynamics are not self-exciting.
 
 \begin{table}[!htbp]\centering\small
 \caption{Track B, public benchmarks: test log-likelihood per event (higher is better).
-Published numbers are from \citet{chang2025deep} (five seeds each); our rows give mean
+Published numbers are from \citet{chang2025deep} and \citet{boyd2025hyper}; our rows give mean
 $\pm$ s.d.\ over seeds (EPT-X: \eptxSeeds; other rows one seed), with the EPT-X
 configuration selected per dataset on validation. Bold: best; underlined: second best;
 shaded: our models.}
@@ -138,16 +149,17 @@ shaded: our models.}
 \input{tables/track_b}
 \end{table}
 
-For next-event prediction (Table~\ref{tab:pred}), EPT-X has the lowest time RMSE on Retweet
-(14{,}336\,s against 15{,}911\,s for NHP) and StackOverflow (1.013 against 1.014 for S2P2), and
-equals the best published RMSE to three decimals on Amazon (0.327), Taxi (0.281) and Taobao (0.125). Its accuracy for the mark of
-the next event is lower than that of S2P2 and NHP on four of them. This is the same split between
-time and mark that the likelihood decomposition shows.
+\paragraph{Next-event prediction.} Table~\ref{tab:pred} reports the two prediction metrics used by
+\citet{chang2025deep}. For the time of the next event, EPT-X has the lowest RMSE on Retweet and
+StackOverflow, ties the best published value to three decimals on Taxi and Taobao, and is second on
+Amazon (0.327 against 0.324 for HHP). Its mark accuracy is below that of the best published models
+on four of the five datasets. The residual mark law raised the mark likelihood, but not the
+accuracy of the most likely mark.
 
 \begin{table}[!htbp]\centering\small
 \caption{Next-event prediction on the public benchmarks: time RMSE (top, lower is better; Retweet
 in seconds) and mark accuracy (bottom, \%, higher is better). Published numbers from
-\citet{chang2025deep}, Table~2(b,c). Bold: best; underlined: second best; shaded: ours.}\label{tab:pred}
+\citet{chang2025deep} and \citet{boyd2025hyper}, Table~2(b,c) of each. Bold: best; underlined: second best; shaded: ours.}\label{tab:pred}
 \setlength{\tabcolsep}{5pt}
 \input{tables/track_b_rmse}\\[6pt]
 \input{tables/track_b_acc}

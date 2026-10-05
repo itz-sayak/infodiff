@@ -196,3 +196,163 @@ def test_transformer_encoder_exact_compensator():
             lam, Lam = m._curve(states[:, n - 1], mus[:, n - 1], grid, H[:, n - 1])
             assert torch.allclose(torch.trapezoid(lam.sum(-1), grid, dim=1), comp[:, n - 1], rtol=2e-4)
             assert torch.allclose(torch.log(lam[torch.arange(B), -1, marks[:, n]]), log_lam[:, n - 1], atol=1e-8)
+
+
+def _eptx_quantile(**kw):
+    from infodiff.experiments.track_b import quantile_atoms
+    rng = np.random.default_rng(0)
+    gaps = np.concatenate([rng.uniform(0.010, 0.014, 300), rng.uniform(0.65, 0.80, 600)])
+    qm, qr, qd = quantile_atoms(gaps, 12, 1.0, 512)
+    return _eptx(rn_q_means=qm, rn_q_orders=qr, rn_q_delta=qd, **kw)
+
+
+def test_quantile_atoms_are_sharp_where_data_are_dense():
+    from infodiff.experiments.track_b import quantile_atoms
+    gaps = np.concatenate([np.full(10, 0.1), np.linspace(1.0, 1.1, 200), np.linspace(5, 50, 20)])
+    m, R, d = quantile_atoms(gaps, 20, 1.0, 4096)
+    assert len(m) == len(R) == len(d) and np.all(np.diff(m) > 0)
+    R = np.asarray(R)
+    inside = (np.asarray(m) > 1.0) & (np.asarray(m) < 1.1)
+    assert R[inside].min() > R[~inside].max()  # densest region gets the sharpest atoms
+
+
+def test_quantile_atoms_exact_compensator():
+    cfg, m = _eptx_quantile()
+    dts, marks, mask = _toy()
+    dts[:, 2] = 0.7  # inside the dense band
+    B, L = dts.shape
+    with torch.no_grad():
+        log_lam, comp, states, mus = m.forward(dts, marks, mask)
+        H = m._last_h
+        for n in range(1, L):
+            u = torch.linspace(0, 1, 400001, dtype=torch.float64)
+            grid = (u ** 3)[None, :] * dts[:, n:n + 1]
+            lam, Lam = m._curve(states[:, n - 1], mus[:, n - 1], grid, H[:, n - 1])
+            num = torch.trapezoid(lam.sum(-1), grid, dim=1)
+            assert torch.allclose(num, comp[:, n - 1], rtol=5e-4), (n, num, comp[:, n - 1])
+            assert torch.allclose(torch.log(lam[torch.arange(B), -1, marks[:, n]]), log_lam[:, n - 1], atol=1e-8)
+
+
+def test_residual_mark_head_starts_at_intensity_marks():
+    _, a = _eptx()
+    _, b = _eptx(mark_head="residual")
+    b.load_state_dict(a.state_dict(), strict=False)  # mk_head keeps its zero output layer
+    with torch.no_grad():
+        b.mk_head[2].weight.zero_()
+        b.mk_head[2].bias.zero_()
+        dts, marks, mask = _toy()
+        la, ca, _, _ = a.forward(dts, marks, mask)
+        lb, cb, _, _ = b.forward(dts, marks, mask)
+    assert torch.allclose(ca, cb) and torch.allclose(la, lb, atol=1e-9)
+
+
+def test_residual_mark_head_is_exact_and_normalised():
+    cfg, m = _eptx(mark_head="residual")
+    dts, marks, mask = _toy()
+    B, L = dts.shape
+    with torch.no_grad():
+        log_lam, comp, states, mus = m.forward(dts, marks, mask)
+        H = m._last_h
+        assert (log_lam <= m._last_log_tot + 1e-9).all()
+        for n in range(1, L):
+            u = torch.linspace(0, 1, 200001, dtype=torch.float64)
+            grid = (u ** 3)[None, :] * dts[:, n:n + 1]
+            lam, Lam = m._curve(states[:, n - 1], mus[:, n - 1], grid, H[:, n - 1])
+            num = torch.trapezoid(lam.sum(-1), grid, dim=1)
+            assert torch.allclose(num, comp[:, n - 1], rtol=2e-4)
+            assert torch.allclose(torch.log(lam[torch.arange(B), -1, marks[:, n]]), log_lam[:, n - 1], atol=1e-8)
+
+
+def _ragged(L=9, B=4, M=3):
+    torch.manual_seed(5)
+    dts = torch.rand(B, L, dtype=torch.float64) * 3.0
+    dts[:, 2] = 1e-3
+    dts[:, 0] = 0
+    marks = torch.randint(0, M, (B, L))
+    mask = torch.ones(B, L, dtype=torch.bool)
+    for b, n in enumerate([L, L - 3, 4, 2]):
+        mask[b, n:] = False
+        marks[b, n:] = M
+        dts[b, n:] = 0
+    return dts, marks, mask
+
+
+import pytest
+
+
+@pytest.mark.parametrize("kw", [
+    dict(renewal=False),
+    dict(),
+    dict(mark_head="residual"),
+    dict(n_layers=3, layer_norm=True),
+    dict(encoder="transformer"),
+    dict(mark_mixing=False, gompertz=False),
+    dict(quantile=True),
+    dict(quantile=True, mark_head="residual"),
+])
+def test_parallel_forward_equals_event_loop(kw):
+    q = kw.pop("quantile", False)
+    cfg, m = _eptx_quantile(**kw) if q else _eptx(**kw)
+    m.eval()
+    dts, marks, mask = _ragged()
+    sel = mask[:, 1:]
+    m.cfg.parallel = False
+    a = m.forward(dts, marks, mask)
+    ta = m._last_log_tot
+    lla, _ = m.loglik(dts, marks, mask)
+    ga = torch.autograd.grad(lla, [p for p in m.parameters()], allow_unused=True)
+    m.cfg.parallel = True
+    b = m.forward(dts, marks, mask)
+    tb = m._last_log_tot
+    llb, _ = m.loglik(dts, marks, mask)
+    gb = torch.autograd.grad(llb, [p for p in m.parameters()], allow_unused=True)
+    assert torch.allclose(a[0][sel], b[0][sel], atol=1e-9) and torch.allclose(a[1][sel], b[1][sel], atol=1e-9)
+    assert torch.allclose(ta[sel], tb[sel], atol=1e-9)
+    valid = mask
+    assert torch.allclose(a[2][valid], b[2][valid], atol=1e-9) and torch.allclose(a[3][valid], b[3][valid], atol=1e-9)
+    assert torch.allclose(lla, llb, atol=1e-8)
+    for x, y in zip(ga, gb):
+        if x is not None or y is not None:
+            assert torch.allclose(x, y, atol=1e-7, rtol=1e-6)
+
+
+def test_init_from_hawkes_reproduces_linear_hawkes_loglik():
+    """Warm start at a linear phase-type Hawkes process: the model's exact log-likelihood equals a
+    brute-force Hawkes log-likelihood (intensity sums over past events, Erlang CDF compensator)."""
+    from scipy.special import gammainc, gammaln
+    M, K, R = 3, 4, 2
+    betas = np.array([0.3, 1.0, 3.0, 10.0])
+    rng = np.random.default_rng(0)
+    A = rng.uniform(0, 0.1, (M, M, K, R))
+    mu = rng.uniform(0.05, 0.3, M)
+    cfg = EPTConfig(n_marks=M, hidden=8, n_rates=2, n_channels=1, hb_rates=K, hb_phases=R,
+                    hb_betas=tuple(betas), renewal=True, rn_scales=4, rn_orders=(1, 4), rn_lo=0.01, rn_hi=10.0)
+    m = EPTTPP(cfg).double()
+    m.init_from_hawkes(A, mu, eps_logit=-40.0)
+    dts, marks, mask = _toy(L=8, B=2, M=M)
+    with torch.no_grad():
+        ll, _ = m.loglik(dts, marks, mask)
+    ref = 0.0
+    for b in range(dts.shape[0]):
+        t = np.cumsum(dts[b].numpy())
+        y = marks[b].numpy()
+        for n in range(1, len(t)):
+            lag, lag0 = t[n] - t[:n], t[n - 1] - t[:n]
+            g = np.exp(np.log(betas)[None, :, None] + np.arange(R) * np.log(betas[None, :, None] * lag[:, None, None])
+                       - betas[None, :, None] * lag[:, None, None] - gammaln(np.arange(R) + 1))
+            lam = mu[y[n]] + (A[y[n], y[:n]] * g).sum()
+            G = gammainc(np.arange(R)[None, None, :] + 1, betas[None, :, None] * lag[:, None, None]) \
+                - gammainc(np.arange(R)[None, None, :] + 1, betas[None, :, None] * lag0[:, None, None])
+            comp = mu.sum() * (t[n] - t[n - 1]) + (A[:, y[:n]].transpose(1, 0, 2, 3) * G[:, None]).sum()
+            ref += np.log(lam) - comp
+    assert abs(float(ll) - ref) < 1e-8 * max(1.0, abs(ref)), (float(ll), ref)
+
+
+@pytest.mark.parametrize("kw", [dict(), dict(mark_head="residual"), dict(renewal=False)])
+def test_channel_parts_sum_to_compensator(kw):
+    cfg, m = _eptx(**kw)
+    dts, marks, mask = _ragged()
+    with torch.no_grad():
+        _, comp, _, _ = m.forward(dts, marks, mask)
+    tot = sum(m._last_comp_parts.values())
+    assert torch.allclose(tot, comp, atol=1e-12) and all((v >= -1e-12).all() for v in m._last_comp_parts.values())

@@ -1,0 +1,13 @@
+
+=== Sun Oct  4 14:06:05 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_ablation.py amazon 0 v2_res "{\"epochs\": 100, \"patience\": 20, \"renewal\": true, \"n_rates\": 8, \"phases\": 4, \"hidden\": 64, \"rn_shift\": true, \"rn_orders\": [1, 4, 16, 64, 256, 1024], \"rn_scales\": 96, \"mark_head\": \"residual\"}"
+  amazon seed=0 ep=0 val_ll=-0.7914 best=-0.7914
+  amazon seed=0 ep=5 val_ll=0.4542 best=0.4542
+  amazon seed=0 ep=10 val_ll=0.5837 best=0.5837
+  amazon seed=0 ep=15 val_ll=0.6212 best=0.6212
+  amazon seed=0 ep=20 val_ll=0.6325 best=0.6377
+  amazon seed=0 ep=25 val_ll=0.6416 best=0.6448
+  amazon seed=0 ep=30 val_ll=0.6422 best=0.6465
+  amazon seed=0 ep=35 val_ll=0.6412 best=0.6465
+  amazon seed=0 ep=40 val_ll=0.6343 best=0.6465
+  amazon seed=0 ep=45 val_ll=0.6333 best=0.6465
+RESULT {"ll_per_event": 0.6443392658937902, "n_events": 82197.0, "time_ll": 2.5260029116406315, "mark_ll": -1.8816636457468414, "channel_share": {"baseline": 6.134870088024875e-05, "neural_state": 9.56568990797974e-05, "hazard": 4.189322518340186e-06, "hawkes": 0.015105727645315625, "renewal": 0.984733077432206}, "backbone_rho": 0.01714470051229, "rmse": 0.3272678554058075, "acc": 0.35942918062210083, "dataset": "amazon", "seed": 0, "val_ll": 0.6465423989890325, "epochs": 48, "seconds": 4186.493544101715, "hidden": 64, "n_rates": 8, "n_channels": 4, "phases": 4, "lr": 0.01, "gompertz": true, "model": "EPT-X", "renewal": true, "input_v2": true, "ept_channel": true, "rn_shift": true, "rn_scales": 96, "rn_orders": [1, 4, 16, 64, 256, 1024], "n_layers": 1, "layer_norm": false, "dropout": 0.0, "weight_decay": 0.0, "encoder": "gru", "rn_quantile": 0, "mark_head": "residual", "init_from_msx": false, "val_ll_init": null, "msx_val_ll": null, "msx_test_ll": null, "msx_eps_logit": null, "n_params": 330787, "batch_size": 64, "config": {"epochs": 100, "patience": 20, "renewal": true, "n_rates": 8, "phases": 4, "hidden": 64, "rn_shift": true, "rn_orders": [1, 4, 16, 64, 256, 1024], "rn_scales": 96, "mark_head": "residual"}, "tag": "v2_res"}

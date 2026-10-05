@@ -87,10 +87,11 @@ def grouped_table(cols, groups, values, higher=True, d=3, exclude_rank=()):
     """cols: column headers; groups: [(title, [row names], shaded)]; values: row -> col -> (mu, sd)."""
     allrows = [r for _, rows, _ in groups for r in rows if r not in exclude_rank]
     rk = {}
-    for c in cols:
-        v = [values.get(r, {}).get(c, (np.nan, None))[0] for r in allrows]
-        b, s = ranks(v, higher)
-        rk[c] = (allrows[b] if b is not None else None, allrows[s] if s is not None else None)
+    for c in cols:  # ranks at the printed precision: rows that print the same value share a rank
+        v = {r: values.get(r, {}).get(c, (np.nan, None))[0] for r in allrows}
+        v = {r: round(x, 0 if abs(x) >= 1000 else d) for r, x in v.items() if x is not None and np.isfinite(x)}
+        lv = sorted(set(v.values()), reverse=higher)
+        rk[c] = ({r for r, x in v.items() if lv and x == lv[0]}, {r for r, x in v.items() if len(lv) > 1 and x == lv[1]})
     n = len(cols) + 1
     lines = ["\\begin{tabular}{l" + "r" * len(cols) + "}", "\\toprule", "& " + " & ".join(cols) + " \\\\", "\\midrule"]
     first = True
@@ -103,7 +104,7 @@ def grouped_table(cols, groups, values, higher=True, d=3, exclude_rank=()):
             cells = []
             for c in cols:
                 mu, sd = values.get(r, {}).get(c, (np.nan, None))
-                cells.append(cell(mu, sd, d, 1 if rk[c][0] == r else 2 if rk[c][1] == r else 0))
+                cells.append(cell(mu, sd, d, 1 if r in rk[c][0] else 2 if r in rk[c][1] else 0))
             if r in exclude_rank:  # shown for reference only: greyed out
                 cells = ["\\textcolor{gray}{" + c + "}" for c in cells]
                 name = "\\textcolor{gray}{" + r + "}"
@@ -195,6 +196,8 @@ PUBLISHED_S2P2 = {  # Chang et al. (2025), Table 2(a): test LL per event (5 seed
     "NHP": dict(amazon=0.129, retweet=-6.348, taxi=0.514, taobao=1.157, stackoverflow=-2.241),
     "AttNHP": dict(amazon=0.484, retweet=-6.499, taxi=0.493, taobao=1.259, stackoverflow=-2.194),
     "S2P2": dict(amazon=0.781, retweet=-6.365, taxi=0.522, taobao=1.304, stackoverflow=-2.163),
+    # Boyd et al. (2025), Table 2(a), same splits and protocol (paper/boyd2025_hyper_hawkes.pdf)
+    "HHP": dict(amazon=0.603, retweet=-6.357, taxi=0.522, taobao=1.273, stackoverflow=-2.195),
 }
 DS_B = ["amazon", "retweet", "taxi", "taobao", "stackoverflow"]
 # Chang et al. (2025), Table 2(b) next-event time RMSE and 2(c) next-mark accuracy (%), means over
@@ -208,6 +211,7 @@ PUBLISHED_RMSE = {
     "NHP": dict(amazon=0.339, retweet=15911, taxi=0.282, taobao=0.126, stackoverflow=1.019),
     "AttNHP": dict(amazon=2.656, retweet=16171, taxi=1.739, taobao=0.130, stackoverflow=1.256),
     "S2P2": dict(amazon=0.327, retweet=15987, taxi=0.281, taobao=0.126, stackoverflow=1.014),
+    "HHP": dict(amazon=0.324, retweet=15589, taxi=0.281, taobao=0.126, stackoverflow=1.016),  # Boyd et al. 2(b)
 }
 PUBLISHED_ACC = {
     "RMTPP": dict(amazon=30.8, retweet=53.4, taxi=91.4, taobao=60.9, stackoverflow=45.6),
@@ -218,8 +222,12 @@ PUBLISHED_ACC = {
     "NHP": dict(amazon=39.4, retweet=61.4, taxi=92.9, taobao=61.5, stackoverflow=47.1),
     "AttNHP": dict(amazon=38.9, retweet=60.7, taxi=92.6, taobao=61.3, stackoverflow=48.2),
     "S2P2": dict(amazon=40.7, retweet=61.3, taxi=93.1, taobao=61.1, stackoverflow=47.5),
+    "HHP": dict(amazon=40.9, retweet=61.3, taxi=93.0, taobao=61.4, stackoverflow=47.1),  # Boyd et al. 2(c)
 }
 _PRED = {}  # filled by table_b: model -> ds -> (rmse list, acc list) of the validation-selected config
+
+
+_NUMS = []  # macros produced while building tables, written out by numbers()
 
 
 def table_b():
@@ -256,6 +264,10 @@ def table_b():
     (OUT / "track_b.tex").write_text(tab)
     seeds = {nice(m): {head[d]: len(x) for d, x in dv.items()} for m, dv in ours.items()}
     (OUT / "track_b_seeds.json").write_text(json.dumps(seeds, indent=1))
+    for d, x in ours.get("EPT-X (ours)", {}).items():  # final EPT-X numbers quoted in the prose
+        mu, sd = mean_sd(x)
+        _NUMS.append(f"\\newcommand{{\\eptxLL{head[d]}}}{{{mu:.3f}}}")
+        _NUMS.append(f"\\newcommand{{\\eptxSD{head[d]}}}{{{sd if sd is not None else 0:.3f}}}")
 
 
 def table_pred():
@@ -290,7 +302,12 @@ def table_cost():
     for ds, label, job in (("taxi", "Taxi", "eptx_taxi_s0"), ("lob_aapl", "LOBSTER AAPL", "eptx_lob_aapl_sharp_s0")):
         tag = "eptx" if ds == "taxi" else "eptx_sharp"
         f = J / "ept_runs" / f"{ds}__{tag}_s0.json"
-        if f.exists():
+        b = load(f"bench_parallel_{ds}.json")
+        if f.exists() and b and b.get("device") == "cuda":  # same model timed on the GPU both ways
+            npar = json.loads(f.read_text())["n_params"]
+            rows.append((label, "EPT-X, event loop (ours)", "GPU", b["event_loop"], npar, "exact"))
+            rows.append((label, "EPT-X, parallel scan (ours)", "GPU", b["parallel"], npar, "exact"))
+        elif f.exists():
             r = json.loads(f.read_text())
             rows.append((label, "EPT-X (ours)", device(job), r["seconds"] / r["epochs"], r["n_params"], "exact"))
         for m in ("S2P2", "NHP", "AttNHP", "THP", "IntensityFree"):
@@ -314,6 +331,26 @@ def table_cost():
     (OUT / "cost.tex").write_text("\n".join(lines))
 
 
+def table_attribution():
+    """Exact share (%) of the expected number of test events contributed by each EPT-X channel,
+    from the closed-form compensator of the selected final run (seed 0)."""
+    a = load("channel_attribution.json")
+    if not a:
+        return
+    order = [("amazon", "Amazon"), ("retweet", "Retweet"), ("taxi", "Taxi"), ("taobao", "Taobao"),
+             ("stackoverflow", "StackOverflow")] + [(f"lob_{t}", f"LOBSTER {t.upper()}") for t in TK]
+    cols = [("hawkes", "Hawkes backbone"), ("renewal", "renewal"), ("baseline", "baseline"),
+            ("hazard", "hazard terms"), ("neural_state", "neural state")]
+    lines = ["\\begin{tabular}{l" + "r" * len(cols) + "}", "\\toprule",
+             "Data & " + " & ".join(c for _, c in cols) + " \\\\", "\\midrule"]
+    for ds, name in order:
+        if ds in a:
+            sh = a[ds]["channel_share"]
+            lines.append(name + " & " + " & ".join(f"{100 * sh.get(k, 0.0):.1f}" for k, _ in cols) + " \\\\")
+    lines += ["\\bottomrule", "\\end{tabular}"]
+    (OUT / "attribution.tex").write_text("\n".join(lines))
+
+
 def table_ablation():
     """EPT-X component ablation: validation LL per event (selection protocol; one seed unless
     several final seeds exist). Rows are only filled where the run exists."""
@@ -326,7 +363,10 @@ def table_ablation():
                 ("\\quad + sharp atoms + deep encoder", ("abl", "sel_sharpdeep")),
                 ("\\quad + wide encoder (128 units)", ("abl", "sel_wide")),
                 ("\\quad + attention encoder (causal Transformer)", ("abl", "sel_attn")),
-                ("\\quad batch 256 (S2P2 setting)", ("abl", "sel_bs256"))]
+                ("\\quad batch 256 (S2P2 setting)", ("abl", "sel_bs256")),
+                ("\\quad + residual mark law", ("abl", "v2_res")),
+                ("\\quad + data-adaptive atoms", ("abl", {"amazon": "v2_q96", "lob_intc": "v2_q96", None: "v2_q48"})),
+                ("\\quad + certified warm start", ("abl", "v2_msx"))]
     values = {}
     for name, (kind, tag) in variants:
         for ds, head in dsets:
@@ -340,7 +380,8 @@ def table_ablation():
                             and r.get("config", {}).get("epochs", 100) <= 300]
                 vals = [r["val_ll"] for r in rows]
             else:
-                f = J / f"eptx_ablation_{ds}_{tag}.json"
+                t = tag.get(ds, tag[None]) if isinstance(tag, dict) else tag
+                f = J / f"eptx_ablation_{ds}_{t}.json"
                 vals = [json.loads(f.read_text())["val_ll"]] if f.exists() else []
             if vals:
                 values.setdefault(name, {})[head] = mean_sd(vals)
@@ -493,6 +534,14 @@ def table_main():
 def numbers():
     """LaTeX macros for every number quoted in the prose (computed, never typed)."""
     out = []
+    amz = ROOT / "data" / "raw" / "easytpp" / "amazon_test.jsonl"
+    if amz.exists():  # EasyTPP Amazon: every gap is uniform on one of two intervals (see the text)
+        g = np.concatenate([np.asarray(json.loads(l)["time_since_last_event"][1:], float) for l in amz.open()])
+        short, long_ = np.mean((g >= 0.010) & (g <= 0.015)), np.mean((g >= 0.70) & (g <= 0.80))
+        box_ll = long_ * np.log(long_ / 0.10) + short * np.log(short / 0.005)
+        out.append(f"\\newcommand{{\\amzBandShare}}{{{100 * (short + long_):.0f}}}")
+        out.append(f"\\newcommand{{\\amzShortShare}}{{{100 * short:.0f}}}")
+        out.append(f"\\newcommand{{\\amzBoxLL}}{{{box_ll:.2f}}}")
     r = load("main_pooled.json")
     if r:
         out.append(f"\\newcommand{{\\rhoPooled}}{{{r['rho']:.2f}}}")
@@ -600,11 +649,17 @@ def numbers():
             rhos.append(f"{v['rho']:.2f}")
     if rhos:
         out.append(f"\\newcommand{{\\rhoByYear}}{{{', '.join(rhos)}}}")
+    for ds, nm in (("taxi", "Taxi"), ("lob_aapl", "AAPL")):  # event loop vs parallel scan, same GPU
+        b = load(f"bench_parallel_{ds}.json")
+        if b:
+            out.append(f"\\newcommand{{\\scanSpeed{nm}}}{{{b['speedup']:.1f}}}")
+            out.append(f"\\newcommand{{\\scanSec{nm}}}{{{b['parallel']:.1f}}}")
+    out += _NUMS
     (ROOT / "manuscript" / "numbers.tex").write_text("\n".join(out) + "\n")
 
 
 if __name__ == "__main__":
-    for f in (table_a, table_b, table_pred, table_cost, table_ablation, table_c, table_d, table_main, numbers):
+    for f in (table_a, table_b, table_pred, table_cost, table_ablation, table_attribution, table_c, table_d, table_main, numbers):
         try:
             f()
             print("ok", f.__name__)

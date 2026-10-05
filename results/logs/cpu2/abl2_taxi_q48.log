@@ -1,0 +1,28 @@
+
+=== Sat Oct  3 21:28:23 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_ablation.py taxi 0 v2_q48 "{\"hidden\": 64, \"n_rates\": 8, \"phases\": 4, \"epochs\": 300, \"patience\": 40, \"renewal\": true, \"rn_quantile\": 48}"
+  taxi seed=0 ep=0 val_ll=-1.1471 best=-1.1471
+  taxi seed=0 ep=5 val_ll=0.0309 best=0.0309
+  taxi seed=0 ep=10 val_ll=0.2274 best=0.2274
+  taxi seed=0 ep=15 val_ll=0.3125 best=0.3125
+  taxi seed=0 ep=20 val_ll=0.3587 best=0.3587
+  taxi seed=0 ep=25 val_ll=0.3849 best=0.3849
+  taxi seed=0 ep=30 val_ll=0.4081 best=0.4081
+  taxi seed=0 ep=35 val_ll=0.4219 best=0.4219
+  taxi seed=0 ep=40 val_ll=0.4297 best=0.4297
+  taxi seed=0 ep=45 val_ll=0.4381 best=0.4385
+  taxi seed=0 ep=50 val_ll=0.4377 best=0.4421
+  taxi seed=0 ep=55 val_ll=0.4507 best=0.4507
+  taxi seed=0 ep=60 val_ll=0.4540 best=0.4540
+  taxi seed=0 ep=65 val_ll=0.4539 best=0.4575
+  taxi seed=0 ep=70 val_ll=0.4599 best=0.4608
+  taxi seed=0 ep=75 val_ll=0.4590 best=0.4611
+  taxi seed=0 ep=80 val_ll=0.4601 best=0.4611
+  taxi seed=0 ep=85 val_ll=0.4606 best=0.4630
+  taxi seed=0 ep=90 val_ll=0.4546 best=0.4630
+  taxi seed=0 ep=95 val_ll=0.4567 best=0.4630
+  taxi seed=0 ep=100 val_ll=0.4529 best=0.4630
+  taxi seed=0 ep=105 val_ll=0.4481 best=0.4630
+  taxi seed=0 ep=110 val_ll=0.4444 best=0.4630
+  taxi seed=0 ep=115 val_ll=0.4415 best=0.4630
+  taxi seed=0 ep=120 val_ll=0.4290 best=0.4630
+RESULT {"ll_per_event": 0.49517454869538835, "n_events": 14420.0, "time_ll": 0.725544745118542, "mark_ll": -0.2303701964231536, "rmse": 0.28195369243621826, "acc": 0.9165048599243164, "dataset": "taxi", "seed": 0, "val_ll": 0.4630310295820898, "epochs": 125, "seconds": 2560.612932920456, "hidden": 64, "n_rates": 8, "n_channels": 4, "phases": 4, "lr": 0.01, "gompertz": true, "model": "EPT-X", "renewal": true, "input_v2": true, "ept_channel": true, "rn_shift": false, "rn_scales": 24, "rn_orders": [1, 4, 16], "n_layers": 1, "layer_norm": false, "dropout": 0.0, "weight_decay": 0.0, "encoder": "gru", "rn_quantile": 48, "mark_head": "intensity", "n_params": 180489, "batch_size": 64, "config": {"hidden": 64, "n_rates": 8, "phases": 4, "epochs": 300, "patience": 40, "renewal": true, "rn_quantile": 48}, "tag": "v2_q48"}

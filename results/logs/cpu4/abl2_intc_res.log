@@ -1,0 +1,17 @@
+
+=== Sat Oct  3 22:45:35 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_ablation.py lob_intc 0 v2_res "{\"hidden\": 64, \"n_rates\": 8, \"phases\": 2, \"epochs\": 100, \"patience\": 20, \"renewal\": true, \"rn_shift\": true, \"rn_orders\": [1, 4, 16, 64, 256, 1024], \"mark_head\": \"residual\"}"
+  lob_intc seed=0 ep=0 val_ll=4.9706 best=4.9706
+  lob_intc seed=0 ep=5 val_ll=5.3756 best=5.3756
+  lob_intc seed=0 ep=10 val_ll=5.4418 best=5.4418
+  lob_intc seed=0 ep=15 val_ll=5.4734 best=5.4734
+  lob_intc seed=0 ep=20 val_ll=5.4917 best=5.4917
+  lob_intc seed=0 ep=25 val_ll=5.4929 best=5.5030
+  lob_intc seed=0 ep=30 val_ll=5.5104 best=5.5104
+  lob_intc seed=0 ep=35 val_ll=5.5100 best=5.5104
+  lob_intc seed=0 ep=40 val_ll=5.5070 best=5.5120
+  lob_intc seed=0 ep=45 val_ll=5.5122 best=5.5122
+  lob_intc seed=0 ep=50 val_ll=5.5039 best=5.5122
+  lob_intc seed=0 ep=55 val_ll=5.4983 best=5.5122
+  lob_intc seed=0 ep=60 val_ll=5.4999 best=5.5122
+  lob_intc seed=0 ep=65 val_ll=5.4991 best=5.5122
+RESULT {"ll_per_event": 6.16521359013362, "n_events": 104775.0, "time_ll": 7.214065221605822, "mark_ll": -1.0488516314722023, "channel_share": {"baseline": 0.014131026633106593, "neural_state": 0.2906612706042466, "hazard": 0.01712419275073684, "hawkes": 0.13219467857012995, "renewal": 0.54588883144178}, "backbone_rho": 0.3152411878108978, "rmse": 0.16671216487884521, "acc": 0.5445191860198975, "dataset": "lob_intc", "seed": 0, "val_ll": 5.512204886292996, "epochs": 66, "seconds": 4892.118296384811, "hidden": 64, "n_rates": 8, "n_channels": 4, "phases": 2, "lr": 0.01, "gompertz": true, "model": "EPT-X", "renewal": true, "input_v2": true, "ept_channel": true, "rn_shift": true, "rn_scales": 24, "rn_orders": [1, 4, 16, 64, 256, 1024], "n_layers": 1, "layer_norm": false, "dropout": 0.0, "weight_decay": 0.0, "encoder": "gru", "rn_quantile": 0, "mark_head": "residual", "init_from_msx": false, "val_ll_init": null, "msx_val_ll": null, "msx_test_ll": null, "n_params": 80627, "batch_size": 64, "config": {"hidden": 64, "n_rates": 8, "phases": 2, "epochs": 100, "patience": 20, "renewal": true, "rn_shift": true, "rn_orders": [1, 4, 16, 64, 256, 1024], "mark_head": "residual"}, "tag": "v2_res"}

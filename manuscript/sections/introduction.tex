@@ -47,12 +47,15 @@ state is phase-type. It combines a linear Hawkes backbone with a history-depende
 channel, a mixture of Erlang distributions that also allows ``no event'', added as a competing
 risk. The likelihood remains exact, the model contains the Hawkes backbone as a special case,
 and the renewal channel can approximate any conditional distribution of the next gap
-(Proposition~\ref{prop:eptx}).
-\item \textbf{Benchmarks and a correction to one baseline.} EPT-X has the best likelihood on all
-five LOBSTER order-book streams and on Retweet, and it is within one standard deviation of the
-best published model on Taobao and StackOverflow. We also find that a widely used IntensityFree
-implementation replaces every inter-event time below $10^{-5}$\,s by $10^{-5}$\,s before scoring.
-Scored on the observed gaps, it loses its lead on two order-book streams.
+(Proposition~\ref{prop:eptx}). Its states follow an affine recursion, so training uses a parallel
+scan (Lemma~\ref{lem:scan}), and it can start from the certified MSX fit, which gives it a
+validation likelihood no lower than that of MSX (Proposition~\ref{prop:floor}).
+\item \textbf{Benchmarks and two findings about the data.} EPT-X has the best likelihood on all
+five LOBSTER order-book streams and on Retweet and Taobao, and it is level with the best published
+model on StackOverflow. A widely used IntensityFree implementation replaces every inter-event time
+below $10^{-5}$\,s by $10^{-5}$\,s before scoring; scored on the observed gaps, it loses its lead on
+two order-book streams. The gaps of the EasyTPP Amazon data are uniform on two fixed intervals,
+which limits what its time likelihood can show.
 \item \textbf{Application.} We study six markets around 670 scheduled macroeconomic releases
 between 2022 and 2026, with a placebo test built into the likelihood. The direct reaction to
 CPI, payrolls, PPI and the FOMC statement is absorbed in about a second, but the market's
@@ -65,4 +68,5 @@ The ingredients are not new on their own. Linear-in-parameters kernel dictionari
 \citep{veen2008estimation,zhou2013learning}, Erlang-chain embeddings and exact-likelihood neural
 point processes \citep{omi2019fully,shchur2020intensity} have all been studied. What we add is
 their combination: certified, closed-form measurement on one side, an exact neural model that
-contains the linear Hawkes process on the other, and experiments showing that both work.
+contains the linear Hawkes process and starts from it on the other, and experiments showing that
+both work.

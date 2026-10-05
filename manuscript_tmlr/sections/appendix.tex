@@ -139,6 +139,15 @@ distributions start at the empirical mark frequencies.
 \item Selected on validation, the LOBSTER streams and Amazon add orders up to 1024 and a
 history-dependent shift of the atoms. Amazon also uses a finer grid: the single-seed validation
 log-likelihood was 0.604, 0.643, 0.653 and 0.649 with 24, 48, 96 and 192 scales, so we use 96.
+\item Data-adaptive atoms: 48 quantile atoms (96 on Amazon and INTC), orders capped at 4096.
+\item Residual mark law: one hidden layer of 64 GELU units on the history summary and the
+standardised log-gap features; its output layer starts at zero.
+\item Certified start: the MSX-auto dictionary and fit of the same dataset; read-outs, hazard
+weights and renewal weights start at $e^{-7}$ and are divided by 10 until the initial validation
+likelihood is within 0.01 nats per event of MSX (not used on Retweet, see Section~\ref{sec:ablation}).
+\item Selected configurations: residual mark law with dropout 0.1 on Taxi; residual mark law on
+StackOverflow; certified start on Taobao and Retweet; data-adaptive atoms, residual mark law and
+certified start on Amazon; sharp atoms on the order books.
 \end{itemize}
 
 \paragraph{Baselines.} The neural baselines run in EasyTPP with the authors' configuration files.
@@ -148,5 +157,6 @@ MSX. A short patch, included in the supplementary code, makes the IntensityFree 
 configurable.
 
 \paragraph{Compute.} All experiments ran on one laptop with an 8\,GB GPU and a 28-core CPU, with
-each CPU job limited to four threads. EPT-X runs about as fast on the CPU as on the GPU, because
-its event recursion is sequential.
+each CPU job limited to four threads. Earlier EPT-X runs used the event loop, which runs about as
+fast on the CPU as on the GPU; runs with the new components used the parallel scan, mostly on the
+GPU. Both evaluations give the same likelihood.

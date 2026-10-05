@@ -1,0 +1,20 @@
+
+=== Sat Oct  3 21:28:23 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_ablation.py taxi 0 v2_res "{\"hidden\": 64, \"n_rates\": 8, \"phases\": 4, \"epochs\": 300, \"patience\": 40, \"renewal\": true, \"mark_head\": \"residual\"}"
+  taxi seed=0 ep=0 val_ll=-0.7958 best=-0.7958
+  taxi seed=0 ep=5 val_ll=0.3123 best=0.3123
+  taxi seed=0 ep=10 val_ll=0.3966 best=0.3966
+  taxi seed=0 ep=15 val_ll=0.4321 best=0.4321
+  taxi seed=0 ep=20 val_ll=0.4475 best=0.4489
+  taxi seed=0 ep=25 val_ll=0.4558 best=0.4562
+  taxi seed=0 ep=30 val_ll=0.4681 best=0.4702
+  taxi seed=0 ep=35 val_ll=0.4716 best=0.4745
+  taxi seed=0 ep=40 val_ll=0.4747 best=0.4747
+  taxi seed=0 ep=45 val_ll=0.4690 best=0.4774
+  taxi seed=0 ep=50 val_ll=0.4671 best=0.4774
+  taxi seed=0 ep=55 val_ll=0.4657 best=0.4774
+  taxi seed=0 ep=60 val_ll=0.4615 best=0.4774
+  taxi seed=0 ep=65 val_ll=0.4555 best=0.4774
+  taxi seed=0 ep=70 val_ll=0.4460 best=0.4774
+  taxi seed=0 ep=75 val_ll=0.4344 best=0.4774
+  taxi seed=0 ep=80 val_ll=0.4303 best=0.4774
+RESULT {"ll_per_event": 0.5165527851670857, "n_events": 14420.0, "time_ll": 0.7259201832849341, "mark_ll": -0.20936739811784846, "rmse": 0.2799678444862366, "acc": 0.918307900428772, "dataset": "taxi", "seed": 0, "val_ll": 0.4773725968212104, "epochs": 83, "seconds": 1481.8117852210999, "hidden": 64, "n_rates": 8, "n_channels": 4, "phases": 4, "lr": 0.01, "gompertz": true, "model": "EPT-X", "renewal": true, "input_v2": true, "ept_channel": true, "rn_shift": false, "rn_scales": 24, "rn_orders": [1, 4, 16], "n_layers": 1, "layer_norm": false, "dropout": 0.0, "weight_decay": 0.0, "encoder": "gru", "rn_quantile": 0, "mark_head": "residual", "n_params": 150691, "batch_size": 64, "config": {"hidden": 64, "n_rates": 8, "phases": 4, "epochs": 300, "patience": 40, "renewal": true, "mark_head": "residual"}, "tag": "v2_res"}

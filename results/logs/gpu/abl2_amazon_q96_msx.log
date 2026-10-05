@@ -1,0 +1,12 @@
+
+=== Sun Oct  4 01:28:54 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_ablation.py amazon 0 v2_q96_msx "{\"epochs\": 100, \"patience\": 20, \"renewal\": true, \"n_rates\": 8, \"phases\": 4, \"hidden\": 64, \"rn_shift\": true, \"rn_orders\": [1, 4, 16, 64, 256, 1024], \"rn_scales\": 96, \"rn_quantile\": 96, \"init_from_msx\": true}"
+  amazon seed=0 ep=0 val_ll=-0.0471 best=-0.0471
+  amazon seed=0 ep=5 val_ll=0.5932 best=0.5932
+  amazon seed=0 ep=10 val_ll=0.6652 best=0.6652
+  amazon seed=0 ep=15 val_ll=0.6962 best=0.6962
+  amazon seed=0 ep=20 val_ll=0.6991 best=0.7013
+  amazon seed=0 ep=25 val_ll=0.7000 best=0.7051
+  amazon seed=0 ep=30 val_ll=0.6961 best=0.7051
+  amazon seed=0 ep=35 val_ll=0.6836 best=0.7051
+  amazon seed=0 ep=40 val_ll=0.6737 best=0.7051
+RESULT {"ll_per_event": 0.7058558452273958, "n_events": 82197.0, "time_ll": 2.5999895591916373, "mark_ll": -1.8941337139642414, "channel_share": {"baseline": 2.309784358999589e-05, "neural_state": 8.008869879021031e-09, "hazard": 1.8462726327924843e-06, "hawkes": 0.0052635030594861245, "renewal": 0.9947115448154211}, "backbone_rho": 0.00636728061363101, "rmse": 0.3269907832145691, "acc": 0.3608039319515228, "dataset": "amazon", "seed": 0, "val_ll": 0.7051468472381653, "epochs": 44, "seconds": 3711.9394912719727, "hidden": 64, "n_rates": 8, "n_channels": 4, "phases": 4, "lr": 0.01, "gompertz": true, "model": "EPT-X", "renewal": true, "input_v2": true, "ept_channel": true, "rn_shift": true, "rn_scales": 96, "rn_orders": [1, 4, 16, 64, 256, 1024], "n_layers": 1, "layer_norm": false, "dropout": 0.0, "weight_decay": 0.0, "encoder": "gru", "rn_quantile": 96, "mark_head": "intensity", "init_from_msx": true, "val_ll_init": -1.915849960540763, "msx_val_ll": -1.9156356832253796, "msx_test_ll": -1.9266210388333198, "n_params": 446419, "batch_size": 64, "config": {"epochs": 100, "patience": 20, "renewal": true, "n_rates": 8, "phases": 4, "hidden": 64, "rn_shift": true, "rn_orders": [1, 4, 16, 64, 256, 1024], "rn_scales": 96, "rn_quantile": 96, "init_from_msx": true}, "tag": "v2_q96_msx"}

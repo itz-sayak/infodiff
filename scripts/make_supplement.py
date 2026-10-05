@@ -24,7 +24,7 @@ SCRIPTS = [  # what a reviewer needs to reproduce the paper (data, experiments, 
     "fetch_easytpp.py", "download_ticks.py", "build_panel.py", "select_l1.py", "run_main.py", "run_track_d.py",
     "run_track_a.py", "summarize_track_a.py", "run_track_b_classical.py", "run_track_c_classical.py",
     "run_ept.py", "run_ept_seed.py", "run_ept_ablation.py", "run_ept_hpo.py", "make_tables.py", "make_figures.py",
-    "gpu_queue.py", "wait_for_job.py",
+    "gpu_queue.py", "wait_for_job.py", "bench_parallel.py", "channel_attribution.py",
 ]
 FORBIDDEN = [r"sayak", r"dutta", r"itz-sayak", r"E87321", r"airamatrix", r"aiit\.com", r"infodiff",
              r"D:[/\\]+Quant", r"C:[/\\]+Users", r"gmail", r"github\.com/itz"]
@@ -60,7 +60,7 @@ Certified Measurement and Prediction of Market Event Streams*.
 | `src/ptpp/baselines/` | classical Hawkes baselines (tick), NPHC, EasyTPP runner |
 | `src/ptpp/sources/`, `src/ptpp/events/` | data pipelines (release calendar, ticks, LOBSTER, delta-crossing events, windows) |
 | `scripts/` | data download, experiments, table and figure generation |
-| `tests/` | unit tests (exact compensators vs quadrature, causality, nesting, certificate) |
+| `tests/` | unit tests (exact compensators vs quadrature, parallel scan vs event loop, causality, nesting, warm start, certificate) |
 | `results/json/` | logged results of every run reported in the paper |
 | `patches/` | EasyTPP patches: equal-length batching fix and the configurable IntensityFree clamp |
 | `configs/` | selected configurations |
@@ -83,6 +83,22 @@ python scripts/make_tables.py        # writes results/tables/*.tex and results/t
 ```bash
 python scripts/fetch_easytpp.py                                   # Hugging Face: easytpp/<name>
 python scripts/run_ept_seed.py taxi 0 eptx '{"n_rates":8,"phases":4,"epochs":300,"renewal":true}'
+```
+The three components added in the final version are switched on per run (configurations selected
+on validation are listed in the paper's appendix):
+```bash
+# residual mark law (Taxi: with dropout 0.1)
+python scripts/run_ept_seed.py taxi 0 eptx_resdo '{"n_rates":8,"phases":4,"epochs":300,"patience":40,"renewal":true,"mark_head":"residual","dropout":0.1}'
+# certified start from the MSX fit (reads results/json/track_b_classical_<ds>.json for the dictionary)
+python scripts/run_ept_seed.py taobao 0 eptx_msx '{"n_rates":8,"phases":4,"epochs":300,"patience":40,"renewal":true,"init_from_msx":true}'
+# data-adaptive (quantile) atoms + residual marks + certified start
+python scripts/run_ept_seed.py amazon 0 eptx_qrm '{"n_rates":8,"phases":4,"epochs":300,"patience":40,"renewal":true,"rn_shift":true,"rn_orders":[1,4,16,64,256,1024],"rn_scales":96,"rn_quantile":96,"mark_head":"residual","init_from_msx":true}'
+```
+Training uses the parallel scan by default (`EPTConfig.parallel=True`); the event loop is kept as
+the reference and `tests/test_ept.py` checks that both give the same likelihood and gradients.
+```bash
+python scripts/bench_parallel.py lob_aapl '{"n_rates":8,"phases":2,"renewal":true,"rn_shift":true,"rn_orders":[1,4,16,64,256,1024]}' cuda
+python scripts/channel_attribution.py taxi:eptx_resdo taobao:eptx_msx      # exact channel shares
 ```
 **Order books (LOBSTER).** Download the free level-1 sample files for AAPL, AMZN, GOOG, INTC and
 MSFT (21 June 2012) from https://lobsterdata.com/info/DataSamples.php and save the message files as

@@ -23,17 +23,22 @@ AttNHP \citep{yang2022transformer} and the state-space model S2P2 \citep{chang20
 intensity with recurrent, attention or state-space encoders, and they estimate the compensator by
 Monte Carlo or quadrature. FullyNN \citep{omi2019fully} models the cumulative hazard with a
 monotone network, and IntensityFree \citep{shchur2020intensity} models the density of the next gap
-with a mixture of log-normals. Both have exact likelihoods but no Hawkes structure. Recent work
-also explores Mamba-style encoders \citep{gao2024mamba} and interpretable latent Hawkes dynamics
-\citep{boyd2025hyper}. EasyTPP \citep{xue2024easytpp} provides shared implementations, and
+with a mixture of log-normals. DTPP \citep{panos2024decomposable} pairs such a time model with an
+attention model for the marks. These models have exact likelihoods but no Hawkes structure. Recent
+work also explores Mamba-style encoders \citep{gao2024mamba}. Hyper Hawkes processes
+\citep{boyd2025hyper} let a network set the dynamics of a latent linear Hawkes process at each
+event; a softplus read-out keeps the intensity positive, so the compensator is again estimated by
+sampling. EasyTPP \citep{xue2024easytpp} provides shared implementations, and
 \citet{bosser2023predictive} study how accurately neural models predict the next event.
 
-EPT-X differs from these models in two ways. First, between events its intensity is a linear
+EPT-X differs from these models in three ways. First, between events its intensity is a linear
 read-out of a phase-type system that can be solved exactly, plus bounded hazard terms and a
 renewal channel whose survival function is a mixture of Erlang survival functions. All of these
 integrate in closed form, so the likelihood we train on and report is exact. Second, its backbone
-is the linear Hawkes process itself, so a fitted model still has branching ratios and excitation
-kernels that can be read off.
+is the linear Hawkes process itself, so a fitted model still has excitation kernels that can be
+read off, and it can start from a certified MSX fit. Third, its states follow
+an affine recursion, so it trains with a parallel scan like S2P2 and HHP, but without sampling the
+compensator.
 
 \paragraph{Phase-type distributions.} Mixtures of Erlang distributions are dense in the set of
 distributions on $(0,\infty)$ \citep{tijms1994stochastic,lee2010modeling}. We use this fact for

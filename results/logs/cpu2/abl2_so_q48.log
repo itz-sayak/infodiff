@@ -1,0 +1,30 @@
+
+=== Sun Oct  4 12:05:18 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_ablation.py stackoverflow 0 v2_q48 "{\"hidden\": 64, \"n_rates\": 8, \"phases\": 4, \"epochs\": 300, \"patience\": 40, \"renewal\": true, \"rn_quantile\": 48}"
+  stackoverflow seed=0 ep=0 val_ll=-4.7318 best=-4.7318
+  stackoverflow seed=0 ep=5 val_ll=-3.0201 best=-3.0201
+  stackoverflow seed=0 ep=10 val_ll=-2.6255 best=-2.6255
+  stackoverflow seed=0 ep=15 val_ll=-2.4525 best=-2.4525
+  stackoverflow seed=0 ep=20 val_ll=-2.3527 best=-2.3527
+  stackoverflow seed=0 ep=25 val_ll=-2.2993 best=-2.2993
+  stackoverflow seed=0 ep=30 val_ll=-2.2695 best=-2.2692
+  stackoverflow seed=0 ep=35 val_ll=-2.2384 best=-2.2384
+  stackoverflow seed=0 ep=40 val_ll=-2.2228 best=-2.2228
+  stackoverflow seed=0 ep=45 val_ll=-2.2118 best=-2.2118
+  stackoverflow seed=0 ep=50 val_ll=-2.2045 best=-2.2039
+  stackoverflow seed=0 ep=55 val_ll=-2.2016 best=-2.1951
+  stackoverflow seed=0 ep=60 val_ll=-2.1894 best=-2.1894
+  stackoverflow seed=0 ep=65 val_ll=-2.1857 best=-2.1857
+  stackoverflow seed=0 ep=70 val_ll=-2.1859 best=-2.1842
+  stackoverflow seed=0 ep=75 val_ll=-2.1791 best=-2.1791
+  stackoverflow seed=0 ep=80 val_ll=-2.1772 best=-2.1772
+  stackoverflow seed=0 ep=85 val_ll=-2.1804 best=-2.1746
+  stackoverflow seed=0 ep=90 val_ll=-2.1804 best=-2.1732
+  stackoverflow seed=0 ep=95 val_ll=-2.1725 best=-2.1714
+  stackoverflow seed=0 ep=100 val_ll=-2.1738 best=-2.1714
+  stackoverflow seed=0 ep=105 val_ll=-2.1749 best=-2.1714
+  stackoverflow seed=0 ep=110 val_ll=-2.1739 best=-2.1714
+  stackoverflow seed=0 ep=115 val_ll=-2.1780 best=-2.1714
+  stackoverflow seed=0 ep=120 val_ll=-2.1761 best=-2.1714
+  stackoverflow seed=0 ep=125 val_ll=-2.1784 best=-2.1714
+  stackoverflow seed=0 ep=130 val_ll=-2.1875 best=-2.1714
+RESULT {"ll_per_event": -2.174489212605774, "n_events": 26117.0, "time_ll": -0.6505455393637286, "mark_ll": -1.5239436732420455, "channel_share": {"baseline": 0.13940565746057054, "neural_state": 0.028200817468925818, "hazard": 0.027363033385739352, "hawkes": 0.5868301753427325, "renewal": 0.2182003163420318}, "backbone_rho": 1.1711636781692505, "rmse": 1.0114850997924805, "acc": 0.4553356170654297, "dataset": "stackoverflow", "seed": 0, "val_ll": -2.1713517741315407, "epochs": 132, "seconds": 9755.98272061348, "hidden": 64, "n_rates": 8, "n_channels": 4, "phases": 4, "lr": 0.01, "gompertz": true, "model": "EPT-X", "renewal": true, "input_v2": true, "ept_channel": true, "rn_shift": false, "rn_scales": 24, "rn_orders": [1, 4, 16], "n_layers": 1, "layer_norm": false, "dropout": 0.0, "weight_decay": 0.0, "encoder": "gru", "rn_quantile": 48, "mark_head": "intensity", "init_from_msx": false, "val_ll_init": null, "msx_val_ll": null, "msx_test_ll": null, "msx_eps_logit": null, "n_params": 349293, "batch_size": 64, "config": {"hidden": 64, "n_rates": 8, "phases": 4, "epochs": 300, "patience": 40, "renewal": true, "rn_quantile": 48}, "tag": "v2_q48"}

@@ -1,0 +1,13 @@
+{
+ "event_loop": 9.11071228981018,
+ "parallel": 3.2376160621643066,
+ "dataset": "taxi",
+ "device": "cuda",
+ "config": {
+  "hidden": 64,
+  "n_rates": 8,
+  "phases": 4,
+  "renewal": true
+ },
+ "speedup": 2.8140187455456904
+}

@@ -1,0 +1,14 @@
+
+=== Sat Oct  3 22:11:09 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_ablation.py taobao 0 v2_res_q48 "{\"hidden\": 64, \"n_rates\": 8, \"phases\": 4, \"epochs\": 300, \"patience\": 40, \"renewal\": true, \"mark_head\": \"residual\", \"rn_quantile\": 48}"
+  taobao seed=0 ep=0 val_ll=0.0839 best=0.0839
+  taobao seed=0 ep=5 val_ll=1.1200 best=1.1200
+  taobao seed=0 ep=10 val_ll=1.1789 best=1.1789
+  taobao seed=0 ep=15 val_ll=1.1738 best=1.1831
+  taobao seed=0 ep=20 val_ll=1.1281 best=1.1831
+  taobao seed=0 ep=25 val_ll=1.0708 best=1.1831
+  taobao seed=0 ep=30 val_ll=1.0115 best=1.1831
+  taobao seed=0 ep=35 val_ll=0.9679 best=1.1831
+  taobao seed=0 ep=40 val_ll=0.9223 best=1.1831
+  taobao seed=0 ep=45 val_ll=0.8643 best=1.1831
+  taobao seed=0 ep=50 val_ll=0.8145 best=1.1831
+RESULT {"ll_per_event": 1.3059768210069755, "n_events": 27955.0, "time_ll": 2.6615382143176536, "mark_ll": -1.3555613933106778, "channel_share": {"baseline": 0.004239095466961865, "neural_state": 0.008449938498140758, "hazard": 0.002295423897009377, "hawkes": 0.7406820037903582, "renewal": 0.24433353834752977}, "backbone_rho": 1.1084504127502441, "rmse": 0.12500308454036713, "acc": 0.613199770450592, "dataset": "taobao", "seed": 0, "val_ll": 1.1831267812389106, "epochs": 53, "seconds": 2564.3239834308624, "hidden": 64, "n_rates": 8, "n_channels": 4, "phases": 4, "lr": 0.01, "gompertz": true, "model": "EPT-X", "renewal": true, "input_v2": true, "ept_channel": true, "rn_shift": false, "rn_scales": 24, "rn_orders": [1, 4, 16], "n_layers": 1, "layer_norm": false, "dropout": 0.0, "weight_decay": 0.0, "encoder": "gru", "rn_quantile": 48, "mark_head": "residual", "init_from_msx": false, "val_ll_init": null, "msx_val_ll": null, "msx_test_ll": null, "n_params": 283715, "batch_size": 64, "config": {"hidden": 64, "n_rates": 8, "phases": 4, "epochs": 300, "patience": 40, "renewal": true, "mark_head": "residual", "rn_quantile": 48}, "tag": "v2_res_q48"}

@@ -55,9 +55,61 @@ def batches(seqs, n_marks: int, bs: int, shuffle: bool, device, rng=None):
                torch.tensor(msk, device=device))
 
 
+DERIVED_BUFFERS = {"rn_sidx", "rn_dvec"}  # rebuilt from the config; absent in older checkpoints
+
+
+def fit_msx_backbone(name: str, tr, M: int) -> dict:
+    """The certified MSX fit used to warm-start EPT-X: the same 12-rate dictionary, shared
+    baseline and validation-selected (Erlang order, l1) as the MSX-auto benchmark row."""
+    from ..baselines import classical as C
+    from ..models.dictionary import PhaseTypeDictionary
+    from .track_c import n_scored, seqs_to_eventdata
+    R, l1 = 2, 0.0
+    for f in (Path(f"results/json/track_b_classical_{name}.json"), Path(f"results/json/track_c_classical_{name}.json")):
+        if f.exists():
+            row = next((r for r in json.loads(f.read_text()) if r.get("key") == "MSX-auto" and "R" in r), None)
+            if row:
+                R, l1 = int(row["R"]), float(row["l1"])
+            break
+    gaps = np.concatenate([np.asarray(d)[1:] for d, _ in tr])
+    gaps = gaps[gaps > 0]
+    lo, hi = float(np.quantile(gaps, 0.01)), float(np.quantile(gaps, 0.999)) * 5
+    dic = PhaseTypeDictionary.log_grid(lo, hi, 12, orders=R)
+    d_tr = seqs_to_eventdata(tr, M)
+    fit = C.fit_msx(d_tr, dic, l1=l1, shared_baseline=True)
+    va, _ = load_split(name, "validation")
+    te, _ = load_split(name, "test")
+    d_va, d_te = seqs_to_eventdata(va, M), seqs_to_eventdata(te, M)
+    return dict(A=fit.extra["model"].endo_weights(), mu=np.asarray(fit.mu, float), betas=dic.betas, R=R, l1=l1,
+                gap=float(fit.extra["gap"]), val_ll=fit.loglik(d_va) / n_scored(d_va),
+                test_ll=fit.loglik(d_te) / n_scored(d_te))
+
+
+def quantile_atoms(gaps: np.ndarray, Q: int, kappa: float = 1.0, r_max: int = 4096):
+    """Erlang atoms at Q equal-mass quantiles of the (positive) training gaps.
+
+    An atom's order sets its coefficient of variation R^{-1/2}; we match it to kappa times the
+    log-distance d_q to the nearer neighbouring atom (R_q = 1 / (kappa d_q)^2, capped at r_max), so
+    atoms overlap like an adaptive-bandwidth kernel estimate and are sharpest where the data are
+    densest. Each atom may shift by up to d_q / 2 in log-rate (used when rn_shift is on)."""
+    if not Q:
+        return (), (), ()
+    m = np.unique(np.quantile(gaps, (np.arange(Q) + 0.5) / Q))
+    lm = np.log(m)
+    if len(lm) == 1:
+        d = np.ones(1)
+    else:
+        gap = np.diff(lm)  # local spacing: the nearer neighbour, so cluster edges stay sharp
+        d = np.minimum(np.r_[gap[0], gap], np.r_[gap, gap[-1]])
+    d = np.maximum(d, 1e-3)
+    R = np.clip(np.round(1.0 / (kappa * d) ** 2), 1, r_max)
+    return tuple(float(x) for x in m), tuple(float(x) for x in R), tuple(float(x) for x in 0.5 * d)
+
+
 def evaluate(model: EPTTPP, seqs, n_marks, device, predict: bool = False, s_max: float = None):
     model.eval()
     tot_ll = tot_n = tot_time = 0.0
+    parts = {}
     se = []
     acc = []
     with torch.no_grad():
@@ -67,6 +119,8 @@ def evaluate(model: EPTTPP, seqs, n_marks, device, predict: bool = False, s_max:
             tot_ll += float(((log_lam - comp) * m).sum())
             tot_time += float(((model._last_log_tot - comp) * m).sum())
             tot_n += float(m.sum())
+            for k, v in (getattr(model, "_last_comp_parts", None) or {}).items():
+                parts[k] = parts.get(k, 0.0) + float((v * m).sum())
             if predict:
                 # predict event n from state after event n-1
                 st = states[:, :-1].reshape(-1, states.shape[-1])
@@ -79,7 +133,9 @@ def evaluate(model: EPTTPP, seqs, n_marks, device, predict: bool = False, s_max:
                 # chunk so that the (chunk, grid, state) tensors stay ~<= 0.4 GB on an 8 GB GPU
                 width = st.shape[-1] + n_marks * (1 + (model.J if model.cfg.renewal else 0))
                 if model.cfg.renewal:
-                    width += model.J * int(max(model.cfg.rn_orders))
+                    width += model.J * min(int(model.rn_R.max()), 1024)
+                if model.cfg.mark_head == "residual":
+                    width += 2 * model.cfg.hidden + n_marks
                 ch = int(max(16, min(4096, 1e8 / (400 * width))))
                 for a in range(0, st.shape[0], ch):
                     e_dt, p_mk, _ = model.predict_next(st[a:a + ch], mu[a:a + ch],
@@ -89,6 +145,11 @@ def evaluate(model: EPTTPP, seqs, n_marks, device, predict: bool = False, s_max:
                     acc.append((p_mk == tgt_mk[a:a + ch]).float().cpu().numpy())
     out = dict(ll_per_event=tot_ll / tot_n, n_events=tot_n, time_ll=tot_time / tot_n,
                mark_ll=(tot_ll - tot_time) / tot_n)
+    if parts:  # exact share of the expected number of events contributed by each channel
+        z = sum(parts.values())
+        out["channel_share"] = {k: v / z for k, v in parts.items()}
+    if model.cfg.hawkes_backbone:
+        out["backbone_rho"] = float(np.max(np.abs(np.linalg.eigvals(model.backbone_branching().cpu().numpy()))))
     if predict:
         out["rmse"] = float(np.sqrt(np.concatenate(se).mean()))
         out["acc"] = float(np.concatenate(acc).mean())
@@ -98,7 +159,9 @@ def evaluate(model: EPTTPP, seqs, n_marks, device, predict: bool = False, s_max:
 def train_one(name: str, seed: int, hidden=64, n_rates=8, n_channels=4, phases=2, lr=1e-2, epochs=300, patience=40,
               bs=64, device=None, verbose=False, weight_decay=0.0, dropout=0.0, gompertz=True, warmup=0.01,
               renewal=False, rn_scales=24, rn_orders=(1, 4, 16), input_v2=None, ept_channel=True, rn_shift=False,
-              n_layers=1, layer_norm=False, ckpt: str | None = None, encoder="gru") -> dict:
+              n_layers=1, layer_norm=False, ckpt: str | None = None, encoder="gru", rn_quantile=0,
+              rn_q_kappa=1.0, rn_q_max=4096, mark_head="intensity", init_from_msx=False,
+              msx_shrink=True, eval_only=False) -> dict:
     device = device or ("cuda" if torch.cuda.is_available() else "cpu")
     torch.manual_seed(seed)
     rng = np.random.default_rng(seed)
@@ -112,14 +175,20 @@ def train_one(name: str, seed: int, hidden=64, n_rates=8, n_channels=4, phases=2
     q001, q01, q999 = (float(np.quantile(gaps, q)) for q in (0.001, 0.01, 0.999))
     eps = 0.1 * q01
     lg = np.log(gaps + eps)
+    q_means, q_orders, q_delta = quantile_atoms(gaps, rn_quantile, rn_q_kappa, rn_q_max) if renewal else ((), (), ())
+    msx = fit_msx_backbone(name, tr, M) if init_from_msx else None  # also on eval_only: same dictionary
+    hb_kw = dict(hb_rates=len(msx["betas"]), hb_phases=msx["R"], hb_betas=tuple(msx["betas"])) if msx else {}
     cfg = EPTConfig(n_marks=M, hidden=hidden, n_rates=n_rates, n_channels=n_channels, tau_min=tau_min,
                     tau_max=tau_max, dropout=dropout, phases=phases, gompertz=gompertz,
                     renewal=renewal, rn_scales=rn_scales, rn_orders=tuple(rn_orders),
                     rn_lo=0.5 * q001, rn_hi=5 * q999, input_v2=input_v2, gap_eps=eps,
                     gap_mu=float(lg.mean()), gap_sd=float(lg.std() + 1e-6), tie_thr=10 * q01,
                     ept_channel=ept_channel, rn_shift=rn_shift, n_layers=n_layers, layer_norm=layer_norm,
-                    encoder=encoder)
+                    encoder=encoder, rn_q_means=q_means, rn_q_orders=q_orders, rn_q_delta=q_delta,
+                    mark_head=mark_head, **hb_kw)
     model = EPTTPP(cfg).to(device)
+    if msx:
+        model.init_from_hawkes(msx["A"], msx["mu"])
     if renewal:  # renewal mark law starts at the empirical mark frequencies
         freq = np.bincount(np.concatenate([k[1:] for _, k in tr]), minlength=M) + 1.0
         with torch.no_grad():
@@ -132,15 +201,34 @@ def train_one(name: str, seed: int, hidden=64, n_rates=8, n_channels=4, phases=2
     best, best_state, bad, start = -np.inf, None, 0, 0
     t0 = time.time()
     ck = Path(ckpt) if ckpt else None
-    if ck is not None and ck.exists():  # resume an interrupted run exactly where it stopped
+    if eval_only:  # re-evaluate a finished run: load its selected weights, skip training
+        s = torch.load(ck, map_location=device, weights_only=False)
+        miss, extra = model.load_state_dict(s["best_state"], strict=False)
+        assert not extra and set(miss) <= DERIVED_BUFFERS, (miss, extra)
+        best, best_state, bad, start, ep_done = s["best"], model.state_dict(), patience, epochs, s["ep"]
+        t0 -= s["seconds"]
+    elif ck is not None and ck.exists():  # resume an interrupted run exactly where it stopped
         s = torch.load(ck, map_location=device, weights_only=False)
         model.load_state_dict(s["model"]); opt.load_state_dict(s["opt"]); sched.load_state_dict(s["sched"])
         best, best_state, bad, start = s["best"], s["best_state"], s["bad"], s["ep"] + 1
         rng.bit_generator.state = s["rng"]
-        torch.set_rng_state(s["torch_rng"])
+        torch.set_rng_state(s["torch_rng"].cpu())  # map_location may have moved it to the GPU
         t0 -= s["seconds"]
         print(f"  resumed {name} seed={seed} from epoch {start}", flush=True)
-    ep = start - 1
+    val_init = None
+    if msx and start == 0:  # epoch 0 = the warm start itself takes part in validation selection
+        # the small read-outs are absolute intensities, so on long time scales they integrate to a
+        # visible compensator: shrink them (epsilon -> 0 in the certified-floor proposition) until the
+        # start is within 0.01 nats per event of the MSX fit on validation
+        eps = -7.0
+        val_init = evaluate(model, va, M, device)["ll_per_event"]
+        while msx_shrink and val_init < msx["val_ll"] - 0.01 and eps > -40:
+            eps -= math.log(10.0)
+            model.init_from_hawkes(msx["A"], msx["mu"], eps_logit=eps)
+            val_init = evaluate(model, va, M, device)["ll_per_event"]
+        msx["eps_logit"] = eps
+        best, best_state = val_init, {k: t.detach().clone() for k, t in model.state_dict().items()}
+    ep = ep_done if eval_only else start - 1
     for ep in range(start, epochs):
         if bad >= patience:
             break
@@ -178,6 +266,9 @@ def train_one(name: str, seed: int, hidden=64, n_rates=8, n_channels=4, phases=2
                renewal=renewal, input_v2=input_v2, ept_channel=ept_channel, rn_shift=rn_shift,
                rn_scales=rn_scales if renewal else None, rn_orders=list(rn_orders) if renewal else None,
                n_layers=n_layers, layer_norm=layer_norm, dropout=dropout, weight_decay=weight_decay, encoder=encoder,
+               rn_quantile=rn_quantile if renewal else 0, mark_head=mark_head, init_from_msx=init_from_msx,
+               val_ll_init=val_init, msx_val_ll=msx["val_ll"] if msx else None,
+               msx_test_ll=msx["test_ll"] if msx else None, msx_eps_logit=msx.get("eps_logit") if msx else None,
                n_params=int(sum(p.numel() for p in model.parameters())))
     return res
 
@@ -212,7 +303,9 @@ def train_one_safe(name: str, seed: int, bs=64, min_bs=8, **kw) -> dict:
             r = train_one(name, seed, bs=bs, **kw)
             r["batch_size"] = bs
             return r
-        except torch.OutOfMemoryError:
+        except (torch.OutOfMemoryError, RuntimeError) as e:  # CUDA OOM may surface as AcceleratorError
+            if not isinstance(e, torch.OutOfMemoryError) and "out of memory" not in str(e):
+                raise
             torch.cuda.empty_cache()
             if bs // 2 < min_bs:
                 raise

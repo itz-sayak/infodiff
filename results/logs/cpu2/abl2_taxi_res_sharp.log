@@ -1,0 +1,20 @@
+
+=== Sat Oct  3 23:30:02 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_ablation.py taxi 0 v2_res_sharp "{\"hidden\": 64, \"n_rates\": 8, \"phases\": 4, \"epochs\": 300, \"patience\": 40, \"renewal\": true, \"mark_head\": \"residual\", \"rn_shift\": true, \"rn_orders\": [1, 4, 16, 64, 256, 1024]}"
+  taxi seed=0 ep=0 val_ll=-0.8592 best=-0.8592
+  taxi seed=0 ep=5 val_ll=0.3279 best=0.3279
+  taxi seed=0 ep=10 val_ll=0.4034 best=0.4034
+  taxi seed=0 ep=15 val_ll=0.4326 best=0.4326
+  taxi seed=0 ep=20 val_ll=0.4476 best=0.4476
+  taxi seed=0 ep=25 val_ll=0.4574 best=0.4574
+  taxi seed=0 ep=30 val_ll=0.4656 best=0.4656
+  taxi seed=0 ep=35 val_ll=0.4676 best=0.4715
+  taxi seed=0 ep=40 val_ll=0.4710 best=0.4715
+  taxi seed=0 ep=45 val_ll=0.4687 best=0.4721
+  taxi seed=0 ep=50 val_ll=0.4654 best=0.4721
+  taxi seed=0 ep=55 val_ll=0.4630 best=0.4721
+  taxi seed=0 ep=60 val_ll=0.4618 best=0.4721
+  taxi seed=0 ep=65 val_ll=0.4557 best=0.4721
+  taxi seed=0 ep=70 val_ll=0.4514 best=0.4721
+  taxi seed=0 ep=75 val_ll=0.4475 best=0.4721
+  taxi seed=0 ep=80 val_ll=0.4344 best=0.4721
+RESULT {"ll_per_event": 0.5104957273697556, "n_events": 14420.0, "time_ll": 0.7202304199895978, "mark_ll": -0.20973469261984223, "channel_share": {"baseline": 0.0015819306827993826, "neural_state": 0.003997719819208915, "hazard": 0.04574751972100024, "hawkes": 0.1496182430832316, "renewal": 0.7990545866937598}, "backbone_rho": 0.6965876221656799, "rmse": 0.28110164403915405, "acc": 0.9174063801765442, "dataset": "taxi", "seed": 0, "val_ll": 0.4721223872479699, "epochs": 82, "seconds": 1780.3470711708069, "hidden": 64, "n_rates": 8, "n_channels": 4, "phases": 4, "lr": 0.01, "gompertz": true, "model": "EPT-X", "renewal": true, "input_v2": true, "ept_channel": true, "rn_shift": true, "rn_scales": 24, "rn_orders": [1, 4, 16, 64, 256, 1024], "n_layers": 1, "layer_norm": false, "dropout": 0.0, "weight_decay": 0.0, "encoder": "gru", "rn_quantile": 0, "mark_head": "residual", "init_from_msx": false, "val_ll_init": null, "msx_val_ll": null, "msx_test_ll": null, "n_params": 156931, "batch_size": 64, "config": {"hidden": 64, "n_rates": 8, "phases": 4, "epochs": 300, "patience": 40, "renewal": true, "mark_head": "residual", "rn_shift": true, "rn_orders": [1, 4, 16, 64, 256, 1024]}, "tag": "v2_res_sharp"}

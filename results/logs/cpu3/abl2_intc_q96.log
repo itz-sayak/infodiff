@@ -1,0 +1,12 @@
+
+=== Sun Oct  4 12:05:18 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_ablation.py lob_intc 0 v2_q96 "{\"hidden\": 64, \"n_rates\": 8, \"phases\": 2, \"epochs\": 100, \"patience\": 20, \"renewal\": true, \"rn_shift\": true, \"rn_orders\": [1, 4, 16, 64, 256, 1024], \"rn_quantile\": 96}"
+  lob_intc seed=0 ep=0 val_ll=4.8886 best=4.8886
+  lob_intc seed=0 ep=5 val_ll=5.3657 best=5.3657
+  lob_intc seed=0 ep=10 val_ll=5.4552 best=5.4552
+  lob_intc seed=0 ep=15 val_ll=5.4790 best=5.4813
+  lob_intc seed=0 ep=20 val_ll=5.5002 best=5.5002
+  lob_intc seed=0 ep=25 val_ll=5.4957 best=5.5042
+  lob_intc seed=0 ep=30 val_ll=5.5030 best=5.5042
+  lob_intc seed=0 ep=35 val_ll=5.4989 best=5.5042
+  lob_intc seed=0 ep=40 val_ll=5.4930 best=5.5042
+RESULT {"ll_per_event": 6.1549693166905275, "n_events": 104775.0, "time_ll": 7.207462978704367, "mark_ll": -1.0524936620138392, "channel_share": {"baseline": 0.010465983074931375, "neural_state": 0.25946505918607743, "hazard": 0.007130778707390247, "hawkes": 0.14224432193789724, "renewal": 0.5806938570937037}, "backbone_rho": 0.2712385654449463, "rmse": 0.16564936935901642, "acc": 0.5430111885070801, "dataset": "lob_intc", "seed": 0, "val_ll": 5.504173357853294, "epochs": 44, "seconds": 5294.552993297577, "hidden": 64, "n_rates": 8, "n_channels": 4, "phases": 2, "lr": 0.01, "gompertz": true, "model": "EPT-X", "renewal": true, "input_v2": true, "ept_channel": true, "rn_shift": true, "rn_scales": 24, "rn_orders": [1, 4, 16, 64, 256, 1024], "n_layers": 1, "layer_norm": false, "dropout": 0.0, "weight_decay": 0.0, "encoder": "gru", "rn_quantile": 96, "mark_head": "intensity", "init_from_msx": false, "val_ll_init": null, "msx_val_ll": null, "msx_test_ll": null, "msx_eps_logit": null, "n_params": 126381, "batch_size": 64, "config": {"hidden": 64, "n_rates": 8, "phases": 2, "epochs": 100, "patience": 20, "renewal": true, "rn_shift": true, "rn_orders": [1, 4, 16, 64, 256, 1024], "rn_quantile": 96}, "tag": "v2_q96"}

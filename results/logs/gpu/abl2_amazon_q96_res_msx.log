@@ -1,0 +1,23 @@
+
+=== Sun Oct  4 04:10:38 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_ablation.py amazon 0 v2_q96_res_msx "{\"epochs\": 100, \"patience\": 20, \"renewal\": true, \"n_rates\": 8, \"phases\": 4, \"hidden\": 64, \"rn_shift\": true, \"rn_orders\": [1, 4, 16, 64, 256, 1024], \"rn_scales\": 96, \"rn_quantile\": 96, \"mark_head\": \"residual\", \"init_from_msx\": true}"
+  amazon seed=0 ep=0 val_ll=0.1083 best=0.1083
+  amazon seed=0 ep=5 val_ll=0.5508 best=0.5508
+  amazon seed=0 ep=10 val_ll=0.6178 best=0.6178
+  amazon seed=0 ep=15 val_ll=0.6441 best=0.6441
+  amazon seed=0 ep=20 val_ll=0.6505 best=0.6505
+  amazon seed=0 ep=25 val_ll=0.6631 best=0.6631
+  amazon seed=0 ep=30 val_ll=0.6723 best=0.6745
+  amazon seed=0 ep=35 val_ll=0.6841 best=0.6848
+  amazon seed=0 ep=40 val_ll=0.6865 best=0.6923
+  amazon seed=0 ep=45 val_ll=0.6996 best=0.6996
+  amazon seed=0 ep=50 val_ll=0.7006 best=0.7006
+  amazon seed=0 ep=55 val_ll=0.7043 best=0.7043
+  amazon seed=0 ep=60 val_ll=0.7040 best=0.7053
+  amazon seed=0 ep=65 val_ll=0.7076 best=0.7076
+  amazon seed=0 ep=70 val_ll=0.7088 best=0.7088
+  amazon seed=0 ep=75 val_ll=0.7094 best=0.7098
+  amazon seed=0 ep=80 val_ll=0.7090 best=0.7112
+  amazon seed=0 ep=85 val_ll=0.7117 best=0.7117
+  amazon seed=0 ep=90 val_ll=0.7125 best=0.7125
+  amazon seed=0 ep=95 val_ll=0.7126 best=0.7127
+RESULT {"ll_per_event": 0.7135136459036674, "n_events": 82197.0, "time_ll": 2.6037624358249083, "mark_ll": -1.890248789921241, "channel_share": {"baseline": 7.706569173400838e-05, "neural_state": 2.1239578908872537e-06, "hazard": 8.114818287600884e-05, "hawkes": 0.0033854970366778243, "renewal": 0.9964541651308213}, "backbone_rho": 0.010252309031784534, "rmse": 0.32767876982688904, "acc": 0.3581274151802063, "dataset": "amazon", "seed": 0, "val_ll": 0.7127073535134317, "epochs": 100, "seconds": 8084.52482008934, "hidden": 64, "n_rates": 8, "n_channels": 4, "phases": 4, "lr": 0.01, "gompertz": true, "model": "EPT-X", "renewal": true, "input_v2": true, "ept_channel": true, "rn_shift": true, "rn_scales": 96, "rn_orders": [1, 4, 16, 64, 256, 1024], "n_layers": 1, "layer_norm": false, "dropout": 0.0, "weight_decay": 0.0, "encoder": "gru", "rn_quantile": 96, "mark_head": "residual", "init_from_msx": true, "val_ll_init": -1.915849911801587, "msx_val_ll": -1.9156356835113282, "msx_test_ll": -1.9266210392131071, "n_params": 451811, "batch_size": 64, "config": {"epochs": 100, "patience": 20, "renewal": true, "n_rates": 8, "phases": 4, "hidden": 64, "rn_shift": true, "rn_orders": [1, 4, 16, 64, 256, 1024], "rn_scales": 96, "rn_quantile": 96, "mark_head": "residual", "init_from_msx": true}, "tag": "v2_q96_res_msx"}

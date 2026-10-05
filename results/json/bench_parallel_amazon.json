@@ -1,0 +1,23 @@
+{
+ "event_loop": 209.79664635658264,
+ "parallel": 57.26839804649353,
+ "dataset": "amazon",
+ "device": "cuda",
+ "config": {
+  "hidden": 64,
+  "n_rates": 8,
+  "phases": 4,
+  "renewal": true,
+  "rn_shift": true,
+  "rn_scales": 96,
+  "rn_orders": [
+   1,
+   4,
+   16,
+   64,
+   256,
+   1024
+  ]
+ },
+ "speedup": 3.663392962140456
+}

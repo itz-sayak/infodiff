@@ -1,0 +1,19 @@
+
+=== Sun Oct  4 02:30:10 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_ablation.py taxi 0 v2_res_ph2 "{\"n_rates\": 8, \"epochs\": 300, \"patience\": 40, \"renewal\": true, \"mark_head\": \"residual\", \"hidden\": 64, \"phases\": 2}"
+  taxi seed=0 ep=0 val_ll=-0.7901 best=-0.7901
+  taxi seed=0 ep=5 val_ll=0.3338 best=0.3338
+  taxi seed=0 ep=10 val_ll=0.4042 best=0.4042
+  taxi seed=0 ep=15 val_ll=0.4279 best=0.4279
+  taxi seed=0 ep=20 val_ll=0.4452 best=0.4452
+  taxi seed=0 ep=25 val_ll=0.4624 best=0.4624
+  taxi seed=0 ep=30 val_ll=0.4650 best=0.4650
+  taxi seed=0 ep=35 val_ll=0.4708 best=0.4708
+  taxi seed=0 ep=40 val_ll=0.4689 best=0.4708
+  taxi seed=0 ep=45 val_ll=0.4651 best=0.4708
+  taxi seed=0 ep=50 val_ll=0.4653 best=0.4708
+  taxi seed=0 ep=55 val_ll=0.4620 best=0.4708
+  taxi seed=0 ep=60 val_ll=0.4536 best=0.4708
+  taxi seed=0 ep=65 val_ll=0.4526 best=0.4708
+  taxi seed=0 ep=70 val_ll=0.4428 best=0.4708
+  taxi seed=0 ep=75 val_ll=0.4181 best=0.4708
+RESULT {"ll_per_event": 0.5077018071146845, "n_events": 14420.0, "time_ll": 0.713431831603242, "mark_ll": -0.20573002448855757, "channel_share": {"baseline": 0.0035528416179046434, "neural_state": 0.004046366821595802, "hazard": 0.06401999650299232, "hawkes": 0.18554404250990245, "renewal": 0.7428367525476047}, "backbone_rho": 0.6040319204330444, "rmse": 0.28047385811805725, "acc": 0.9176837801933289, "dataset": "taxi", "seed": 0, "val_ll": 0.47080618325105844, "epochs": 76, "seconds": 779.6753959655762, "hidden": 64, "n_rates": 8, "n_channels": 4, "phases": 2, "lr": 0.01, "gompertz": true, "model": "EPT-X", "renewal": true, "input_v2": true, "ept_channel": true, "rn_shift": false, "rn_scales": 24, "rn_orders": [1, 4, 16], "n_layers": 1, "layer_norm": false, "dropout": 0.0, "weight_decay": 0.0, "encoder": "gru", "rn_quantile": 0, "mark_head": "residual", "init_from_msx": false, "val_ll_init": null, "msx_val_ll": null, "msx_test_ll": null, "n_params": 100067, "batch_size": 64, "config": {"n_rates": 8, "epochs": 300, "patience": 40, "renewal": true, "mark_head": "residual", "hidden": 64, "phases": 2}, "tag": "v2_res_ph2"}

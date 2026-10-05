@@ -1,0 +1,21 @@
+
+=== Sat Oct  3 22:24:26 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_ablation.py stackoverflow 0 v2_res "{\"hidden\": 64, \"n_rates\": 8, \"phases\": 4, \"epochs\": 300, \"patience\": 40, \"renewal\": true, \"mark_head\": \"residual\"}"
+  stackoverflow seed=0 ep=0 val_ll=-4.3279 best=-4.3279
+  stackoverflow seed=0 ep=5 val_ll=-2.5807 best=-2.5807
+  stackoverflow seed=0 ep=10 val_ll=-2.3393 best=-2.3393
+  stackoverflow seed=0 ep=15 val_ll=-2.2663 best=-2.2663
+  stackoverflow seed=0 ep=20 val_ll=-2.2141 best=-2.2141
+  stackoverflow seed=0 ep=25 val_ll=-2.1965 best=-2.1965
+  stackoverflow seed=0 ep=30 val_ll=-2.1818 best=-2.1818
+  stackoverflow seed=0 ep=35 val_ll=-2.1683 best=-2.1683
+  stackoverflow seed=0 ep=40 val_ll=-2.1675 best=-2.1665
+  stackoverflow seed=0 ep=45 val_ll=-2.1670 best=-2.1598
+  stackoverflow seed=0 ep=50 val_ll=-2.1582 best=-2.1563
+  stackoverflow seed=0 ep=55 val_ll=-2.1604 best=-2.1563
+  stackoverflow seed=0 ep=60 val_ll=-2.1630 best=-2.1563
+  stackoverflow seed=0 ep=65 val_ll=-2.1737 best=-2.1563
+  stackoverflow seed=0 ep=70 val_ll=-2.1636 best=-2.1563
+  stackoverflow seed=0 ep=75 val_ll=-2.1760 best=-2.1563
+  stackoverflow seed=0 ep=80 val_ll=-2.1742 best=-2.1563
+  stackoverflow seed=0 ep=85 val_ll=-2.1731 best=-2.1563
+RESULT {"ll_per_event": -2.1622667946165333, "n_events": 26117.0, "time_ll": -0.6558040650007658, "mark_ll": -1.5064627296157675, "channel_share": {"baseline": 0.0047359865145403385, "neural_state": 0.022339395527511127, "hazard": 0.4490308270785573, "hawkes": 0.4939177659255752, "renewal": 0.02997602495381603}, "backbone_rho": 1.4521716833114624, "rmse": 1.0116044282913208, "acc": 0.45426350831985474, "dataset": "stackoverflow", "seed": 0, "val_ll": -2.156331479683372, "epochs": 89, "seconds": 6561.233778953552, "hidden": 64, "n_rates": 8, "n_channels": 4, "phases": 4, "lr": 0.01, "gompertz": true, "model": "EPT-X", "renewal": true, "input_v2": true, "ept_channel": true, "rn_shift": false, "rn_scales": 24, "rn_orders": [1, 4, 16], "n_layers": 1, "layer_norm": false, "dropout": 0.0, "weight_decay": 0.0, "encoder": "gru", "rn_quantile": 0, "mark_head": "residual", "init_from_msx": false, "val_ll_init": null, "msx_val_ll": null, "msx_test_ll": null, "n_params": 282259, "batch_size": 64, "config": {"hidden": 64, "n_rates": 8, "phases": 4, "epochs": 300, "patience": 40, "renewal": true, "mark_head": "residual"}, "tag": "v2_res"}

@@ -1,0 +1,11 @@
+
+=== Sat Oct  3 22:36:26 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_ablation.py amazon 0 v2_q96_res "{\"epochs\": 100, \"patience\": 20, \"renewal\": true, \"n_rates\": 8, \"phases\": 4, \"hidden\": 64, \"rn_shift\": true, \"rn_orders\": [1, 4, 16, 64, 256, 1024], \"rn_scales\": 96, \"rn_quantile\": 96, \"mark_head\": \"residual\"}"
+  amazon seed=0 ep=0 val_ll=-0.7202 best=-0.7202
+  amazon seed=0 ep=5 val_ll=0.5221 best=0.5221
+  amazon seed=0 ep=10 val_ll=0.6488 best=0.6488
+  amazon seed=0 ep=15 val_ll=0.6838 best=0.6838
+  amazon seed=0 ep=20 val_ll=0.6768 best=0.6838
+  amazon seed=0 ep=25 val_ll=0.6524 best=0.6838
+  amazon seed=0 ep=30 val_ll=0.6234 best=0.6838
+  amazon seed=0 ep=35 val_ll=0.5878 best=0.6838
+RESULT {"ll_per_event": 0.681128303040257, "n_events": 82197.0, "time_ll": 2.567694646702434, "mark_ll": -1.8865663436621773, "channel_share": {"baseline": 0.00032275152812565153, "neural_state": 0.000531086209531576, "hazard": 2.4767401698618516e-05, "hawkes": 0.04025603101142745, "renewal": 0.9588653638492167}, "backbone_rho": 0.043555848300457, "rmse": 0.3266606330871582, "acc": 0.358066588640213, "dataset": "amazon", "seed": 0, "val_ll": 0.6838493747933458, "epochs": 36, "seconds": 10335.1426050663, "hidden": 64, "n_rates": 8, "n_channels": 4, "phases": 4, "lr": 0.01, "gompertz": true, "model": "EPT-X", "renewal": true, "input_v2": true, "ept_channel": true, "rn_shift": true, "rn_scales": 96, "rn_orders": [1, 4, 16, 64, 256, 1024], "n_layers": 1, "layer_norm": false, "dropout": 0.0, "weight_decay": 0.0, "encoder": "gru", "rn_quantile": 96, "mark_head": "residual", "init_from_msx": false, "val_ll_init": null, "msx_val_ll": null, "msx_test_ll": null, "n_params": 444643, "batch_size": 64, "config": {"epochs": 100, "patience": 20, "renewal": true, "n_rates": 8, "phases": 4, "hidden": 64, "rn_shift": true, "rn_orders": [1, 4, 16, 64, 256, 1024], "rn_scales": 96, "rn_quantile": 96, "mark_head": "residual"}, "tag": "v2_q96_res"}

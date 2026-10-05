@@ -1,0 +1,35 @@
+
+=== Sat Oct  3 21:41:15 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_ablation.py amazon 0 v2_q96 "{\"epochs\": 100, \"patience\": 20, \"renewal\": true, \"n_rates\": 8, \"phases\": 4, \"hidden\": 64, \"rn_shift\": true, \"rn_orders\": [1, 4, 16, 64, 256, 1024], \"rn_scales\": 96, \"rn_quantile\": 96}"
+  amazon seed=0 ep=0 val_ll=-0.7367 best=-0.7367
+Traceback (most recent call last):
+  File "D:\Quant\scripts\run_ept_ablation.py", line 10, in <module>
+    r = train_one(ds, seed, verbose=True, **cfg)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\src\infodiff\experiments\track_b.py", line 276, in train_one_safe
+    out.write_text(json.dumps(rows, indent=1))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\src\infodiff\experiments\track_b.py", line 213, in train_one
+    for ep in range(start, epochs):
+            ^^^^^^^^^^^^^^^
+  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\_tensor.py", line 623, in backward
+    torch.autograd.backward(
+  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\autograd\__init__.py", line 395, in backward
+    _engine_run_backward(
+  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\autograd\graph.py", line 979, in _engine_run_backward
+    return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+torch.AcceleratorError: CUDA error: out of memory
+Search for `cudaErrorMemoryAllocation' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+For more detailed error information, run with CUDA_LOG_FILE=stderr
+
+
+=== Sat Oct  3 21:50:04 2026 attempt 2: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_ablation.py amazon 0 v2_q96 "{\"epochs\": 100, \"patience\": 20, \"renewal\": true, \"n_rates\": 8, \"phases\": 4, \"hidden\": 64, \"rn_shift\": true, \"rn_orders\": [1, 4, 16, 64, 256, 1024], \"rn_scales\": 96, \"rn_quantile\": 96}"
+  amazon seed=0 ep=0 val_ll=-0.7367 best=-0.7367
+  amazon seed=0 ep=5 val_ll=0.5236 best=0.5236
+  amazon seed=0 ep=10 val_ll=0.6411 best=0.6411
+  amazon seed=0 ep=15 val_ll=0.6768 best=0.6768
+  amazon seed=0 ep=20 val_ll=0.6724 best=0.6768
+  amazon seed=0 ep=25 val_ll=0.6489 best=0.6768
+  amazon seed=0 ep=30 val_ll=0.6211 best=0.6768
+  amazon seed=0 ep=35 val_ll=0.5961 best=0.6768
+RESULT {"ll_per_event": 0.6779976555228977, "n_events": 82197.0, "time_ll": 2.567600764968612, "mark_ll": -1.8896031094457142, "channel_share": {"baseline": 0.0002763257628834859, "neural_state": 0.0004540137216849484, "hazard": 2.035661718775301e-05, "hawkes": 0.03906144104003337, "renewal": 0.9601878628582105}, "backbone_rho": 0.0426209419965744, "rmse": 0.3269529938697815, "acc": 0.35914936661720276, "dataset": "amazon", "seed": 0, "val_ll": 0.6767500629710154, "epochs": 36, "seconds": 2772.0932805538177, "hidden": 64, "n_rates": 8, "n_channels": 4, "phases": 4, "lr": 0.01, "gompertz": true, "model": "EPT-X", "renewal": true, "input_v2": true, "ept_channel": true, "rn_shift": true, "rn_scales": 96, "rn_orders": [1, 4, 16, 64, 256, 1024], "n_layers": 1, "layer_norm": false, "dropout": 0.0, "weight_decay": 0.0, "encoder": "gru", "rn_quantile": 96, "mark_head": "intensity", "init_from_msx": false, "val_ll_init": null, "msx_val_ll": null, "msx_test_ll": null, "n_params": 439251, "batch_size": 64, "config": {"epochs": 100, "patience": 20, "renewal": true, "n_rates": 8, "phases": 4, "hidden": 64, "rn_shift": true, "rn_orders": [1, 4, 16, 64, 256, 1024], "rn_scales": 96, "rn_quantile": 96}, "tag": "v2_q96"}

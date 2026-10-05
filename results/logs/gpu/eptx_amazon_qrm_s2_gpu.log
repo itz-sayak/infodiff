@@ -1,0 +1,28 @@
+
+=== Mon Oct  5 01:22:41 2026 attempt 1: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_seed.py amazon 2 eptx_qrm "{\"epochs\": 300, \"patience\": 40, \"renewal\": true, \"n_rates\": 8, \"phases\": 4, \"hidden\": 64, \"rn_shift\": true, \"rn_orders\": [1, 4, 16, 64, 256, 1024], \"rn_scales\": 96, \"rn_quantile\": 96, \"mark_head\": \"residual\", \"init_from_msx\": true}"
+Traceback (most recent call last):
+  File "D:\Quant\scripts\run_ept_seed.py", line 18, in <module>
+    r = train_one(ds, seed, ckpt=str(ck), **cfg)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\src\infodiff\experiments\track_b.py", line 303, in train_one_safe
+    r = train_one(name, seed, bs=bs, **kw)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\src\infodiff\experiments\track_b.py", line 215, in train_one
+    torch.set_rng_state(s["torch_rng"])
+  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\random.py", line 36, in set_rng_state
+    default_generator.set_state(new_state)
+TypeError: RNG state must be a torch.ByteTensor
+
+=== Mon Oct  5 01:26:43 2026 attempt 2: D:\Quant\.venv\Scripts\python.exe -u scripts/run_ept_seed.py amazon 2 eptx_qrm "{\"epochs\": 300, \"patience\": 40, \"renewal\": true, \"n_rates\": 8, \"phases\": 4, \"hidden\": 64, \"rn_shift\": true, \"rn_orders\": [1, 4, 16, 64, 256, 1024], \"rn_scales\": 96, \"rn_quantile\": 96, \"mark_head\": \"residual\", \"init_from_msx\": true}"
+Traceback (most recent call last):
+  File "D:\Quant\scripts\run_ept_seed.py", line 18, in <module>
+    r = train_one(ds, seed, ckpt=str(ck), **cfg)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\src\infodiff\experiments\track_b.py", line 303, in train_one_safe
+    r = train_one(name, seed, bs=bs, **kw)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Quant\src\infodiff\experiments\track_b.py", line 215, in train_one
+    torch.set_rng_state(s["torch_rng"])
+  File "C:\Users\E87321\AppData\Local\Programs\Python\Python311\Lib\site-packages\torch\random.py", line 36, in set_rng_state
+    default_generator.set_state(new_state)
+TypeError: RNG state must be a torch.ByteTensor

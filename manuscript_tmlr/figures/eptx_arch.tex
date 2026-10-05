@@ -38,6 +38,9 @@
   \draw[->] (hz.east) -- (hz.east -| sum.west);
   \draw[->] (rn.east) -- node[lab, above] {$p/S_{\mathrm{ren}}$} (rn.east -| sum.west);
 
-  \node (lam) at (12.6,0.225) {$\lambda_y(t)$};
-  \draw[->] (sum) -- (lam);
+  % optional residual mark law: splits the total intensity across marks; the total is unchanged
+  \node[box, dashed, minimum width=15mm] (mk) at (13.1,0.225) {mark law};
+  \draw[->] (sum) -- node[lab, above] {$\lambda$} (mk);
+  \node (lam) at (15.0,0.225) {$\lambda_y(t)$};
+  \draw[->] (mk) -- (lam);
 \end{tikzpicture}

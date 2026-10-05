@@ -9,7 +9,8 @@ $n$-th event, $s=t-t_n$ denotes the time elapsed since that event.
 \caption{EPT-X at one event. The GRU summary $\bm h_n$ sets the jump of the neural Erlang state,
 the hazard parameters and the renewal weights, while the Hawkes state is driven by the event mark
 alone. The grey boxes are the states carried from one event to the next. Until the next event,
-all four terms evolve in closed form, and their sum is the intensity $\lambda_y(t)$.}\label{fig:eptx}
+all four terms evolve in closed form. The dashed box is the optional residual mark law, which
+splits the total intensity across marks without changing it.}\label{fig:eptx}
 \end{figure}
 
 \paragraph{EPT: a neural phase-type state.} The latent state $\bm\xi(t)\in\R_{\ge0}^P$ consists of
@@ -122,3 +123,74 @@ report separately. Predictions of the next event are Bayes-optimal functionals o
 density: the expected gap is $\int_0^\infty S(s)\,\mathrm{d}s$, where $S$ is the survival function
 of the full model, and the predicted mark is $\arg\max_y\int_0^\infty\lambda_y(s)S(s)\,\mathrm{d}s$.
 Both integrals are computed by one-dimensional quadrature on a logarithmic grid.
+
+\paragraph{Parallel evaluation.} The encoder reads only the observed gaps and marks, never the
+latent state. All summaries $\bm h_1,\dots,\bm h_N$ can therefore be computed first, in one call to
+the recurrent network. Given them, the state updates are affine.
+
+\begin{lemma}\label{lem:scan}
+Let $E(\Delta)$ be the block-diagonal transfer matrix of the Erlang chains over a gap $\Delta$
+(Lemma~\ref{lem:recursion}), and let $D_n=\mathrm{diag}\bigl(\sigma(W_g\bm h_n)\bigr)E(\Delta_n)$ and
+$\bm b_n=\mathrm{softplus}(W_\xi\bm h_n)$. Then $\bm\xi(t_n^+)=D_n\bm\xi(t_{n-1}^+)+\bm b_n$, and all
+post-event states follow from a prefix scan in $O(\log N)$ parallel steps. Every entry of every
+$D_n$ lies in $[0,1]$.
+\end{lemma}
+
+\begin{proof}
+The first claim restates the jump rule after evolving the state over the gap by Lemma~\ref{lem:recursion}.
+Affine maps compose associatively, $(D_2,\bm b_2)\circ(D_1,\bm b_1)=(D_2D_1,\,D_2\bm b_1+\bm b_2)$,
+so a parallel prefix scan applies. The entries of $E(\Delta)$ are Poisson probabilities and the gates
+lie in $(0,1)$, so the entries of $D_n$ lie in $[0,1]$ and the scan cannot overflow.
+\end{proof}
+
+The Hawkes state follows the same scan without gates. Once the post-event states are known, the
+intensity and compensator of every gap are evaluated independently. The likelihood is the same as
+with the event loop; only the order of computation changes.
+
+\paragraph{Residual mark law.} The compensator depends only on the total intensity
+$\lambda=\sum_y\lambda_y$. The split of $\lambda$ across marks can therefore be made more flexible
+without losing exactness. We set
+\[
+\tilde\lambda_y(t)=\lambda(t)\,\mathrm{softmax}_y\bigl(\log\lambda_y(t)+m_y(\bm h_n,s)\bigr),
+\]
+where $m$ is a small network of the history summary and the elapsed time $s$. The total intensity,
+and hence the compensator, is unchanged. With $m=0$ the marks are those of EPT-X, so this is a
+residual correction. Separate models for times and marks were used before by
+\citet{shchur2020intensity} and \citet{panos2024decomposable}; here the time model keeps its Hawkes
+structure.
+
+\paragraph{Data-adaptive atoms.} A logarithmic grid spends atoms evenly over all time scales. When
+the gaps concentrate in narrow bands, few atoms fall inside them. We therefore add atoms at $Q$
+equal-mass quantiles of the training gaps. The order of each such atom is set so that its
+coefficient of variation matches the log-distance $d_q$ to its nearest neighbour,
+$R_q=\min\{\lceil d_q^{-2}\rceil,4096\}$. Atoms are then sharpest where the data are densest, much
+like an adaptive-bandwidth kernel estimate, and the compensator stays exact.
+
+\paragraph{A certified starting point.} The Hawkes backbone of EPT-X can use the dictionary of an
+MSX fit, and MSX gives its global optimum with a certificate (Proposition~\ref{prop:gap}).
+
+\begin{proposition}\label{prop:floor}
+Initialise EPT-X with the backbone weights $\Theta$ and baselines $\mu$ of the MSX optimum on the
+training data, and with the neural read-outs, hazard terms and renewal weights at a scale
+$\varepsilon>0$. Then:
+\begin{enumerate}
+\item as $\varepsilon\to0$, the initial log-likelihood of EPT-X on any data converges to that of the
+MSX fit, which is within the certified gap of the best linear phase-type Hawkes process on this
+dictionary;
+\item if the model is selected by validation likelihood over all training epochs including the
+initial one, its validation likelihood is at least that of the initial model.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+\emph{Part 1.} At $\varepsilon=0$ the read-outs, hazards and renewal weights vanish, so EPT-X equals
+the backbone (Proposition~\ref{prop:eptx}, part 2), whose intensity and compensator are those of
+MSX. The intensities and compensators depend continuously on $\varepsilon$ and are bounded below by
+$\mu>0$, so the log-likelihood converges. The second statement is Proposition~\ref{prop:gap}.
+
+\emph{Part 2.} The selected model maximises validation likelihood over a set that contains the
+initial model.
+\end{proof}
+
+The guarantee concerns validation data. On test data it holds only to the extent that the
+validation and test splits agree.
