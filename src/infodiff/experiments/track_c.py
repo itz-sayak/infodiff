@@ -85,7 +85,8 @@ def run(dataset: str, out: Path, methods=("MSX-auto", "MSX", "ExpKern", "SumExp"
             elif mname == "CondLaw":
                 # the conditional-law lag grid must stay coarse enough to fit in memory
                 ml = max(lo, 1e-4)
-                fit = C.fit_tick_claw(d_tr, [(ml, ml, min(hi / 10, 10.0), min(hi, 60.0), "log")])
+                fit = C.fit_tick_claw(d_tr, [(ml, ml, min(hi / 10, 10.0), min(hi, 60.0), "log"),
+                                             (ml / 2, ml / 2, min(hi / 4, 10.0), min(hi, 60.0), "log")])
             else:
                 raise KeyError(mname)
             row = dict(dataset=dataset, method=fit.name, key=mname,

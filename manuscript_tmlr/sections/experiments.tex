@@ -170,7 +170,8 @@ Proposition~\ref{prop:floor}.
 \paragraph{Where the events come from.} Because every channel has a closed-form compensator, the
 expected number of events splits exactly by channel (Table~\ref{tab:attribution}). The split differs
 across data. On Taxi, four in five events come from the renewal channel, and on Retweet four in five
-come from the neural state. On Taobao and StackOverflow, about half come from the Hawkes backbone,
+come from the neural state. On Amazon, whose gaps are drawn from two fixed intervals, the renewal
+channel accounts for all but 0.4\% of them, as a renewal process should. On Taobao and StackOverflow, about half come from the Hawkes backbone,
 and on the order books the renewal channel carries 41 to 58\%, with the backbone and the neural state
 sharing the rest. The backbone is not constrained to be stationary, so its weights
 describe excitation within a sequence rather than a long-run branching ratio.
