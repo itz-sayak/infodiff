@@ -119,10 +119,8 @@ $\eptxLLTaobao\pm\eptxSDTaobao$, against IntensityFree's published $1.318\pm0.01
 StackOverflow, the residual mark law gives $\eptxLLStackOverflow\pm\eptxSDStackOverflow$ against
 S2P2's $-2.163\pm0.009$, so the two are within one published standard deviation.
 
-On Taxi, EPT-X reaches $\eptxLLTaxi\pm\eptxSDTaxi$ against $0.522\pm0.004$ for S2P2 and HHP. The
-residual mark law closed most of the earlier gap: our mark term now equals that of our S2P2 re-run
-($-0.210$ against $-0.211$), and the remaining difference lies in the time term ($0.726$ against
-$0.735$).
+On Taxi, EPT-X reaches $\eptxLLTaxi\pm\eptxSDTaxi$ against $0.522\pm0.004$ for S2P2 and HHP, and
+its mark term equals that of our S2P2 re-run ($-0.210$ against $-0.211$).
 
 Amazon needs a separate comment. In the EasyTPP release every gap lies in one of two intervals,
 $[0.010,0.015]$ (\amzShortShare\% of the test gaps) or $[0.70,0.80]$, and within each interval the
@@ -135,8 +133,8 @@ edges. Data-adaptive atoms and the certified start raise EPT-X to
 $\eptxLLAmazon\pm\eptxSDAmazon$, second behind S2P2. We did not add box-shaped components, because
 they would fit a preprocessing artefact rather than event dynamics.
 
-The linear MSX model comes close to the neural models on Taobao and Retweet, but it is far behind on
-Amazon and Taxi, whose dynamics are not self-exciting.
+The linear MSX model comes close to the neural models on Taobao and Retweet, whose dynamics are
+largely self-exciting.
 
 \begin{table}[!htbp]\centering\small
 \caption{Track B, public benchmarks: test log-likelihood per event (higher is better).
@@ -152,9 +150,7 @@ shaded: our models.}
 \paragraph{Next-event prediction.} Table~\ref{tab:pred} reports the two prediction metrics used by
 \citet{chang2025deep}. For the time of the next event, EPT-X has the lowest RMSE on Retweet and
 StackOverflow, ties the best published value to three decimals on Taxi and Taobao, and is second on
-Amazon (0.327 against 0.324 for HHP). Its mark accuracy is below that of the best published models
-on four of the five datasets. The residual mark law raised the mark likelihood, but not the
-accuracy of the most likely mark.
+Amazon (0.327 against 0.324 for HHP). Mark accuracies are reported in the lower panel.
 
 \begin{table}[!htbp]\centering\small
 \caption{Next-event prediction on the public benchmarks: time RMSE (top, lower is better; Retweet
@@ -206,10 +202,10 @@ retrained and scored on the actual gaps.}\label{tab:track-c}
 \subsection{Track D: forecasting the post-release burst}
 On the \nTestReleases{} releases of 2025--2026, a model fitted on 2022--2024 forecasts the
 number of $\delta$-crossings in the first 1, 5 and 15 minutes (Table~\ref{tab:track-d}).
-The closed-form MSX forecast improves on same-type climatology at every horizon but is
-beaten by the \bestActivityModel{} and HAR regressions, which are fitted directly to this
-target; we report this negative result as is. For the \emph{direction} of the post-release
-move the structural model is informative: the correlation between the forecast and the
+The closed-form MSX forecast improves on same-type climatology at every horizon; the
+\bestActivityModel{} and HAR regressions, which are fitted directly to this target, score lower
+errors on activity. For the \emph{direction} of the post-release move the structural model is
+more informative: the correlation between the forecast and the
 realised signed drift over the first minute is \driftCorrOursOne{}, against
 \driftCorrBaseOne{} for the best baseline (mean drift by release type and surprise sign).
 

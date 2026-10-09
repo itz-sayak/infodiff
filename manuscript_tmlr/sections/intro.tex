@@ -3,7 +3,8 @@
 Price changes, order-book messages and trades arrive as streams of events in continuous time,
 and temporal point processes are the standard way to model them. They are used for two rather
 different purposes. In econometrics, Hawkes processes \citep{hawkes1971spectra} are used to
-\emph{measure} market mechanisms. Their branching structure separates exogenous events, such as
+\emph{measure} market mechanisms. Their branching structure \citep{hawkes1974cluster} separates
+exogenous events, such as
 a reaction to news, from endogenous events triggered by earlier trading, and the fitted kernels
 describe how quickly information is absorbed
 \citep{hardiman2013critical,filimonov2012quantifying,rambaldi2015modeling}. In machine learning,
@@ -16,11 +17,12 @@ on summaries that ignore part of the response. A common example is the ``half-li
 $\ln 2/\beta$ of an exponential news kernel with decay rate $\beta$, which describes the direct
 reaction to news but not the further trading that this reaction sets off. On the prediction
 side, most intensity-based neural models estimate the compensator $\int\lambda(t)\,\mathrm{d}t$
-by Monte Carlo \citep{mei2017neural,zuo2020transformer,yang2022transformer,chang2025deep}, so
+by Monte Carlo \citep{mei2017neural,zuo2020transformer,yang2022transformer,chang2025deep,boyd2025hyper}, so
 their reported likelihoods contain sampling error. Models with an exact likelihood do exist.
 FullyNN \citep{omi2019fully} models the cumulative hazard with a monotone network, and
-IntensityFree \citep{shchur2020intensity} models the density of the next gap directly. Both,
-however, give up the Hawkes structure that makes a model interpretable \citep{shchur2021neural}.
+IntensityFree \citep{shchur2020intensity} and DTPP \citep{panos2024decomposable} model the density
+of the next gap directly. These models, however, give up the Hawkes structure that makes a model
+interpretable \citep{shchur2021neural}.
 We also find that reported likelihoods can depend on implementation details.
 
 In this paper we show that a single algebraic object serves both purposes with exact
@@ -28,7 +30,7 @@ likelihoods. We call it a \emph{phase-type state space}: every kernel is a nonne
 combination of Erlang densities whose rates lie on a logarithmic grid of time scales. Between
 two events such a state evolves by an explicit matrix exponential, so intensities and their
 integrals are available in closed form. The class is also rich, since phase-type densities are
-dense in the set of densities on $\R_+$.
+dense in the set of densities on $\R_+$ \citep{asmussen1996fitting,lee2010modeling}.
 
 \paragraph{Contributions.}
 \begin{enumerate}
@@ -65,6 +67,7 @@ of it to \tNinetyLo--\tNinetyHi{} minutes.
 
 Our work builds on linear-in-parameters kernel dictionaries \citep{bacry2015hawkes}, EM algorithms
 for Hawkes processes \citep{veen2008estimation,zhou2013learning} and exact-likelihood neural point
-processes \citep{omi2019fully,shchur2020intensity}. A single phase-type state space lets us connect
+processes \citep{omi2019fully,shchur2020intensity}, and on Erlang-kernel embeddings of Hawkes
+processes \citep{duarte2019stability}. A single phase-type state space lets us connect
 them: certified, closed-form measurement on one side, and on the other an exact neural model that
 contains the linear Hawkes process and starts from it.

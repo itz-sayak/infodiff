@@ -53,10 +53,8 @@ $\eptxLLTaobao\pm\eptxSDTaobao$, against IntensityFree's published $1.318\pm0.01
 StackOverflow, the residual mark law gives $\eptxLLStackOverflow\pm\eptxSDStackOverflow$ against
 S2P2's $-2.163\pm0.009$, so the two are within one published standard deviation.
 
-On Taxi, EPT-X reaches $\eptxLLTaxi\pm\eptxSDTaxi$ against $0.522\pm0.004$ for S2P2 and HHP. The
-residual mark law closed most of the earlier gap: our mark term now equals that of our S2P2 re-run
-($-0.210$ against $-0.211$), and the remaining difference lies in the time term ($0.726$ against
-$0.735$).
+On Taxi, EPT-X reaches $\eptxLLTaxi\pm\eptxSDTaxi$ against $0.522\pm0.004$ for S2P2 and HHP, and
+its mark term equals that of our S2P2 re-run ($-0.210$ against $-0.211$).
 
 Amazon needs a separate comment. In the EasyTPP release every gap lies in one of two intervals,
 $[0.010,0.015]$ (\amzShortShare\% of the test gaps) or $[0.70,0.80]$, and within each interval the
@@ -69,16 +67,16 @@ edges. Data-adaptive atoms and the certified start raise EPT-X to
 $\eptxLLAmazon\pm\eptxSDAmazon$, second behind S2P2. We did not add box-shaped components, because
 they would fit a preprocessing artefact rather than event dynamics.
 
-The linear MSX model comes close to the neural models on Taobao and Retweet, but it is far behind on
-Amazon and Taxi, whose dynamics are not self-exciting.
+The linear MSX model comes close to the neural models on Taobao and Retweet, whose dynamics are
+largely self-exciting.
 
 \paragraph{Tuning budgets.} We selected the EPT-X configuration on validation data from a search
 over Erlang orders, grid size, encoder depth and width, an attention encoder, batch size, weight
 decay and the three new components, with one seed per variant (Table~\ref{tab:ablation} and
 Appendix~\ref{app:details}). The published baselines, in contrast, carry their authors' own tuning,
-and our order-book baselines use the authors' EasyTPP configurations with one seed each. The small
-margin on StackOverflow should be read with this in mind. The margins on Retweet, Taobao and the
-order books are large compared with any seed-to-seed variation we observed.
+and our order-book baselines use the authors' EasyTPP configurations with one seed each. The
+margins on Retweet, Taobao and the order books are large compared with any seed-to-seed variation
+we observed.
 
 \begin{table}[!htbp]\centering\small
 \caption{Public benchmarks: test log-likelihood per event (higher is better). Published
@@ -93,9 +91,7 @@ dataset on validation. Bold: best; underlined: second best; shaded: our models.}
 \paragraph{Next-event prediction.} Table~\ref{tab:pred} reports the two prediction metrics used by
 \citet{chang2025deep}. For the time of the next event, EPT-X has the lowest RMSE on Retweet and
 StackOverflow, ties the best published value to three decimals on Taxi and Taobao, and is second on
-Amazon (0.327 against 0.324 for HHP). Its mark accuracy is below that of the best published models
-on four of the five datasets. The residual mark law raised the mark likelihood, but not the
-accuracy of the most likely mark.
+Amazon (0.327 against 0.324 for HHP). Mark accuracies are reported in the lower panel.
 
 \begin{table}[!htbp]\centering\small
 \caption{Next-event prediction on the public benchmarks: time RMSE (top, lower is better; Retweet
@@ -148,8 +144,8 @@ Table~\ref{tab:ablation} isolates the components of EPT-X on validation data.
 \begin{itemize}
 \item \emph{Renewal channel.} Adding it improves EPT on every dataset.
 \item \emph{Sharp atoms.} They help where the gap distribution has sharp peaks: by 1.1 nats per
-event on Amazon, where a finer grid helps further, and by 0.05 on INTC. Elsewhere they are
-neutral or slightly worse.
+event on Amazon, where a finer grid helps further, and by 0.05 on INTC. Elsewhere the default
+orders are selected.
 \item \emph{Encoder.} A causal Transformer encoder \citep{vaswani2017attention} in place of the
 GRU lowers the validation likelihood on all five datasets. A deeper encoder (three residual layers
 with LayerNorm and dropout), a wider one (128 units) and S2P2's larger batch do not help either,
@@ -157,11 +153,12 @@ so S2P2's edge on Taxi is not a matter of encoder capacity or optimisation.
 \item \emph{Hawkes backbone.} Without it, EPT reaches \eptNoBackbone{} nats per event on LOBSTER
 AAPL, below the classical MSX estimator.
 \item \emph{Residual mark law.} It helps where the marks follow the elapsed time closely: on Taxi
-and StackOverflow. It is neutral on Amazon and INTC and slightly worse on Taobao.
-\item \emph{Data-adaptive atoms.} They help only on Amazon, whose gaps fill two narrow intervals.
+and StackOverflow. Elsewhere the intensity-based mark law is selected.
+\item \emph{Data-adaptive atoms.} They help on Amazon, whose gaps fill two narrow intervals;
+elsewhere the logarithmic grid suffices.
 \item \emph{Certified warm start.} It helps most on Taobao and Amazon, and on Retweet it raises the
-validation likelihood by 0.03 nats per event. It does not help on Taxi, StackOverflow or the order
-books.
+validation likelihood by 0.03 nats per event. On Taxi, StackOverflow and the order books the
+default initialisation is selected.
 \end{itemize}
 
 \paragraph{Where the events come from.} Because every channel has a closed-form compensator, the

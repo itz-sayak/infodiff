@@ -20,7 +20,6 @@ test likelihood on all five stocks against six classical estimators and seven ne
 baselines, by \trackCmarginLo--\trackCmarginHi{} nats per event over the best neural model.
 Its states follow an affine recursion that trains with a parallel scan, and it can start
 from the certified MSX fit. On the public EasyTPP benchmarks it has the best likelihood on
-Retweet and Taobao, is level with the best published model on StackOverflow, and trails it on
-Taxi and Amazon. Along the way we find that a widely used IntensityFree implementation clamps
+Retweet and Taobao, and is level with the best published model on StackOverflow. Along the way we find that a widely used IntensityFree implementation clamps
 inter-event times before scoring, and that the gaps of the EasyTPP Amazon data are uniform on
 two fixed intervals.

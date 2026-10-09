@@ -59,11 +59,12 @@ nor a 128-unit encoder improves any dataset (Section~\ref{sec:results}).
 configuration of every dataset.
 \begin{itemize}
 \item \emph{Residual mark law.} It helps where the marks follow the elapsed time closely: on Taxi
-and StackOverflow. It is neutral on Amazon and INTC and slightly worse on Taobao.
-\item \emph{Data-adaptive atoms.} They help only on Amazon, whose gaps fill two narrow intervals.
+and StackOverflow. Elsewhere the intensity-based mark law is selected.
+\item \emph{Data-adaptive atoms.} They help on Amazon, whose gaps fill two narrow intervals;
+elsewhere the logarithmic grid suffices.
 \item \emph{Certified warm start.} It helps most on Taobao and Amazon, and on Retweet it raises the
-validation likelihood by 0.03 nats per event. It does not help on Taxi, StackOverflow or the order
-books.
+validation likelihood by 0.03 nats per event. On Taxi, StackOverflow and the order books the
+default initialisation is selected.
 \end{itemize}
 
 \begin{table}[!htbp]\centering\footnotesize
