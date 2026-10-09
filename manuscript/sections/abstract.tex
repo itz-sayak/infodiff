@@ -1,25 +1,19 @@
-How fast do prices absorb scheduled macroeconomic news, and how much of the post-release
-activity is the market reacting to itself? We study six markets (EUR/USD, USD/JPY, gold, the
-S\&P~500, bitcoin and ether) around 670 scheduled releases between 2022 and 2026. Price changes
-are recorded as $\delta$-crossing events and modelled with a multiscale phase-type Hawkes process
-whose parameters all enter linearly. The log-likelihood is then concave, and we compute the global maximum
-with a Fenchel duality-gap certificate. A Markov embedding gives the echo-corrected
-response to a release in closed form; we prove it is stable iff the spectral radius of
-the branching matrix is below one. A built-in placebo test on matched release-free days,
-with a penalty chosen on held-out windows, separates genuine news effects from artefacts:
-CPI, payrolls, PPI, the FOMC statement and retail sales pass it, second-tier releases and
-the ECB and BoJ do not. For the releases that pass, the direct reaction is absorbed in
-about a second, but echoes stretch half of the response to \tEchoLo--\tEchoHi{}\,s and
-ninety percent to \tNinetyLo--\tNinetyHi{} minutes; the branching ratio is
-$\rho(G)=\rhoPooled$ and declines from 2022 to 2026. On synthetic benchmarks the certified
-estimator recovers multiscale and network kernels with 7--10$\times$ smaller likelihood
-deficits than six classical estimators. We also introduce EPT-X, a neural point process
-with an exact compensator that superposes a history-conditioned hyper-Erlang renewal
-channel on a linear Hawkes backbone; on LOBSTER limit-order-book data it achieves the best
-test likelihood on all five stocks against six classical estimators and seven neural
-baselines, by \trackCmarginLo--\trackCmarginHi{} nats per event over the best neural model.
-Its states follow an affine recursion that trains with a parallel scan, and it can start
-from the certified MSX fit. On the public EasyTPP benchmarks it has the best likelihood on
-Retweet and Taobao, and is level with the best published model on StackOverflow. Along the way we find that a widely used IntensityFree implementation clamps
-inter-event times before scoring, and that the gaps of the EasyTPP Amazon data are uniform on
-two fixed intervals.
+Temporal point processes are used both to \emph{measure} market mechanisms, for example how fast
+prices absorb news and how much of the reaction is the market responding to itself, and to
+\emph{predict} the next event. We show that one algebraic object, the phase-type (Erlang-chain)
+state space, serves both purposes with exact likelihoods. For measurement, we build a multiscale
+phase-type Hawkes process whose parameters all enter linearly. Its log-likelihood is concave, and
+we compute the global maximum together with a Fenchel duality-gap certificate. A Markov embedding
+gives the response to an exogenous shock, echoes included, in closed form, and this response is
+stable if and only if the spectral radius of the branching matrix is below one. Applied to six
+markets around 670 scheduled macroeconomic releases (2022--2026) with a built-in placebo test, the
+model shows that the direct reaction to CPI, payrolls, PPI and the FOMC statement is absorbed in
+about a second, while the market's own echoes stretch half of the response to
+\tEchoLo--\tEchoHi{}\,s. For prediction, we introduce EPT-X, a neural point process that adds a
+history-dependent mixture-of-Erlang renewal channel to a linear Hawkes backbone. Its intensity
+and compensator remain in closed form, its states follow an affine recursion that trains with a
+parallel scan, and it can start from the certified MSX fit. EPT-X has the best test likelihood on
+all five LOBSTER order-book streams and on Retweet and Taobao, is level with the best published
+model on StackOverflow. We also find that a widely used
+IntensityFree implementation clamps short inter-event times before scoring, and that the gaps of
+the EasyTPP Amazon data are uniform on two fixed intervals.

@@ -50,7 +50,7 @@ def copy_text(src: Path, dst: Path) -> None:
 README = """# Exact phase-type point processes: supplementary code
 
 Anonymous supplementary material for the TMLR submission *Exact Phase-Type Point Processes for
-Certified Measurement and Prediction of Market Event Streams*.
+Certified Measurement and Prediction of Event Streams*.
 
 ## Contents
 | Path | What |
