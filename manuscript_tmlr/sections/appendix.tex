@@ -70,24 +70,11 @@ likelihood of held-out windows (Table~\ref{tab:l1}). Without the penalty, nonneg
 inflate release and placebo masses equally. The held-out likelihood peaks at
 $\ell_1=\lOneSelected$, which is also where release and placebo masses separate.
 
-\begin{table}[!htbp]\centering\small
+\begin{table}[!htb]\centering\small
 \caption{Choice of the $\ell_1$ penalty on the news kernels. Held-out log-likelihood on the
 2024 windows relative to the best level (bold), and the mean news-kernel mass of release and
 placebo windows.}\label{tab:l1}
 \input{tables/l1_selection}
-\end{table}
-
-\clearpage
-\section{Synthetic recovery: all metrics}\label{app:synthetic}
-\begin{table}[!h]\centering\footnotesize
-\caption{Synthetic recovery, all metrics (mean $\pm$ s.d.\ over five seeds):
-relative error of the branching matrix and of its spectral radius, kernel $L^1$ error and held-out
-deficit dLL ($10^{-3}$ nats/event), all lower is better, and edge AUC (higher is better). AUC needs
-absent true edges, so it is defined only for S4 and S5 (n/a for the complete graphs S1--S3).
-``--'': not produced by the method; NPHC estimates only the branching matrix. Missing rows are fits
-that did not converge. Bold: best; underlined: second best within each scenario; shaded: ours.}\label{tab:track-a-full}
-\scriptsize\setlength{\tabcolsep}{5pt}\renewcommand{\arraystretch}{1.0}
-\input{tables/track_a_full}
 \end{table}
 
 \section{Forecasting the post-release burst}\label{app:forecast}
@@ -106,6 +93,20 @@ release; QLIKE scores the forecast of realised variance. Mean over assets; lower
 best; underlined: second best; shaded: our model.}\label{tab:track-d}
 \setlength{\tabcolsep}{5pt}
 \input{tables/track_d}
+\end{table}
+
+\section{Synthetic recovery: all metrics}\label{app:synthetic}
+Table~\ref{tab:track-a-full} reports every metric for the five scenarios of Section~\ref{sec:synthetic}.
+
+\begin{table}[!tp]\centering\footnotesize
+\caption{Synthetic recovery, all metrics (mean $\pm$ s.d.\ over five seeds):
+relative error of the branching matrix and of its spectral radius, kernel $L^1$ error and held-out
+deficit dLL ($10^{-3}$ nats/event), all lower is better, and edge AUC (higher is better). AUC needs
+absent true edges, so it is defined only for S4 and S5 (n/a for the complete graphs S1--S3).
+``--'': not produced by the method; NPHC estimates only the branching matrix. Missing rows are fits
+that did not converge. Bold: best; underlined: second best within each scenario; shaded: ours.}\label{tab:track-a-full}
+\scriptsize\setlength{\tabcolsep}{5pt}\renewcommand{\arraystretch}{1.0}
+\input{tables/track_a_full}
 \end{table}
 
 \section{Experimental details}\label{app:details}
