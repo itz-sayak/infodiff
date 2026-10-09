@@ -535,9 +535,14 @@ def numbers():
     """LaTeX macros for every number quoted in the prose (computed, never typed)."""
     out = []
     amz = ROOT / "data" / "raw" / "easytpp" / "amazon_test.jsonl"
+    cache = J / "amazon_gaps.json"  # cached so the macros reproduce without the raw data
     if amz.exists():  # EasyTPP Amazon: every gap is uniform on one of two intervals (see the text)
         g = np.concatenate([np.asarray(json.loads(l)["time_since_last_event"][1:], float) for l in amz.open()])
         short, long_ = np.mean((g >= 0.010) & (g <= 0.015)), np.mean((g >= 0.70) & (g <= 0.80))
+        cache.write_text(json.dumps(dict(short=float(short), long=float(long_)), indent=1))
+    if cache.exists():
+        c = json.loads(cache.read_text())
+        short, long_ = c["short"], c["long"]
         box_ll = long_ * np.log(long_ / 0.10) + short * np.log(short / 0.005)
         out.append(f"\\newcommand{{\\amzBandShare}}{{{100 * (short + long_):.0f}}}")
         out.append(f"\\newcommand{{\\amzShortShare}}{{{100 * short:.0f}}}")
