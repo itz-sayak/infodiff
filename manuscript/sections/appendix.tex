@@ -56,16 +56,11 @@ validation likelihood on all five datasets we tested, and neither a three-layer 
 nor a 128-unit encoder improves any dataset (Section~\ref{sec:results}).
 
 \paragraph{New components.} Table~\ref{tab:ablation} adds each new component to the selected
-configuration of every dataset.
-\begin{itemize}
-\item \emph{Residual mark law.} It helps where the marks follow the elapsed time closely: on Taxi
-and StackOverflow. Elsewhere the intensity-based mark law is selected.
-\item \emph{Data-adaptive atoms.} They help on Amazon, whose gaps fill two narrow intervals;
-elsewhere the logarithmic grid suffices.
-\item \emph{Certified warm start.} It helps most on Taobao and Amazon, and on Retweet it raises the
-validation likelihood by 0.03 nats per event. On Taxi, StackOverflow and the order books the
-default initialisation is selected.
-\end{itemize}
+configuration of every dataset. The components are selected where the data call for them. The
+residual mark law helps where the marks follow the elapsed time closely, on Taxi and
+StackOverflow. Data-adaptive atoms help on Amazon, whose gaps fill two narrow intervals. The
+certified warm start helps most on Taobao and Amazon, and on Retweet it raises the validation
+likelihood by 0.03 nats per event. Elsewhere the default setting of each component is selected.
 
 \begin{table}[!htbp]\centering\footnotesize
 \caption{EPT-X ablations: validation log-likelihood per event (higher is better). The EPT and

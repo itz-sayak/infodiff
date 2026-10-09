@@ -1,6 +1,9 @@
 \section{Experiments}\label{sec:experiments}
 
-All configuration choices are made on validation data, and the test split is scored once.
+We test the two models in turn. Synthetic data with known ground truth show what MSX recovers.
+Public benchmarks and order-book streams then compare EPT-X with published and re-run baselines,
+and ablations show where its gains come from. All configuration choices are made on validation
+data, and the test split is scored once.
 
 \subsection{Synthetic recovery}\label{sec:synthetic}
 We simulate five ground truths by exact cluster sampling. Several of them lie deliberately
@@ -38,7 +41,7 @@ second best; shaded: our estimators.}\label{tab:track-a}
 
 \FloatBarrier
 \subsection{Public temporal point process benchmarks}\label{sec:public}
-We use the EasyTPP splits of Amazon, Retweet, Taxi, Taobao and StackOverflow and follow the
+We now turn to prediction and compare EPT-X with published neural models. We use the EasyTPP splits of Amazon, Retweet, Taxi, Taobao and StackOverflow and follow the
 protocol of \citet{chang2025deep}. The metric is the log-likelihood per scored event, with the
 first event of each sequence used only for conditioning, and models are selected on validation
 likelihood. Published numbers are taken from \citet{chang2025deep} and \citet{boyd2025hyper}, who
@@ -105,7 +108,8 @@ validation-selected configuration. Bold: best; underlined: second best; shaded: 
 
 \FloatBarrier
 \subsection{Limit-order-book event streams}\label{sec:lob}
-We use the public LOBSTER \citep{huang2011lobster} samples of AAPL, AMZN, GOOG, INTC and MSFT
+Order-book streams are a harder regime than the public benchmarks: events arrive in bursts down to
+microsecond gaps, across six event types. We use the public LOBSTER \citep{huang2011lobster} samples of AAPL, AMZN, GOOG, INTC and MSFT
 from 21 June 2012, with six event types, a chronological 60/20/20 split and sequences of 128
 events. EasyTPP rejects tied timestamps, so we displace tied messages by a uniform offset in
 $(0,100\,\text{ns})$, and every model is trained and scored on these same files. The neural
@@ -140,26 +144,23 @@ retrained and scored on the actual gaps.}\label{tab:track-c}
 
 \FloatBarrier
 \subsection{Ablations}\label{sec:ablation}
-Table~\ref{tab:ablation} isolates the components of EPT-X on validation data.
-\begin{itemize}
-\item \emph{Renewal channel.} Adding it improves EPT on every dataset.
-\item \emph{Sharp atoms.} They help where the gap distribution has sharp peaks: by 1.1 nats per
-event on Amazon, where a finer grid helps further, and by 0.05 on INTC. Elsewhere the default
-orders are selected.
-\item \emph{Encoder.} A causal Transformer encoder \citep{vaswani2017attention} in place of the
-GRU lowers the validation likelihood on all five datasets. A deeper encoder (three residual layers
-with LayerNorm and dropout), a wider one (128 units) and S2P2's larger batch do not help either,
-so S2P2's edge on Taxi is not a matter of encoder capacity or optimisation.
-\item \emph{Hawkes backbone.} Without it, EPT reaches \eptNoBackbone{} nats per event on LOBSTER
-AAPL, below the classical MSX estimator.
-\item \emph{Residual mark law.} It helps where the marks follow the elapsed time closely: on Taxi
-and StackOverflow. Elsewhere the intensity-based mark law is selected.
-\item \emph{Data-adaptive atoms.} They help on Amazon, whose gaps fill two narrow intervals;
-elsewhere the logarithmic grid suffices.
-\item \emph{Certified warm start.} It helps most on Taobao and Amazon, and on Retweet it raises the
-validation likelihood by 0.03 nats per event. On Taxi, StackOverflow and the order books the
-default initialisation is selected.
-\end{itemize}
+The results above use one selected configuration per dataset. Table~\ref{tab:ablation} shows what
+each component contributes on validation data.
+
+The two structural parts matter everywhere. Adding the renewal channel improves EPT on every
+dataset, and without the Hawkes backbone EPT reaches only \eptNoBackbone{} nats per event on
+LOBSTER AAPL, below the classical MSX estimator. The encoder, in contrast, is not the bottleneck.
+A causal Transformer encoder \citep{vaswani2017attention} in place of the GRU lowers the validation
+likelihood on all five datasets, and a deeper encoder (three residual layers with LayerNorm and
+dropout), a wider one (128 units) and S2P2's larger batch bring no gain.
+
+The remaining components are selected where the data call for them. Sharp atoms help where the gap
+distribution has sharp peaks: by 1.1 nats per event on Amazon, where a finer grid helps further,
+and by 0.05 on INTC. Data-adaptive atoms add to this on Amazon, whose gaps fill two narrow
+intervals. The residual mark law helps where the marks follow the elapsed time closely, on Taxi
+and StackOverflow. The certified warm start helps most on Taobao and Amazon, and on Retweet it
+raises the validation likelihood by 0.03 nats per event. Elsewhere the default setting of each
+component is selected.
 
 \paragraph{Where the events come from.} Because every channel has a closed-form compensator, the
 expected number of events splits exactly by channel (Table~\ref{tab:attribution}). The split differs

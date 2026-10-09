@@ -1,6 +1,7 @@
 \section{EPT and EPT-X: neural point processes with an exact compensator}\label{sec:ept}
 
-We now turn to prediction. Events arrive at times $t_1<t_2<\dots$ with marks
+MSX is linear by design, which is what makes it certifiable. For prediction we keep its state space
+and its exact likelihood, and let a network adapt the state to the history. Events arrive at times $t_1<t_2<\dots$ with marks
 $y_n\in\{1,\dots,M\}$, and we write $\Delta_n=t_n-t_{n-1}$ for the gaps. For a time $t$ after the
 $n$-th event, $s=t-t_n$ denotes the time elapsed since that event.
 
@@ -50,15 +51,13 @@ a very short interval followed by a pause. A linear Hawkes intensity describes e
 We fix $Q$ Erlang ``atoms'' indexed by $q$, each with an order $R_q$ and a rate $\beta_q$. Their means
 $R_q/\beta_q$ lie on a logarithmic grid that spans the time scales of the data, and their orders
 come from $\{1,4,16\}$, optionally up to $1024$. An atom of order $R_q$ has coefficient of variation
-$R_q^{-1/2}$, so high orders give sharp peaks in log-time. From $\bm h_n$ the network outputs:
-\begin{itemize}
-\item weights $\pi_1,\dots,\pi_Q,\pi_\infty\ge0$ summing to one, where $\pi_\infty$ is the weight of a
-\emph{defect} atom meaning ``the renewal channel produces no event'';
-\item for each time scale, a distribution $\omega_{y\mid q}$ over the marks, so that the mark of a
-burst may depend on how quickly it follows the last event;
-\item optionally, a bounded shift of each log-rate, which lets an atom move within its grid cell.
-\end{itemize}
-The renewal channel's joint density of the next gap $s$ and mark $y$, and its survival function,
+$R_q^{-1/2}$, so high orders give sharp peaks in log-time. From $\bm h_n$ the network outputs
+three things. The first is a set of weights $\pi_1,\dots,\pi_Q,\pi_\infty\ge0$ that sum to one,
+where $\pi_\infty$ is the weight of a \emph{defect} atom meaning ``the renewal channel produces no
+event''. The second is, for each time scale, a distribution $\omega_{y\mid q}$ over the marks, so
+that the mark of a burst may depend on how quickly it follows the last event. The third, which is
+optional, is a bounded shift of each log-rate, which lets an atom move within its grid cell. With
+these outputs, the renewal channel's joint density of the next gap $s$ and mark $y$, and its survival function,
 are
 \begin{equation}\label{eq:renewal}
 p(s,y)=\sum_{q=1}^{Q}\pi_q\,\omega_{y\mid q}\,
@@ -123,6 +122,9 @@ report separately. Predictions of the next event are Bayes-optimal functionals o
 density: the expected gap is $\int_0^\infty S(s)\,\mathrm{d}s$, where $S$ is the survival function
 of the full model, and the predicted mark is $\arg\max_y\int_0^\infty\lambda_y(s)S(s)\,\mathrm{d}s$.
 Both integrals are computed by one-dimensional quadrature on a logarithmic grid.
+
+The rest of this section describes how the model is evaluated in parallel, two optional
+components, and a way to start training from the certified fit of Section~\ref{sec:model}.
 
 \paragraph{Parallel evaluation.} The encoder reads only the observed gaps and marks, never the
 latent state. All summaries $\bm h_1,\dots,\bm h_N$ can therefore be computed first, in one call to
@@ -191,4 +193,7 @@ $\mu>0$, so the log-likelihood converges. The second statement is Proposition~\r
 \emph{Part 2.} The selected model maximises validation likelihood over a set that contains the
 initial model.
 \end{proof}
+
+The proposition links the two models of this paper: the certified linear fit is the floor from
+which the neural model starts.
 

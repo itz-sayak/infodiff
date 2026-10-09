@@ -1,6 +1,8 @@
 \section{Application: how fast do markets absorb macroeconomic news?}\label{sec:application}
 
-Figure~\ref{fig:pipeline} summarises the steps from raw data to absorption times.
+We now return to the measurement question that motivated MSX and apply it to market data around
+scheduled macroeconomic releases. Figure~\ref{fig:pipeline} summarises the steps from raw data to
+absorption times.
 
 \begin{figure}[!htbp]\centering
 \input{figures/pipeline}
@@ -36,12 +38,14 @@ regression. The pooled model has \nWindows{} windows (\nNewsWindows{} release an
 \nPlaceboWindows{} placebo) with \nEventsScored{} million scored events, and its certificate bounds
 the distance to the optimum by \gapMaxPooled{} nats per dimension.
 
-\paragraph{Endogeneity.} The spectral radius of the branching matrix is $\rho(G)=\rhoPooled$, so
+\paragraph{Endogeneity.} The fitted model first tells us how endogenous these markets are. The
+spectral radius of the branching matrix is $\rho(G)=\rhoPooled$, so
 roughly seven in every eight price events are triggered by earlier price events rather than
 directly by news. Fitted year by year, $\rho(G)$ declines from 2022 to 2026 (\rhoByYear), and the
 slowest echo mode decays in about \relaxPooled{} minutes.
 
-\paragraph{Falsification.} Under the null hypothesis of no effect, a nonnegative news kernel still
+\paragraph{Falsification.} Before reading the news kernels, we test them. Under the null
+hypothesis of no effect, a nonnegative news kernel still
 has a positive expected mass, because estimates cannot fall below zero. A comparison with
 release-free placebo windows is therefore essential. With the $\ell_1$ level chosen by held-out
 likelihood, \nPassPlacebo{} of the \nKinds{} release types exceed their placebo by at least 50\%
@@ -90,7 +94,8 @@ placebo by 50\% (Figure~\ref{fig:placebo}).}\label{tab:absorption}
 (blue) or $-1$ (orange) standard deviation, from the pooled model. Time axis logarithmic.}\label{fig:drift}
 \end{figure}
 
-\paragraph{Goodness of fit.} Time-rescaled residuals \citep{brown2002time} have
+\paragraph{Goodness of fit.} These conclusions rest on the fit of the model, which we check with
+time-rescaled residuals \citep{brown2002time}. They have
 Kolmogorov--Smirnov statistics of at most \ksMax{} against Exp(1); the per-window
 excess-dispersion test rejects in \edLo--\edHi\% of windows, compared with 42\% (power-law
 kernel) and 93\% (double exponential) of trading days reported for EBS FX data by

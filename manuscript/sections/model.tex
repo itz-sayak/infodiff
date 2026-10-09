@@ -41,19 +41,14 @@ standardised surprise. The MSX intensity of event type $i$ is
 +\underbrace{\sum_{e:\,\tau_e>t}\sum_{k}\alpha_{ic_ek}\,\beta^{\mathrm{ant}}_k e^{-\beta^{\mathrm{ant}}_k(\tau_e-t)}}_{\text{anticipation}} .
 \label{eq:intensity}
 \end{align}
-The terms are as follows.
-\begin{itemize}
-\item \emph{Baseline.} $c_{iw}$ is an intercept for window $w$, and $h_m$ are periodic hat
-functions of the local time of day $\mathrm{tod}(t)$ with weights $\eta_{im}$.
-\item \emph{Endogenous excitation.} $t_n^j$ is the $n$-th event of type $j$, the $g_{kr}$ are the
+The four terms have the following meaning. In the baseline, $c_{iw}$ is an intercept for window
+$w$, and $h_m$ are periodic hat functions of the local time of day $\mathrm{tod}(t)$ with weights
+$\eta_{im}$. In the endogenous term, $t_n^j$ is the $n$-th event of type $j$, the $g_{kr}$ are the
 basis densities~(\ref{eq:basis}), and $a_{ijkr}$ is the weight with which an event of type $j$
-excites type $i$ at time scale $k$ and order $r$.
-\item \emph{Response to news.} $g^{\mathrm{exo}}_{kr}$ is a second dictionary with its own rates,
-and $b_{ickrm}$ weights mark component $m$ of a release of type $c$.
-\item \emph{Anticipation.} $\alpha_{ick}$ captures activity that builds up before a release of type
-$c$, with rates $\beta^{\mathrm{ant}}_k$.
-\end{itemize}
-All parameters are nonnegative. Every term is linear in its parameters, so we can write
+excites type $i$ at time scale $k$ and order $r$. The response to news uses a second dictionary
+$g^{\mathrm{exo}}_{kr}$ with its own rates, in which $b_{ickrm}$ weights mark component $m$ of a
+release of type $c$. Finally, $\alpha_{ick}$ captures activity that builds up before a release of
+type $c$, with rates $\beta^{\mathrm{ant}}_k$. All parameters are nonnegative. Every term is linear in its parameters, so we can write
 $\lambda_i(t)=\bm x(t)^\top\bm\theta_i$, where $\bm\theta_i$ stacks the parameters of type $i$ and
 $\bm x(t)\ge0$ stacks the corresponding known functions of time. The log-likelihood then
 separates across event types:

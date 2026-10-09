@@ -1,5 +1,9 @@
 \section{Phase-type state spaces}\label{sec:phasetype}
 
+Both models in this paper rest on one construction: kernels built from Erlang densities, and the
+linear recursion that their states obey. We introduce it here once, and the following two sections
+use it without change.
+
 \paragraph{A dictionary of Erlang densities.} Fix a set of rates $\beta_1,\dots,\beta_K>0$ on a
 logarithmic grid, so that each rate corresponds to a time scale $1/\beta_k$, and an Erlang order
 $R\ge1$. For $k=1,\dots,K$ and $r=0,\dots,R-1$ we define the basis densities
@@ -71,4 +75,6 @@ which gives the second formula.
 \end{proof}
 
 Evaluating a likelihood therefore costs $O(N d K R^2)$ operations for $N$ events in $d$
-dimensions, and it involves no Monte Carlo or quadrature error.
+dimensions, and it involves no Monte Carlo or quadrature error. The next section uses this
+recursion in a linear model for measurement, and Section~\ref{sec:eptx} in a neural model for
+prediction.
